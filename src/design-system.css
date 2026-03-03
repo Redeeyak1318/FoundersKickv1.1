@@ -1,0 +1,515 @@
+/* ================================================================
+   FOUNDERSKICK — UNIFIED DESIGN SYSTEM v2.0
+   Single source of truth for every visual decision in the app.
+   ================================================================ */
+
+/* ── 1. COLOR TOKENS ─────────────────────────────────────────── */
+:root {
+
+  /* Backgrounds */
+  --bg-primary:      #050505;
+  --bg-secondary:    #0A0A0C;
+  --bg-elevated:     rgba(10, 10, 12, 0.60);
+  --bg-card:         rgba(255, 255, 255, 0.024);
+  --bg-card-hover:   rgba(255, 255, 255, 0.038);
+  --bg-overlay:      rgba(5, 5, 5, 0.88);
+
+  /* Accent — Primary brand colours */
+  --accent-primary:   #0050FF;
+  --accent-secondary: #00D6FF;
+  --accent-emerald:   #34d399;
+  --accent-rose:      #fb7185;
+  --accent-amber:     #fbbf24;
+  --accent-violet:    #a78bfa;
+
+  /* Text */
+  --text-primary:   rgba(255, 255, 255, 0.92);
+  --text-secondary: rgba(255, 255, 255, 0.60);
+  --text-tertiary:  rgba(255, 255, 255, 0.34);
+  --text-accent:    var(--accent-secondary);
+
+  /* Borders */
+  --border-subtle:  rgba(255, 255, 255, 0.068);
+  --border-hover:   rgba(0, 214, 255, 0.22);
+  --border-active:  rgba(0, 214, 255, 0.50);
+
+  /* Gradients */
+  --gradient-brand:  linear-gradient(135deg, #0050FF 0%, #00D6FF 100%);
+  --gradient-dark:   linear-gradient(180deg, #050505 0%, #0A0A0C 100%);
+  --gradient-card:   linear-gradient(145deg, rgba(0,80,255,0.06) 0%, rgba(0,214,255,0.02) 100%);
+
+  /* Legacy aliases — keep backward compat with existing class refs */
+  --color-bg-primary:       var(--bg-primary);
+  --color-bg-secondary:     var(--bg-secondary);
+  --color-bg-card:          var(--bg-card);
+  --color-bg-glass:         var(--bg-elevated);
+  --color-bg-glass-hover:   var(--bg-card-hover);
+  --color-bg-elevated:      var(--bg-elevated);
+  --color-bg-tertiary:      #0c0c14;
+  --color-accent-primary:   var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary:  var(--accent-secondary);
+  --color-accent-glow:      rgba(0, 80, 255, 0.35);
+  --color-accent-cyan:      var(--accent-secondary);
+  --color-accent-emerald:   var(--accent-emerald);
+  --color-accent-rose:      var(--accent-rose);
+  --color-accent-amber:     var(--accent-amber);
+  --color-text-primary:     var(--text-primary);
+  --color-text-secondary:   var(--text-secondary);
+  --color-text-tertiary:    var(--text-tertiary);
+  --color-text-accent:      var(--text-accent);
+  --color-border:           var(--border-subtle);
+  --color-border-hover:     var(--border-hover);
+  --color-border-active:    var(--border-active);
+  --gradient-primary:       var(--gradient-brand);
+  --gradient-secondary:     var(--gradient-brand);
+}
+
+/* ── 2. TYPOGRAPHY SCALE ─────────────────────────────────────── */
+:root {
+  --font-display: 'DELTHA', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --font-body:    'DELTHA', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+
+  /* Size scale — 4px optical rhythm */
+  --text-2xs:  0.625rem;   /* 10px */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+  --text-5xl:  3rem;       /* 48px */
+  --text-6xl:  3.75rem;    /* 60px */
+  --text-7xl:  4.5rem;     /* 72px */
+  --text-8xl:  6rem;       /* 96px */
+}
+
+/* ── 3. SPACING SCALE (4px base) ─────────────────────────────── */
+:root {
+  --sp-1:  0.25rem;   /* 4px  */
+  --sp-2:  0.5rem;    /* 8px  */
+  --sp-3:  0.75rem;   /* 12px */
+  --sp-4:  1rem;      /* 16px */
+  --sp-6:  1.5rem;    /* 24px */
+  --sp-8:  2rem;      /* 32px */
+  --sp-12: 3rem;      /* 48px */
+  --sp-16: 4rem;      /* 64px */
+  --sp-24: 6rem;      /* 96px */
+
+  /* Legacy */
+  --space-xs:  var(--sp-1);
+  --space-sm:  var(--sp-2);
+  --space-md:  var(--sp-4);
+  --space-lg:  var(--sp-6);
+  --space-xl:  var(--sp-8);
+  --space-2xl: var(--sp-12);
+  --space-3xl: var(--sp-16);
+  --space-4xl: var(--sp-24);
+}
+
+/* ── 4. RADIUS SYSTEM ────────────────────────────────────────── */
+:root {
+  --radius-sm:   8px;
+  --radius-md:   16px;
+  --radius-lg:   24px;
+  --radius-xl:   24px;  /* keep legacy .glass-card compat */
+  --radius-full: 9999px;
+}
+
+/* ── 5. MOTION SCALE ─────────────────────────────────────────── */
+:root {
+  /* Durations */
+  --motion-fast:   150ms;
+  --motion-normal: 250ms;
+  --motion-slow:   400ms;
+
+  /* Primary easing — smooth precision, no bounce, no elastic */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Legacy compat */
+  --ease-out-expo:    var(--ease);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring:      var(--ease);    /* eliminated elastic spring */
+  --duration-fast:    var(--motion-fast);
+  --duration-base:    var(--motion-normal);
+  --duration-slow:    var(--motion-slow);
+  --duration-slower:  600ms;
+}
+
+/* ── 6. SHADOW SYSTEM ────────────────────────────────────────── */
+:root {
+  /* No heavy drop shadows. Glow-only model. */
+  --shadow-sm:       0 0 0 1px var(--border-subtle);
+  --shadow-md:       0 4px 20px rgba(0, 0, 0, 0.22);
+  --shadow-lg:       0 8px 32px rgba(0, 0, 0, 0.28);
+  --shadow-xl:       0 16px 48px rgba(0, 0, 0, 0.30);
+
+  /* Glow shadows */
+  --glow-cyan:       0 0 20px rgba(0, 214, 255, 0.10);
+  --glow-cyan-md:    0 0 32px rgba(0, 214, 255, 0.18);
+  --glow-blue:       0 0 24px rgba(0,  80, 255, 0.20);
+  --glow-blue-md:    0 0 40px rgba(0,  80, 255, 0.30);
+  --glow-green:      0 0 20px rgba(52, 211, 153, 0.20);
+  --glow-amber:      0 0 20px rgba(251,191,  36, 0.20);
+
+  /* Legacy */
+  --shadow-glow:      var(--glow-blue);
+  --shadow-glow-lg:   var(--glow-blue-md);
+  --shadow-cyan-glow: var(--glow-cyan);
+}
+
+/* ── 7. GLASS / BACKDROP ─────────────────────────────────────── */
+:root {
+  --glass-blur:       blur(20px);
+  --glass-blur-heavy: blur(40px);
+  --glass-border:     1px solid var(--border-subtle);
+}
+
+/* ── 8. LAYOUT CONSTANTS ─────────────────────────────────────── */
+:root {
+  --sidebar-width:     280px;
+  --sidebar-collapsed: 72px;
+  --navbar-height:     64px;
+  --content-max-width: 1200px;
+}
+
+/* ================================================================
+   COMPONENT PRIMITIVES — Derived from tokens above
+   ================================================================ */
+
+/* ── Cards ── */
+.ds-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition:
+    background  var(--motion-normal) var(--ease),
+    border-color var(--motion-normal) var(--ease),
+    box-shadow   var(--motion-normal) var(--ease),
+    transform    var(--motion-normal) var(--ease);
+}
+
+.ds-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px);
+}
+
+/* ── Buttons ── */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-6);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--motion-normal) var(--ease);
+  white-space: nowrap;
+}
+
+.ds-btn-primary {
+  background: var(--gradient-brand);
+  color: #fff;
+  box-shadow: var(--glow-blue);
+}
+
+.ds-btn-primary:hover {
+  box-shadow: var(--glow-blue-md);
+  transform: translateY(-1px);
+}
+
+.ds-btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.ds-btn-secondary:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  box-shadow: var(--glow-cyan);
+}
+
+.ds-btn-ghost {
+  background: transparent;
+  color: var(--accent-secondary);
+  border: 1px solid rgba(0, 214, 255, 0.28);
+}
+
+.ds-btn-ghost:hover {
+  background: rgba(0, 214, 255, 0.08);
+  box-shadow: var(--glow-cyan);
+}
+
+/* ── Inputs ── */
+.ds-input {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: all var(--motion-normal) var(--ease);
+}
+
+.ds-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(0, 80, 255, 0.12), var(--glow-blue);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ds-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ── Badge ── */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.ds-badge-cyan   { background: rgba(0,214,255,0.12); border: 1px solid rgba(0,214,255,0.28); color: var(--accent-secondary); }
+.ds-badge-green  { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.28); color: var(--accent-emerald); }
+.ds-badge-amber  { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.28); color: var(--accent-amber); }
+.ds-badge-rose   { background: rgba(251,113,133,0.12); border: 1px solid rgba(251,113,133,0.28); color: var(--accent-rose); }
+.ds-badge-violet { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.28); color: var(--accent-violet); }
+
+/* ── Section Label ── */
+.ds-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+}
+
+/* ── Divider ── */
+.ds-divider {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ── Scrollbar (global) ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track  { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb  {
+  background: rgba(0, 214, 255, 0.18);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 214, 255, 0.32); }
+
+/* ── Selection ── */
+::selection {
+  background: rgba(0, 80, 255, 0.28);
+  color: var(--text-primary);
+}
+
+/* ── Focus ring (keyboard nav) ── */
+:focus-visible {
+  outline: 2px solid rgba(0, 214, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   GLOBAL OVERRIDES — Patch index.css legacy values with system
+   ================================================================ */
+
+/* Ensure consistent easing everywhere */
+.glass-card,
+.post-card,
+.startup-card,
+.nav-item,
+.magnetic-btn,
+.input-field,
+.navbar-icon-btn,
+.post-action-btn {
+  transition-timing-function: var(--ease) !important;
+  transition-duration: var(--motion-normal) !important;
+}
+
+/* Consistent glass card lift */
+.glass-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--glow-cyan) !important;
+  border-color: var(--border-hover) !important;
+}
+
+/* Post card unified */
+.post-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg) !important;
+  backdrop-filter: none; /* handled per-card in JS */
+}
+
+.post-card:hover {
+  background: var(--bg-card-hover) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--glow-cyan) !important;
+  border-color: var(--border-hover) !important;
+}
+
+/* Input field unified */
+.input-field {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.input-field:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 80, 255, 0.12) !important;
+}
+
+/* Startup card — softer hover */
+.startup-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--glow-cyan-md) !important;
+  border-color: var(--border-hover) !important;
+}
+
+/* Nav item hover */
+.nav-item:hover {
+  background: rgba(0, 214, 255, 0.06) !important;
+  box-shadow: none !important;
+}
+
+.nav-item.active {
+  background: rgba(0, 80, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
+/* Magnetic button */
+.magnetic-btn-primary {
+  transition-duration: var(--motion-normal) !important;
+}
+
+.magnetic-btn-primary:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: var(--glow-blue-md) !important;
+}
+
+/* Tabs */
+.tabs { border-bottom: 1px solid var(--border-subtle); }
+
+.tab-btn {
+  padding: 0.65rem 1.1rem;
+  background: none;
+  border: none;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--motion-normal) var(--ease);
+}
+
+.tab-btn:hover { color: var(--text-primary); }
+
+.tab-btn.active {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-brand);
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(0, 214, 255, 0.40);
+}
+
+/* ================================================================
+   KEYFRAMES — Unified motion vocabulary
+   ================================================================ */
+
+@keyframes ds-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ds-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ds-scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ds-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0   rgba(0, 214, 255, 0); }
+  50%       { box-shadow: 0 0 20px rgba(0, 214, 255, 0.20); }
+}
+
+@keyframes ds-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes ds-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Utility: apply once */
+.ds-animate-fade-in  { animation: ds-fade-in  var(--motion-slow) var(--ease) both; }
+.ds-animate-fade-up  { animation: ds-fade-up  var(--motion-slow) var(--ease) both; }
+.ds-animate-scale-in { animation: ds-scale-in var(--motion-normal) var(--ease) both; }
+.ds-animate-glow     { animation: ds-glow-pulse 2.5s ease-in-out infinite; }
+
+/* Stagger helpers */
+.ds-delay-1  { animation-delay:  60ms; }
+.ds-delay-2  { animation-delay: 120ms; }
+.ds-delay-3  { animation-delay: 180ms; }
+.ds-delay-4  { animation-delay: 240ms; }
+.ds-delay-5  { animation-delay: 300ms; }
+
+/* ================================================================
+   GRADIENT TEXT HELPER
+   ================================================================ */
+.ds-gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ================================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================================ */
+
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+    --content-max-width: 960px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width:     var(--sidebar-collapsed);
+    --content-max-width: 100%;
+  }
+}
