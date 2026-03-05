@@ -1,7 +1,6 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import MagneticButton from '../components/ui/MagneticButton'
 import { blurFade } from '../utils/motion'
 
 /* Simple particle background for auth pages */

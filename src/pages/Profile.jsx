@@ -1,7 +1,5 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import MagneticButton from '../components/ui/MagneticButton'
-import GlassCard from '../components/ui/GlassCard'
 
 const TABS = ['About', 'Startups', 'Posts', 'Reposts', 'Collaborations']
 

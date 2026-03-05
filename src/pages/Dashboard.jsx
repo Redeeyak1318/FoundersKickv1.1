@@ -1,7 +1,6 @@
-import { useState, useRef, useCallback } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
-import { staggerContainer, staggerItem } from '../utils/motion'
-import MagneticButton from '../components/ui/MagneticButton'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
+import { useCallback, useState } from 'react'
+import { staggerItem } from '../utils/motion'
 
 /* ─────────────────────── Avatar Colours ─────────────────────── */
 const AVATAR_GRADIENTS = [
