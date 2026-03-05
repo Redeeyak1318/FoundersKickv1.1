@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Link, NavLink } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Component as HeroSlider } from "../components/ui/lumina-interactive-list"
+import { ShuffleHero } from "../components/ui/shuffle-grid"
 import "../cinematic.css"
 
 /* =========================================================
@@ -44,56 +45,6 @@ function Navbar({ scrolled }) {
 }
 
 /* =========================================================
-   FEATURE CARDS
-   ========================================================= */
-const FEATURES = [
-    {
-        icon: "🔗",
-        title: "Connect",
-        description:
-            "Find the perfect co-founder or team member with intelligent matching.",
-    },
-    {
-        icon: "🚀",
-        title: "Commit",
-        description:
-            "Turn ideas into action with structured execution and accountability.",
-    },
-    {
-        icon: "⚡",
-        title: "Collaborate",
-        description:
-            "Build faster with aligned teams and seamless collaboration.",
-    },
-]
-
-function FeatureCards() {
-    return (
-        <section className="feature-cards-section">
-            <div className="section-heading">
-                <div className="section-heading__eyebrow">The Ecosystem</div>
-                <h2 className="section-heading__title">
-                    Three pillars of <span className="cin-text-gradient">FoundersKick</span>
-                </h2>
-                <p className="section-heading__subtitle">
-                    Designed for modern builders who move fast and think big.
-                </p>
-            </div>
-
-            <div className="feature-cards-grid">
-                {FEATURES.map((f) => (
-                    <div className="feature-card" key={f.title}>
-                        <div className="feature-card__icon">{f.icon}</div>
-                        <div className="feature-card__title">{f.title}</div>
-                        <div className="feature-card__description">{f.description}</div>
-                    </div>
-                ))}
-            </div>
-        </section>
-    )
-}
-
-/* =========================================================
    LANDING PAGE
    ========================================================= */
 export default function Landing() {
@@ -114,8 +65,8 @@ export default function Landing() {
             {/* ===== HERO (LUMINA SLIDER) ===== */}
             <HeroSlider />
 
-            {/* ===== FEATURE CARDS ===== */}
-            <FeatureCards />
+            {/* ===== SHUFFLE GRID HERO — THREE PILLARS ===== */}
+            <ShuffleHero />
 
             {/* ===== FOOTER ===== */}
             <footer className="cinematic-footer">

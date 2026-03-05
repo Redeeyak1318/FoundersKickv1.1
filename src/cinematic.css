@@ -1174,3 +1174,199 @@
     margin: 0 auto;
     line-height: 1.6;
 }
+
+/* =========================================================
+   SHUFFLE HERO — Animated Grid Section
+   ========================================================= */
+.shuffle-hero-section {
+    position: relative;
+    z-index: 5;
+    padding: 100px 0 120px;
+    overflow: hidden;
+    background: var(--cin-bg);
+}
+
+.shuffle-hero-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 4vw, 64px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+}
+
+/* ─── Left Content ─── */
+.shuffle-hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.shuffle-hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cin-accent-primary);
+    margin-bottom: 20px;
+}
+
+.shuffle-hero-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--cin-accent-primary);
+    opacity: 0.6;
+}
+
+.shuffle-hero-heading {
+    font-family: var(--cin-font-serif);
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    font-weight: 500;
+    color: var(--cin-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 24px;
+}
+
+.shuffle-hero-heading-accent {
+    background: var(--cin-gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shuffle-hero-paragraph {
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    font-weight: 400;
+    color: var(--cin-text-secondary);
+    line-height: 1.75;
+    margin-bottom: 36px;
+    max-width: 480px;
+    letter-spacing: -0.01em;
+}
+
+.shuffle-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--cin-font);
+    letter-spacing: -0.01em;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    background: var(--cin-gradient-accent);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--cin-ease);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.2),
+        0 0 40px rgba(249, 115, 22, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    width: fit-content;
+}
+
+.shuffle-hero-cta::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.shuffle-hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 24px rgba(249, 115, 22, 0.4),
+        0 0 80px rgba(249, 115, 22, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.shuffle-hero-cta:hover::after {
+    opacity: 1;
+}
+
+.shuffle-hero-cta:active {
+    transform: translateY(0);
+}
+
+.shuffle-hero-cta-arrow {
+    transition: transform 0.3s ease;
+}
+
+.shuffle-hero-cta:hover .shuffle-hero-cta-arrow {
+    transform: translateX(4px);
+}
+
+/* ─── Right Grid ─── */
+.shuffle-hero-grid-wrapper {
+    position: relative;
+}
+
+.shuffle-grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    height: 500px;
+    gap: 2px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.shuffle-grid-square {
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+    .shuffle-hero-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .shuffle-hero-content {
+        text-align: center;
+        align-items: center;
+    }
+
+    .shuffle-hero-paragraph {
+        max-width: 560px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .shuffle-hero-label {
+        justify-content: center;
+    }
+
+    .shuffle-grid-container {
+        height: 400px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .shuffle-hero-section {
+        padding: 60px 0 80px;
+    }
+
+    .shuffle-grid-container {
+        height: 300px;
+    }
+
+    .shuffle-hero-heading {
+        font-size: clamp(1.8rem, 6vw, 2.4rem);
+    }
+}
