@@ -10,9 +10,9 @@ function AuthParticles() {
             <div style={{
                 position: 'absolute', inset: 0,
                 background: `
-          radial-gradient(ellipse at 80% 30%, rgba(108, 92, 231, 0.12) 0%, transparent 50%),
-          radial-gradient(ellipse at 20% 70%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
-          radial-gradient(ellipse at 60% 90%, rgba(244, 114, 182, 0.06) 0%, transparent 40%)
+          radial-gradient(ellipse at 80% 30%, rgba(249, 115, 22, 0.12) 0%, transparent 50%),
+          radial-gradient(ellipse at 20% 70%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 60% 90%, rgba(249, 115, 22, 0.06) 0%, transparent 40%)
         `,
             }} />
             {Array.from({ length: 25 }).map((_, i) => (
@@ -23,7 +23,7 @@ function AuthParticles() {
                         width: 2 + Math.random() * 4,
                         height: 2 + Math.random() * 4,
                         borderRadius: '50%',
-                        background: ['#6c5ce7', '#a78bfa', '#22d3ee', '#f472b6'][i % 4],
+                        background: ['#F97316', '#fb923c', '#3B82F6', '#ea580c'][i % 4],
                         left: `${Math.random() * 100}%`,
                         top: `${Math.random() * 100}%`,
                         opacity: 0.3,
@@ -72,10 +72,10 @@ export default function Signup() {
                         width: 36, height: 36, borderRadius: 10,
                         background: 'var(--gradient-primary)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.9rem',
+                        fontFamily: 'var(--font-serif, Playfair Display, serif)', fontWeight: 500, fontSize: '0.9rem',
                         boxShadow: 'var(--shadow-glow)',
                     }}>FK</div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem' }}>
+                    <span style={{ fontFamily: 'var(--font-serif, Playfair Display, serif)', fontWeight: 500, fontSize: '1.1rem' }}>
                         FoundersKick
                     </span>
                 </Link>
@@ -100,6 +100,7 @@ export default function Signup() {
                 <div className="auth-divider">or</div>
 
                 {success ? (
+
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -108,7 +109,6 @@ export default function Signup() {
                         <motion.div
                             style={{
                                 width: 64, height: 64, borderRadius: '50%',
-                                background: 'rgba(52, 211, 153, 0.15)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 margin: '0 auto 1rem',
                                 color: '#34d399', fontSize: '1.5rem',
@@ -125,6 +125,7 @@ export default function Signup() {
                             Redirecting to your dashboard...
                         </div>
                     </motion.div>
+
                 ) : (
                     <form onSubmit={handleSubmit}>
                         <motion.div

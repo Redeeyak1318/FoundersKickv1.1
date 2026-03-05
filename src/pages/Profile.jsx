@@ -49,7 +49,7 @@ const mockStartups = [
     {
         id: 1, name: 'NexaFlow', emoji: '\u26A1',
         desc: 'AI-powered workflow automation for modern teams. Automate the boring, amplify the human.',
-        stage: 'MVP', color: '#22d3ee', role: 'Founder & CEO', year: '2024',
+        stage: 'MVP', color: '#3B82F6', role: 'Founder & CEO', year: '2024',
         metrics: [{ label: 'DAU', value: '1.2k' }, { label: 'MRR', value: '$4.8k' }]
     },
     {
@@ -64,7 +64,7 @@ const mockCollabs = [
     {
         id: 1, project: 'OpenFoundry', partner: 'Samantha Wei', handle: '@samwei',
         role: 'Technical Lead', desc: 'Open-source tooling for early-stage founder teams.',
-        status: 'Active', color: '#a78bfa'
+        status: 'Active', color: '#fb923c'
     },
     {
         id: 2, project: 'Launchpad AI', partner: 'Raj Patel', handle: '@rajpatel',
@@ -92,7 +92,7 @@ function StatPill({ value, label }) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
             <span style={{
-                fontSize: '1.05rem', fontWeight: 700, fontFamily: 'DELTHA, sans-serif',
+                fontSize: '1.05rem', fontWeight: 700, fontFamily: 'var(--font-display)',
                 background: 'linear-gradient(135deg, #fff, #a0a0b0)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
             }}>{value}</span>
@@ -116,13 +116,13 @@ function SocialIcon({ icon, label, href }) {
             style={{
                 width: 34, height: 34, borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: hov ? 'rgba(0, 214, 255, 0.12)' : 'rgba(255,255,255,0.05)',
-                border: `1px solid ${hov ? 'rgba(0,214,255,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                color: hov ? '#00D6FF' : 'var(--color-text-tertiary)',
-                fontSize: '0.6rem', fontWeight: 700, fontFamily: 'DELTHA, sans-serif',
+                background: hov ? 'rgba(249, 115, 22, 0.12)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${hov ? 'rgba(249,115,22,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                color: hov ? '#fb923c' : 'var(--color-text-tertiary)',
+                fontSize: '0.6rem', fontWeight: 700, fontFamily: 'var(--font-display)',
                 textDecoration: 'none', cursor: 'pointer',
                 transition: 'all 0.25s ease',
-                boxShadow: hov ? '0 0 14px rgba(0,214,255,0.25)' : 'none'
+                boxShadow: hov ? '0 0 14px rgba(249,115,22,0.25)' : 'none'
             }}
             title={label}
         >
@@ -136,7 +136,7 @@ function PostCard({ post, index }) {
     const [liked, setLiked] = useState(false)
     const [reposted, setReposted] = useState(false)
     const tagColors = {
-        'Product Update': '#00D6FF', 'Insights': '#a78bfa',
+        'Product Update': '#fb923c', 'Insights': '#a78bfa',
         'Milestone': '#34d399', 'Philosophy': '#f472b6'
     }
     return (
@@ -146,14 +146,13 @@ function PostCard({ post, index }) {
             transition={{ delay: index * 0.08, duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
             whileHover={{ y: -2 }}
             style={{
-                background: 'rgba(255,255,255,0.025)',
                 border: '1px solid rgba(255,255,255,0.07)',
                 borderRadius: 16, padding: '1.5rem',
                 cursor: 'default'
             }}
             onHoverStart={e => {
                 if (e.currentTarget) {
-                    e.currentTarget.style.borderColor = 'rgba(0,214,255,0.2)'
+                    e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'
                     e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)'
                 }
             }}
@@ -167,7 +166,7 @@ function PostCard({ post, index }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                 <div style={{
                     width: 36, height: 36, borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #0050FF, #00D6FF)',
+                    background: 'linear-gradient(135deg, #F97316, #fb923c)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '0.85rem', fontWeight: 700, color: '#fff', flexShrink: 0
                 }}>A</div>
@@ -200,8 +199,8 @@ function PostCard({ post, index }) {
                         style={{
                             display: 'flex', alignItems: 'center', gap: 6,
                             background: 'none', border: 'none', cursor: btn.action ? 'pointer' : 'default',
-                            fontSize: '0.75rem', color: btn.active ? '#00D6FF' : 'var(--color-text-tertiary)',
-                            fontFamily: 'DELTHA, sans-serif', padding: 0,
+                            fontSize: '0.75rem', color: btn.active ? '#fb923c' : 'var(--color-text-tertiary)',
+                            fontFamily: 'var(--font-display)', padding: 0,
                             transition: 'color 0.2s ease'
                         }}
                     >
@@ -221,7 +220,6 @@ function RepostCard({ post, index }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.5 }}
             style={{
-                background: 'rgba(255,255,255,0.02)',
                 border: '1px solid rgba(255,255,255,0.07)',
                 borderRadius: 16, padding: '1.25rem',
             }}
@@ -230,13 +228,13 @@ function RepostCard({ post, index }) {
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>&#8617; You reposted</span>
             </div>
             <div style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 12, padding: '1rem'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.75rem' }}>
                     <div style={{
                         width: 30, height: 30, borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #6c5ce7, #a78bfa)',
+                        background: 'linear-gradient(135deg, #F97316, #ea580c)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: '0.7rem', fontWeight: 700, color: '#fff'
                     }}>{post.originalAuthor[0]}</div>
@@ -266,7 +264,6 @@ function StartupCard({ startup, index }) {
             onHoverStart={() => setHov(true)}
             onHoverEnd={() => setHov(false)}
             style={{
-                background: 'rgba(255,255,255,0.025)',
                 border: `1px solid ${hov ? startup.color + '50' : 'rgba(255,255,255,0.07)'}`,
                 borderRadius: 20, padding: '1.5rem',
                 transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
@@ -293,22 +290,22 @@ function StartupCard({ startup, index }) {
                 <span style={{
                     padding: '4px 12px', borderRadius: 999, fontSize: '0.65rem', fontWeight: 600,
                     background: startup.stage === 'Growth' ? 'rgba(52,211,153,0.12)' : 'rgba(34,211,238,0.12)',
-                    color: startup.stage === 'Growth' ? '#34d399' : '#22d3ee',
-                    border: `1px solid ${startup.stage === 'Growth' ? '#34d39940' : '#22d3ee40'}`,
+                    color: startup.stage === 'Growth' ? '#34d399' : '#3B82F6',
+                    border: `1px solid ${startup.stage === 'Growth' ? '#34d39940' : '#3B82F640'}`,
                     letterSpacing: '0.04em'
                 }}>{startup.stage}</span>
             </div>
-            <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.4rem', fontFamily: 'DELTHA, sans-serif' }}>{startup.name}</div>
+            <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.4rem', fontFamily: 'var(--font-display)' }}>{startup.name}</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', lineHeight: 1.65, marginBottom: '1.25rem' }}>{startup.desc}</div>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                 <span style={{
                     padding: '3px 10px', borderRadius: 999,
-                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.08)',
                     fontSize: '0.65rem', color: 'var(--color-text-tertiary)'
                 }}>{startup.role}</span>
                 <span style={{
                     padding: '3px 10px', borderRadius: 999,
-                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.08)',
                     fontSize: '0.65rem', color: 'var(--color-text-tertiary)'
                 }}>Since {startup.year}</span>
             </div>
@@ -334,7 +331,6 @@ function CollabCard({ collab, index }) {
             transition={{ delay: index * 0.1, duration: 0.4 }}
             whileHover={{ x: 4 }}
             style={{
-                background: 'rgba(255,255,255,0.025)',
                 border: '1px solid rgba(255,255,255,0.07)',
                 borderRadius: 16, padding: '1.25rem',
                 display: 'flex', alignItems: 'center', gap: '1.25rem',
@@ -347,7 +343,7 @@ function CollabCard({ collab, index }) {
                 border: `1px solid ${collab.color}35`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '1.1rem', fontWeight: 700, color: collab.color,
-                fontFamily: 'DELTHA, sans-serif'
+                fontFamily: 'var(--font-display)'
             }}>
                 {collab.project[0]}
             </div>
@@ -382,11 +378,11 @@ export default function Profile() {
                 <motion.div
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
                     style={{
-                        background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
+                        border: '1px solid rgba(255,255,255,0.07)',
                         borderRadius: 20, padding: '2rem'
                     }}
                 >
-                    <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#00D6FF', marginBottom: '1rem', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#fb923c', marginBottom: '1rem', fontWeight: 600 }}>
                         About
                     </div>
                     <p style={{ fontSize: '0.925rem', color: 'var(--color-text-secondary)', lineHeight: 1.85, marginBottom: '1.5rem' }}>
@@ -403,11 +399,11 @@ export default function Profile() {
                 <motion.div
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.45 }}
                     style={{
-                        background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
+                        border: '1px solid rgba(255,255,255,0.07)',
                         borderRadius: 20, padding: '2rem'
                     }}
                 >
-                    <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#00D6FF', marginBottom: '1.25rem', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#fb923c', marginBottom: '1.25rem', fontWeight: 600 }}>
                         Expertise
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -420,10 +416,9 @@ export default function Profile() {
                                 whileHover={{ scale: 1.06, y: -1 }}
                                 style={{
                                     padding: '6px 14px', borderRadius: 999,
-                                    background: 'rgba(0,214,255,0.07)',
-                                    border: '1px solid rgba(0,214,255,0.18)',
+                                    border: '1px solid rgba(249,115,22,0.18)',
                                     fontSize: '0.75rem', fontWeight: 500,
-                                    color: 'rgba(0,214,255,0.9)', cursor: 'default'
+                                    color: 'rgba(249,115,22,0.9)', cursor: 'default'
                                 }}
                             >{skill}</motion.span>
                         ))}
@@ -434,7 +429,7 @@ export default function Profile() {
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }}
                     style={{
                         display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-                        background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
+                        border: '1px solid rgba(255,255,255,0.07)',
                         borderRadius: 20, padding: '1.5rem', gap: '1rem'
                     }}
                 >
@@ -445,7 +440,7 @@ export default function Profile() {
                         { label: 'Based', value: 'India' },
                     ].map(item => (
                         <div key={item.label} style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 4, fontFamily: 'DELTHA, sans-serif' }}>{item.value}</div>
+                            <div style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 4, fontFamily: 'var(--font-display)' }}>{item.value}</div>
                             <div style={{ fontSize: '0.62rem', color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{item.label}</div>
                         </div>
                     ))}
@@ -496,23 +491,21 @@ export default function Profile() {
                     border: '1px solid rgba(255,255,255,0.06)', borderBottom: 'none'
                 }}>
                     <motion.div animate={{ x: [0, 25, 0], y: [0, -12, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-                        style={{ position: 'absolute', width: 260, height: 260, borderRadius: '50%', top: '-60%', right: '15%', background: 'radial-gradient(circle, rgba(0,80,255,0.25) 0%, transparent 65%)' }} />
+                        style={{ position: 'absolute', width: 260, height: 260, borderRadius: '50%', top: '-60%', right: '15%', background: 'radial-gradient(circle, rgba(249,115,22,0.25) 0%, transparent 65%)' }} />
                     <motion.div animate={{ x: [0, -18, 0], y: [0, 14, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-                        style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', bottom: '-50%', left: '8%', background: 'radial-gradient(circle, rgba(0,214,255,0.18) 0%, transparent 65%)' }} />
+                        style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', bottom: '-50%', left: '8%', background: 'radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 65%)' }} />
                     <motion.div animate={{ x: [0, 10, 0], y: [0, -8, 0] }} transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-                        style={{ position: 'absolute', width: 140, height: 140, borderRadius: '50%', top: '20%', left: '40%', background: 'radial-gradient(circle, rgba(108,92,231,0.18) 0%, transparent 65%)' }} />
+                        style={{ position: 'absolute', width: 140, height: 140, borderRadius: '50%', top: '20%', left: '40%', background: 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 65%)' }} />
                     <div style={{
                         position: 'absolute', inset: 0,
                         backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
                         backgroundSize: '40px 40px', opacity: 0.5
                     }} />
-                    <div style={{ position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(0,214,255,0.4), transparent)' }} />
+                    <div style={{ position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(249,115,22,0.4), transparent)' }} />
                 </div>
 
                 {/* Info Strip */}
                 <div style={{
-                    background: 'rgba(10,10,12,0.97)',
-                    backdropFilter: 'blur(32px)',
                     border: '1px solid rgba(255,255,255,0.06)', borderTop: 'none',
                     borderRadius: '0 0 24px 24px',
                     padding: '1.75rem 2.5rem 2rem',
@@ -521,20 +514,20 @@ export default function Profile() {
                 }}>
                     <div style={{ flex: 1, minWidth: 220, paddingLeft: '6.5rem' }}>
                         <h1 style={{
-                            fontSize: '1.75rem', fontWeight: 800, fontFamily: 'DELTHA, sans-serif',
+                            fontSize: '1.75rem', fontWeight: 800, fontFamily: 'var(--font-display)',
                             margin: '0 0 0.15rem',
                             background: 'linear-gradient(135deg, #fff 30%, #a0a0b0)',
                             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
                         }}>Alex Johnson</h1>
                         <div style={{ fontSize: '0.8rem', color: 'var(--color-text-tertiary)', marginBottom: '0.5rem' }}>
-                            @alexj &middot; <span style={{ color: '#00D6FF', fontWeight: 500 }}>Founder &amp; Builder</span>
+                            @alexj &middot; <span style={{ color: '#fb923c', fontWeight: 500 }}>Founder &amp; Builder</span>
                         </div>
                         <div style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', marginBottom: '1.1rem', maxWidth: 360, lineHeight: 1.6 }}>
                             Building tools that help founders move faster. Previously 2x founder (1 exit). Love shipping.
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                             {socialLinks.map(s => <SocialIcon key={s.label} {...s} />)}
-                            <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.08)', margin: '0 6px' }} />
+                            <div style={{ width: 1, height: 20, margin: '0 6px' }} />
                             <div style={{ display: 'flex', gap: '1.5rem' }}>
                                 <StatPill value="847" label="Connections" />
                                 <StatPill value="2" label="Startups" />
@@ -549,10 +542,10 @@ export default function Profile() {
                             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                             style={{
                                 padding: '9px 22px', borderRadius: 10, fontSize: '0.8rem', fontWeight: 600,
-                                fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                                background: 'linear-gradient(90deg, #0050FF, #00D6FF)',
+                                fontFamily: 'var(--font-display)', cursor: 'pointer',
+                                background: 'linear-gradient(90deg, #F97316, #fb923c)',
                                 border: 'none', color: '#fff',
-                                boxShadow: '0 4px 16px rgba(0,80,255,0.3)'
+                                boxShadow: '0 4px 16px rgba(249,115,22,0.3)'
                             }}
                         >
                             Edit Profile
@@ -568,14 +561,14 @@ export default function Profile() {
                     style={{
                         position: 'absolute', left: '2.5rem', bottom: -28,
                         width: 88, height: 88, borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #0050FF, #00D6FF)',
+                        background: 'linear-gradient(135deg, #F97316, #fb923c)',
                         border: '3px solid #0A0A0C',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: '2rem', fontWeight: 800, color: '#fff',
-                        fontFamily: 'DELTHA, sans-serif',
+                        fontFamily: 'var(--font-display)',
                         boxShadow: avatarHovered
-                            ? '0 0 0 6px rgba(0,214,255,0.15), 0 0 40px rgba(0,214,255,0.3)'
-                            : '0 0 0 3px rgba(0,214,255,0.08), 0 8px 24px rgba(0,0,0,0.5)',
+                            ? '0 0 0 6px rgba(249,115,22,0.15), 0 0 40px rgba(249,115,22,0.3)'
+                            : '0 0 0 3px rgba(249,115,22,0.08), 0 8px 24px rgba(0,0,0,0.5)',
                         transition: 'box-shadow 0.4s ease', cursor: 'pointer', zIndex: 10
                     }}
                 >
@@ -600,7 +593,7 @@ export default function Profile() {
                             position: 'relative', padding: '0.75rem 1.2rem',
                             background: 'none', border: 'none', cursor: 'pointer',
                             fontSize: '0.82rem', fontWeight: activeTab === tab ? 600 : 400,
-                            fontFamily: 'DELTHA, sans-serif',
+                            fontFamily: 'var(--font-display)',
                             color: activeTab === tab ? '#fff' : 'var(--color-text-tertiary)',
                             transition: 'color 0.25s ease', whiteSpace: 'nowrap'
                         }}
@@ -612,9 +605,9 @@ export default function Profile() {
                                     layoutId="profile-tab-line"
                                     style={{
                                         position: 'absolute', bottom: -1, left: 0, right: 0, height: 2,
-                                        background: 'linear-gradient(90deg, #0050FF, #00D6FF)',
+                                        background: 'linear-gradient(90deg, #F97316, #fb923c)',
                                         borderRadius: 1,
-                                        boxShadow: '0 0 10px rgba(0,214,255,0.5)'
+                                        boxShadow: '0 0 10px rgba(249,115,22,0.5)'
                                     }}
                                     transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                                 />

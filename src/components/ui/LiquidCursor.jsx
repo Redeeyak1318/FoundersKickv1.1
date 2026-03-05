@@ -6,7 +6,7 @@ import * as THREE from 'three'
    
    Architecture:
    • Fullscreen orthographic Three.js scene (pointer-events: none)
-   • GLSL fragment shader — simplex noise, plasma distortion, glow
+   • GLSL fragment shader — simplex noise, plasma distortion, 
    • Uniforms: uTime, uMouse, uVelocity, uHover, uClick
    • Lerp physics: smooth follow, velocity squish, click shockwave
    • Snowfall coupling: exports cursor position via window.__liquidCursor
@@ -114,11 +114,11 @@ const FRAGMENT = /* glsl */`
     float baseR  = 0.045 * breath;
     float hoverR = baseR * (1.0 + uHover * 0.55);
 
-    /* ── Soft glow fall-off ── */
+    /* ── Soft  fall-off ── */
     float inner  = smoothstep(hoverR * 0.6,  0.0,  distWarp);
     float mid    = smoothstep(hoverR * 1.8,  0.0,  distWarp);
     float outer  = smoothstep(hoverR * 3.8,  0.0,  distWarp);
-    float glow   = smoothstep(hoverR * 7.0,  0.0,  dist);
+    float    = smoothstep(hoverR * 7.0,  0.0,  dist);
 
     /* ── Click shockwave ── */
     float ring   = 0.0;
@@ -174,7 +174,7 @@ const FRAGMENT = /* glsl */`
     color.b += cAberB * 0.30;
 
     /* Glow halo color */
-    vec3 haloColor  = mix(cyan, violet, 0.4) * glow;
+    vec3 haloColor  = mix(cyan, violet, 0.4) * ;
     color += haloColor * 0.22;
 
     /* Micro particles */
@@ -188,7 +188,7 @@ const FRAGMENT = /* glsl */`
     alpha += inner  * 0.88;
     alpha += mid    * 0.35;
     alpha += outer  * 0.12;
-    alpha += glow   * 0.07;
+    alpha +=    * 0.07;
     alpha += ring   * 0.75;
     alpha += particles * 0.6;
     alpha  = clamp(alpha, 0.0, 1.0);

@@ -87,7 +87,7 @@ const FRAG = /* glsl */`
     return beams * band * app * fadeOut * (0.55 + 0.45 * vnoise(d * 7.0 + u_time));
   }
 
-  /* ── Soft glow (emulate bloom in-shader for transparent canvas) ── */
+  /* ── Soft  (emulate bloom in-shader for transparent canvas) ── */
   float softGlow(float d, float radius) {
     return exp(-d * d / (2.0 * radius * radius));
   }
@@ -125,7 +125,7 @@ const FRAG = /* glsl */`
     float rVal  = smoothstep(0.022, 0.0, ring) * peak;
     col += vec3(0.35, 0.78, 1.0) * rVal * 1.1;
     col += vec3(0.92, 0.58, 1.0) * rVal * 0.55;
-    /* Wide glow halo around ring */
+    /* Wide  halo around ring */
     float rGlow = softGlow(ring, 0.04) * peak * 0.45;
     col += vec3(0.20, 0.60, 1.0) * rGlow;
 
@@ -218,7 +218,7 @@ export default function SpaceWarpTransition() {
       new THREE.Vector2(W, H),
       0,     // start strength = 0 (ramped in animate)
       0.55,  // radius
-      0.08   // threshold — low so warp glow always crosses it
+      0.08   // threshold — low so warp  always crosses it
     )
     composer.addPass(bloomPass)
     composer.addPass(new OutputPass())
@@ -273,7 +273,7 @@ export default function SpaceWarpTransition() {
           bloomPass.strength = 0
         }
 
-        /* Use bloom composer for GPU glow during warp */
+        /* Use bloom composer for GPU  during warp */
         composer.render()
 
       } else if (u.u_progress.value > 0.001) {

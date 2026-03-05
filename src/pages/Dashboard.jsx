@@ -5,12 +5,12 @@ import MagneticButton from '../components/ui/MagneticButton'
 
 /* ─────────────────────── Avatar Colours ─────────────────────── */
 const AVATAR_GRADIENTS = [
-    ['#6c5ce7', '#a78bfa'],
-    ['#0050FF', '#00D6FF'],
+    ['#F97316', '#fb923c'],
+    ['#3B82F6', '#22D3EE'],
     ['#f472b6', '#fb7185'],
     ['#34d399', '#6ee7b7'],
     ['#f59e0b', '#fcd34d'],
-    ['#22d3ee', '#67e8f9'],
+    ['#3B82F6', '#60a5fa'],
 ]
 
 /* ─────────────────────── Mock Data ─────────────────────── */
@@ -77,9 +77,9 @@ const EXTRA_POSTS = [
 ]
 
 const TAG_COLORS = {
-    Milestone: '#34d399', Insights: '#a78bfa', Product: '#00D6FF',
-    'Co-Founder': '#f472b6', Fundraising: '#f59e0b', Growth: '#22d3ee',
-    AI: '#6c5ce7', Design: '#f472b6'
+    Milestone: '#34d399', Insights: '#8B5CF6', Product: '#3B82F6',
+    'Co-Founder': '#fb7185', Fundraising: '#f59e0b', Growth: '#3B82F6',
+    AI: '#F97316', Design: '#fb7185'
 }
 
 /* ─────────────────────── Ripple Hook ─────────────────────── */
@@ -111,7 +111,7 @@ function DotMenu() {
                     alignItems: 'center', justifyContent: 'center',
                     background: open ? 'rgba(255,255,255,0.08)' : 'transparent',
                     border: 'none', cursor: 'pointer',
-                    color: 'var(--color-text-tertiary)', fontSize: '1rem',
+                    color: 'var(--text-tertiary)', fontSize: '1rem',
                     transition: 'background 0.2s ease', letterSpacing: 2
                 }}
             >
@@ -126,17 +126,18 @@ function DotMenu() {
                         transition={{ duration: 0.18 }}
                         style={{
                             position: 'absolute', right: 0, top: 'calc(100% + 8px)',
-                            background: '#111118', border: '1px solid rgba(255,255,255,0.1)',
+                            background: 'rgba(15,15,25,0.95)', border: '1px solid var(--border-subtle)',
                             borderRadius: 12, padding: '0.4rem', zIndex: 50,
-                            minWidth: 150, boxShadow: '0 16px 40px rgba(0,0,0,0.6)'
+                            minWidth: 150, boxShadow: 'var(--shadow-xl)',
+                            backdropFilter: 'blur(20px)',
                         }}
                     >
                         {items.map(item => (
                             <button key={item} onClick={() => setOpen(false)} style={{
                                 display: 'block', width: '100%', padding: '8px 14px',
                                 background: 'none', border: 'none', borderRadius: 8,
-                                color: 'var(--color-text-secondary)', fontSize: '0.8rem',
-                                fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
+                                color: 'var(--text-secondary)', fontSize: '0.8rem',
+                                fontFamily: 'var(--font-display)', cursor: 'pointer',
                                 textAlign: 'left', transition: 'background 0.15s ease'
                             }}
                                 onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
@@ -164,7 +165,7 @@ function PostCard({ post, index }) {
     const [cardHovered, setCardHovered] = useState(false)
     const { ripples, trigger: triggerRipple } = useRipple()
     const [grad1, grad2] = AVATAR_GRADIENTS[post.colorIdx % AVATAR_GRADIENTS.length]
-    const tagColor = TAG_COLORS[post.tag] || '#00D6FF'
+    const tagColor = TAG_COLORS[post.tag] || '#3B82F6'
 
     const handleLike = (e) => {
         triggerRipple(e)
@@ -191,21 +192,22 @@ function PostCard({ post, index }) {
             layout
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: index * 0.06, ease: [0.25, 1, 0.5, 1] }}
+            transition={{ duration: 0.45, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
             onHoverStart={() => setCardHovered(true)}
             onHoverEnd={() => setCardHovered(false)}
             style={{
                 marginBottom: '1.25rem',
                 background: cardHovered
-                    ? 'rgba(255,255,255,0.035)'
-                    : 'rgba(255,255,255,0.022)',
-                border: `1px solid ${cardHovered ? 'rgba(0,214,255,0.18)' : 'rgba(255,255,255,0.07)'}`,
+                    ? 'rgba(255,255,255,0.04)'
+                    : 'rgba(255,255,255,0.025)',
+                backdropFilter: 'blur(20px)',
+                border: `1px solid ${cardHovered ? 'rgba(99,102,241,0.2)' : 'var(--border-subtle)'}`,
                 borderRadius: 20,
                 padding: '1.5rem',
                 boxShadow: cardHovered
-                    ? '0 12px 48px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,214,255,0.06) inset'
-                    : '0 4px 16px rgba(0,0,0,0.2)',
-                transition: 'all 0.3s ease',
+                    ? '0 12px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,102,241,0.06) inset'
+                    : 'var(--shadow-md)',
+                transition: 'all 0.35s var(--ease)',
                 position: 'relative', overflow: 'hidden',
                 transform: cardHovered ? 'translateY(-2px)' : 'translateY(0)',
             }}
@@ -218,7 +220,6 @@ function PostCard({ post, index }) {
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                     style={{
                         position: 'absolute', borderRadius: '50%',
-                        background: 'rgba(0,214,255,0.15)',
                         left: r.x - 40, top: r.y - 40,
                         pointerEvents: 'none', zIndex: 0
                     }}
@@ -231,7 +232,7 @@ function PostCard({ post, index }) {
                 transition={{ duration: 0.3 }}
                 style={{
                     position: 'absolute', top: 0, left: '10%', right: '10%', height: 1,
-                    background: 'linear-gradient(90deg, transparent, rgba(0,214,255,0.5), transparent)',
+                    background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent)',
                     transformOrigin: 'center', pointerEvents: 'none'
                 }}
             />
@@ -252,7 +253,7 @@ function PostCard({ post, index }) {
                 </motion.div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>{post.author}</span>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{post.author}</span>
                         {post.tag && (
                             <span style={{
                                 padding: '2px 9px', borderRadius: 999, fontSize: '0.6rem',
@@ -261,7 +262,7 @@ function PostCard({ post, index }) {
                             }}>{post.tag}</span>
                         )}
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-tertiary)', marginTop: 2 }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
                         {post.role} &middot; {post.time}
                     </div>
                 </div>
@@ -270,7 +271,7 @@ function PostCard({ post, index }) {
 
             {/* Content */}
             <p style={{
-                fontSize: '0.9rem', color: 'var(--color-text-secondary)',
+                fontSize: '0.9rem', color: 'var(--text-secondary)',
                 lineHeight: 1.82, marginBottom: '1.25rem',
                 position: 'relative', zIndex: 1
             }}>
@@ -281,7 +282,7 @@ function PostCard({ post, index }) {
             <div style={{
                 display: 'flex', alignItems: 'center', gap: '0.25rem',
                 paddingTop: '1rem',
-                borderTop: '1px solid rgba(255,255,255,0.05)',
+                borderTop: '1px solid var(--border-subtle)',
                 position: 'relative', zIndex: 1
             }}>
                 {/* Like */}
@@ -291,10 +292,10 @@ function PostCard({ post, index }) {
                     style={{
                         display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px',
                         borderRadius: 10, background: liked ? 'rgba(251,113,133,0.1)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${liked ? 'rgba(251,113,133,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                        color: liked ? '#fb7185' : 'var(--color-text-tertiary)',
+                        border: `1px solid ${liked ? 'rgba(251,113,133,0.3)' : 'var(--border-subtle)'}`,
+                        color: liked ? '#fb7185' : 'var(--text-tertiary)',
                         fontSize: '0.78rem', fontWeight: liked ? 600 : 400,
-                        fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
+                        fontFamily: 'var(--font-display)', cursor: 'pointer',
                         transition: 'all 0.25s ease', position: 'relative', overflow: 'hidden'
                     }}
                 >
@@ -319,10 +320,10 @@ function PostCard({ post, index }) {
                     style={{
                         display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px',
                         borderRadius: 10,
-                        background: commentOpen ? 'rgba(0,214,255,0.08)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${commentOpen ? 'rgba(0,214,255,0.25)' : 'rgba(255,255,255,0.06)'}`,
-                        color: commentOpen ? '#00D6FF' : 'var(--color-text-tertiary)',
-                        fontSize: '0.78rem', fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
+                        background: commentOpen ? 'rgba(99,102,241,0.08)' : 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${commentOpen ? 'rgba(99,102,241,0.25)' : 'var(--border-subtle)'}`,
+                        color: commentOpen ? 'var(--accent-primary)' : 'var(--text-tertiary)',
+                        fontSize: '0.78rem', fontFamily: 'var(--font-display)', cursor: 'pointer',
                         transition: 'all 0.25s ease'
                     }}
                 >
@@ -340,14 +341,13 @@ function PostCard({ post, index }) {
                         display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px',
                         borderRadius: 10, position: 'relative', overflow: 'hidden',
                         background: reposted ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${reposted ? 'rgba(52,211,153,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                        color: reposted ? '#34d399' : 'var(--color-text-tertiary)',
+                        border: `1px solid ${reposted ? 'rgba(52,211,153,0.3)' : 'var(--border-subtle)'}`,
+                        color: reposted ? '#34d399' : 'var(--text-tertiary)',
                         fontSize: '0.78rem', fontWeight: reposted ? 600 : 400,
-                        fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
+                        fontFamily: 'var(--font-display)', cursor: 'pointer',
                         transition: 'all 0.25s ease'
                     }}
                 >
-                    {/* Repost sweep glow */}
                     <AnimatePresence>
                         {repostAnim && (
                             <motion.div
@@ -369,7 +369,6 @@ function PostCard({ post, index }) {
                     {reposts}
                 </motion.button>
 
-                {/* Spacer */}
                 <div style={{ flex: 1 }} />
 
                 {/* Bookmark */}
@@ -379,9 +378,9 @@ function PostCard({ post, index }) {
                     style={{
                         width: 34, height: 34, borderRadius: 10, display: 'flex',
                         alignItems: 'center', justifyContent: 'center',
-                        background: bookmarked ? 'rgba(0,80,255,0.12)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${bookmarked ? 'rgba(0,80,255,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                        color: bookmarked ? '#0050FF' : 'var(--color-text-tertiary)',
+                        background: bookmarked ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${bookmarked ? 'rgba(99,102,241,0.3)' : 'var(--border-subtle)'}`,
+                        color: bookmarked ? 'var(--accent-primary)' : 'var(--text-tertiary)',
                         cursor: 'pointer', transition: 'all 0.25s ease'
                     }}
                 >
@@ -398,13 +397,10 @@ function PostCard({ post, index }) {
                     style={{
                         width: 34, height: 34, borderRadius: 10, display: 'flex',
                         alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.06)',
-                        color: 'var(--color-text-tertiary)',
+                        border: '1px solid var(--border-subtle)',
+                        color: 'var(--text-tertiary)', background: 'transparent',
                         cursor: 'pointer', transition: 'all 0.25s ease'
                     }}
-                    onHoverStart={e => { if (e.currentTarget) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
-                    onHoverEnd={e => { if (e.currentTarget) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}
                 >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
@@ -424,7 +420,6 @@ function PostCard({ post, index }) {
                         style={{ overflow: 'hidden' }}
                     >
                         <div style={{ paddingTop: '1rem', position: 'relative', zIndex: 1 }}>
-                            {/* Sample comments */}
                             <div style={{ marginBottom: '1rem', display: 'grid', gap: '0.75rem' }}>
                                 {[
                                     { initials: 'AK', name: 'Alex Kim', text: 'This is incredible! Congrats on the momentum.', grad: AVATAR_GRADIENTS[1] },
@@ -443,21 +438,20 @@ function PostCard({ post, index }) {
                                             fontSize: '0.6rem', fontWeight: 700, color: '#fff'
                                         }}>{c.initials}</div>
                                         <div style={{
-                                            flex: 1, background: 'rgba(255,255,255,0.03)',
-                                            border: '1px solid rgba(255,255,255,0.06)',
+                                            flex: 1,
+                                            border: '1px solid var(--border-subtle)',
                                             borderRadius: 12, padding: '8px 12px'
                                         }}>
-                                            <div style={{ fontSize: '0.75rem', fontWeight: 600, marginBottom: 3 }}>{c.name}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>{c.text}</div>
+                                            <div style={{ fontSize: '0.75rem', fontWeight: 600, marginBottom: 3, color: 'var(--text-primary)' }}>{c.name}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{c.text}</div>
                                         </div>
                                     </motion.div>
                                 ))}
                             </div>
-                            {/* Comment input */}
                             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                                 <div style={{
                                     width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-                                    background: 'linear-gradient(135deg, #0050FF, #00D6FF)',
+                                    background: 'var(--gradient-accent)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     fontSize: '0.65rem', fontWeight: 700, color: '#fff'
                                 }}>A</div>
@@ -468,13 +462,13 @@ function PostCard({ post, index }) {
                                         onChange={e => setCommentText(e.target.value)}
                                         placeholder="Write a comment..."
                                         style={{
-                                            width: '100%', background: 'rgba(255,255,255,0.04)',
-                                            border: '1px solid rgba(0,214,255,0.2)',
+                                            width: '100%',
+                                            border: '1px solid rgba(99,102,241,0.2)',
                                             borderRadius: 12, padding: '9px 44px 9px 14px',
-                                            color: '#fff', fontSize: '0.82rem',
-                                            fontFamily: 'DELTHA, sans-serif', outline: 'none',
-                                            boxSizing: 'border-box',
-                                            boxShadow: '0 0 12px rgba(0,214,255,0.1)'
+                                            color: 'var(--text-primary)', fontSize: '0.82rem',
+                                            fontFamily: 'var(--font-display)', outline: 'none',
+                                            boxSizing: 'border-box', background: 'rgba(255,255,255,0.04)',
+                                            boxShadow: '0 0 12px rgba(99,102,241,0.1)'
                                         }}
                                     />
                                     <motion.button
@@ -482,7 +476,7 @@ function PostCard({ post, index }) {
                                         onClick={() => { if (commentText.trim()) setCommentText('') }}
                                         style={{
                                             position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
-                                            background: commentText.trim() ? 'linear-gradient(90deg, #0050FF, #00D6FF)' : 'rgba(255,255,255,0.06)',
+                                            background: commentText.trim() ? 'var(--gradient-accent)' : 'rgba(255,255,255,0.06)',
                                             border: 'none', borderRadius: 8, width: 28, height: 28,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             cursor: 'pointer', transition: 'all 0.2s ease'
@@ -523,16 +517,17 @@ function PostComposer({ onPost }) {
             style={{
                 marginBottom: '1.5rem',
                 background: 'rgba(255,255,255,0.025)',
-                border: `1px solid ${focused ? 'rgba(0,214,255,0.25)' : 'rgba(255,255,255,0.07)'}`,
+                backdropFilter: 'blur(20px)',
+                border: `1px solid ${focused ? 'rgba(99,102,241,0.25)' : 'var(--border-subtle)'}`,
                 borderRadius: 20, padding: '1.25rem',
-                boxShadow: focused ? '0 0 32px rgba(0,214,255,0.08)' : 'none',
+                boxShadow: focused ? '0 0 32px rgba(99,102,241,0.08)' : 'none',
                 transition: 'all 0.3s ease'
             }}
         >
             <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'flex-start' }}>
                 <div style={{
                     width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-                    background: 'linear-gradient(135deg, #0050FF, #00D6FF)',
+                    background: 'var(--gradient-accent)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '0.8rem', fontWeight: 700, color: '#fff'
                 }}>A</div>
@@ -545,7 +540,7 @@ function PostComposer({ onPost }) {
                     rows={focused || text ? 3 : 1}
                     style={{
                         flex: 1, background: 'transparent', border: 'none',
-                        color: '#fff', fontSize: '0.9rem', fontFamily: 'DELTHA, sans-serif',
+                        color: 'var(--text-primary)', fontSize: '0.9rem', fontFamily: 'var(--font-display)',
                         outline: 'none', resize: 'none', lineHeight: 1.7,
                         transition: 'all 0.3s ease', paddingTop: '0.15rem'
                     }}
@@ -560,29 +555,29 @@ function PostComposer({ onPost }) {
                         transition={{ duration: 0.25 }}
                         style={{ overflow: 'hidden' }}
                     >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '0.875rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '0.875rem', borderTop: '1px solid var(--border-subtle)' }}>
                             <div style={{ display: 'flex', gap: 8 }}>
                                 {[
                                     { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>, tip: 'Image' },
                                     { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>, tip: 'Video' },
                                     { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>, tip: 'Link' },
                                 ].map((btn, i) => (
-                                    <motion.button key={i} whileHover={{ scale: 1.1, color: '#00D6FF' }} whileTap={{ scale: 0.9 }} title={btn.tip}
-                                        style={{ background: 'none', border: 'none', color: 'var(--color-text-tertiary)', cursor: 'pointer', display: 'flex', padding: 6, borderRadius: 8, transition: 'color 0.2s ease' }}>
+                                    <motion.button key={i} whileHover={{ scale: 1.1, color: 'var(--accent-primary)' }} whileTap={{ scale: 0.9 }} title={btn.tip}
+                                        style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', display: 'flex', padding: 6, borderRadius: 8, transition: 'color 0.2s ease' }}>
                                         {btn.icon}
                                     </motion.button>
                                 ))}
                             </div>
                             <motion.button
-                                whileHover={{ scale: 1.03, boxShadow: '0 6px 20px rgba(0,80,255,0.4)' }}
+                                whileHover={{ scale: 1.03, boxShadow: '0 6px 20px rgba(99,102,241,0.4)' }}
                                 whileTap={{ scale: 0.96 }}
                                 onClick={handlePost}
                                 style={{
                                     padding: '8px 22px', borderRadius: 10, fontSize: '0.8rem', fontWeight: 600,
-                                    fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                                    background: text.trim() ? 'linear-gradient(90deg, #0050FF, #00D6FF)' : 'rgba(255,255,255,0.06)',
-                                    border: 'none', color: text.trim() ? '#fff' : 'var(--color-text-tertiary)',
-                                    boxShadow: text.trim() ? '0 4px 16px rgba(0,80,255,0.25)' : 'none',
+                                    fontFamily: 'var(--font-display)', cursor: 'pointer',
+                                    background: text.trim() ? 'var(--gradient-accent)' : 'rgba(255,255,255,0.06)',
+                                    border: 'none', color: text.trim() ? '#fff' : 'var(--text-tertiary)',
+                                    boxShadow: text.trim() ? '0 4px 16px rgba(99,102,241,0.25)' : 'none',
                                     transition: 'all 0.25s ease'
                                 }}
                             >
@@ -607,24 +602,26 @@ function TrendingWidget() {
     ]
     return (
         <div style={{
-            background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
+            background: 'rgba(255,255,255,0.025)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid var(--border-subtle)',
             borderRadius: 20, padding: '1.5rem', marginBottom: '1.25rem'
         }}>
-            <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#00D6FF', marginBottom: '1.1rem', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', marginBottom: '1.1rem', fontWeight: 600 }}>
                 Trending Now
             </div>
             {topics.map((t, i) => (
                 <motion.div key={t.tag} whileHover={{ x: 4 }} style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     padding: '9px 0',
-                    borderBottom: i < topics.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    borderBottom: i < topics.length - 1 ? '1px solid var(--border-subtle)' : 'none',
                     cursor: 'pointer'
                 }}>
                     <div>
-                        <div style={{ fontSize: '0.82rem', fontWeight: 500 }}>#{t.tag}</div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--color-text-tertiary)' }}>{t.count} posts</div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-primary)' }}>#{t.tag}</div>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>{t.count} posts</div>
                     </div>
-                    <span style={{ fontSize: '0.65rem', color: '#34d399', fontWeight: 600, background: 'rgba(52,211,153,0.1)', padding: '2px 7px', borderRadius: 999 }}>{t.trend}</span>
+                    <span style={{ fontSize: '0.65rem', color: '#34d399', fontWeight: 600, padding: '2px 7px', borderRadius: 999 }}>{t.trend}</span>
                 </motion.div>
             ))}
         </div>
@@ -638,14 +635,15 @@ function SuggestedFounders() {
         { name: 'Tom Wright', role: 'Product Designer', initials: 'TW', colorIdx: 1 },
         { name: 'Luna Kim', role: 'Growth Lead', initials: 'LK', colorIdx: 2 },
     ]
-    // state per founder: 'idle' | 'requested' | 'connected'
     const [states, setStates] = useState(() => Object.fromEntries(founders.map((_, i) => [i, 'idle'])))
     return (
         <div style={{
-            background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
+            background: 'rgba(255,255,255,0.025)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid var(--border-subtle)',
             borderRadius: 20, padding: '1.5rem'
         }}>
-            <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#00D6FF', marginBottom: '1.1rem', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', marginBottom: '1.1rem', fontWeight: 600 }}>
                 Suggested for You
             </div>
             {founders.map((f, i) => {
@@ -661,7 +659,7 @@ function SuggestedFounders() {
                     <div key={i} style={{
                         display: 'flex', alignItems: 'center', gap: 10,
                         padding: '9px 0',
-                        borderBottom: i < founders.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                        borderBottom: i < founders.length - 1 ? '1px solid var(--border-subtle)' : 'none',
                     }}>
                         <div style={{
                             width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
@@ -671,8 +669,8 @@ function SuggestedFounders() {
                             boxShadow: `0 0 10px ${g1}40`
                         }}>{f.initials}</div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</div>
-                            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-tertiary)' }}>{f.role}</div>
+                            <div style={{ fontSize: '0.82rem', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-primary)' }}>{f.name}</div>
+                            <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>{f.role}</div>
                         </div>
 
                         <AnimatePresence mode="wait">
@@ -684,9 +682,10 @@ function SuggestedFounders() {
                                     onClick={advance}
                                     style={{
                                         padding: '5px 12px', borderRadius: 8, fontSize: '0.65rem', fontWeight: 600,
-                                        fontFamily: 'DELTHA, sans-serif', cursor: 'pointer', flexShrink: 0,
-                                        background: 'rgba(0,214,255,0.08)', border: '1px solid rgba(0,214,255,0.3)',
-                                        color: '#00D6FF', transition: 'all 0.2s ease'
+                                        fontFamily: 'var(--font-display)', cursor: 'pointer', flexShrink: 0,
+                                        border: '1px solid rgba(99,102,241,0.3)',
+                                        color: 'var(--accent-primary)', background: 'transparent',
+                                        transition: 'all 0.2s ease'
                                     }}
                                 >+ Connect</motion.button>
                             )}
@@ -696,9 +695,9 @@ function SuggestedFounders() {
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: 5,
                                         padding: '5px 10px', borderRadius: 8,
-                                        background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
-                                        fontSize: '0.65rem', color: 'var(--color-text-tertiary)',
-                                        fontFamily: 'DELTHA, sans-serif', flexShrink: 0, cursor: 'default'
+                                        border: '1px solid var(--border-subtle)',
+                                        fontSize: '0.65rem', color: 'var(--text-tertiary)',
+                                        fontFamily: 'var(--font-display)', flexShrink: 0, cursor: 'default'
                                     }}
                                 >
                                     <motion.div
@@ -715,9 +714,9 @@ function SuggestedFounders() {
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: 5,
                                         padding: '5px 10px', borderRadius: 8,
-                                        background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.3)',
+                                        border: '1px solid rgba(52,211,153,0.3)',
                                         fontSize: '0.65rem', color: '#34d399', fontWeight: 600,
-                                        fontFamily: 'DELTHA, sans-serif', flexShrink: 0, cursor: 'default'
+                                        fontFamily: 'var(--font-display)', flexShrink: 0, cursor: 'default'
                                     }}
                                 >
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -741,16 +740,16 @@ function LoadMoreButton({ onClick, loading }) {
             style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         >
-            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
+            <div style={{ flex: 1, height: 1, background: 'var(--border-subtle)' }} />
             <motion.button
-                whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(0,214,255,0.15)' }}
+                whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(99,102,241,0.15)' }}
                 whileTap={{ scale: 0.96 }}
                 onClick={onClick}
                 style={{
                     padding: '8px 20px', borderRadius: 10, fontSize: '0.78rem',
-                    fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                    background: 'rgba(0,214,255,0.07)', border: '1px solid rgba(0,214,255,0.2)',
-                    color: '#00D6FF', fontWeight: 500, transition: 'all 0.25s ease',
+                    fontFamily: 'var(--font-display)', cursor: 'pointer',
+                    border: '1px solid rgba(99,102,241,0.2)', background: 'transparent',
+                    color: 'var(--accent-primary)', fontWeight: 500, transition: 'all 0.25s ease',
                     display: 'flex', alignItems: 'center', gap: 8
                 }}
             >
@@ -758,14 +757,14 @@ function LoadMoreButton({ onClick, loading }) {
                     <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                        style={{ width: 12, height: 12, border: '2px solid rgba(0,214,255,0.3)', borderTopColor: '#00D6FF', borderRadius: '50%' }}
+                        style={{ width: 12, height: 12, border: '2px solid rgba(99,102,241,0.3)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%' }}
                     />
                 ) : (
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
                 )}
                 {loading ? 'Loading...' : 'Load more posts'}
             </motion.button>
-            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
+            <div style={{ flex: 1, height: 1, background: 'var(--border-subtle)' }} />
         </motion.div>
     )
 }
@@ -805,10 +804,15 @@ export default function Dashboard() {
                 transition={{ duration: 0.45 }}
                 style={{ marginBottom: '1.75rem' }}
             >
-                <h1 style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'DELTHA, sans-serif', marginBottom: '0.25rem' }}>
+                <h1 style={{
+                    fontSize: '1.6rem', fontWeight: 800, fontFamily: 'var(--font-display)',
+                    marginBottom: '0.25rem', color: 'var(--text-primary)',
+                    background: 'var(--gradient-text)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                }}>
                     Home Feed
                 </h1>
-                <p style={{ color: 'var(--color-text-tertiary)', fontSize: '0.85rem' }}>
+                <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
                     Latest from your network
                 </p>
             </motion.div>
@@ -831,7 +835,7 @@ export default function Dashboard() {
                     {!hasMore && (
                         <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                            style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-tertiary)', fontSize: '0.8rem' }}
+                            style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-tertiary)', fontSize: '0.8rem' }}
                         >
                             You are all caught up &mdash; check back later for more posts.
                         </motion.div>

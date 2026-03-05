@@ -163,12 +163,12 @@ const FRAGMENT = /* glsl */`
     /* ────────────── DEPTH GRADIENT LAYERS (volumetric illusion) ────── */
     float innerCore = radial(distWarp, hoverR * 0.28);           // hot center
     float inner     = radial(distWarp, hoverR * 0.62);           // core plasma
-    float mid       = radial(distWarp, hoverR * 1.75);           // mid glow
+    float mid       = radial(distWarp, hoverR * 1.75);           // mid 
     float outer     = radial(distWarp, hoverR * 3.6);            // outer corona
-    float glow      = radial(dist,     hoverR * 7.5);            // ambient glow
-    float audioGlow = glow * (1.0 + uAudioBass * 0.8);          // bass-driven halo
+    float       = radial(dist,     hoverR * 7.5);            // ambient 
+    float audioGlow =  * (1.0 + uAudioBass * 0.8);          // bass-driven halo
 
-    /* ── Scroll vertical stretch glow ── */
+    /* ── Scroll vertical stretch  ── */
     float scrollGlow = uScrollVel * radial(abs(diff.y) - hoverR, hoverR * 4.0)
                      * radial(dist, hoverR * 8.0) * 0.6;
 

@@ -10,36 +10,36 @@ import { springConfig } from '../../utils/motion'
 
 const VARIANT_STYLES = {
     primary: {
-        background: 'linear-gradient(135deg, #0050FF 0%, #00D6FF 100%)',
+        background: 'linear-gradient(135deg, #F97316 0%, #ea580c 100%)',
         color: '#fff',
         border: 'none',
-        boxShadow: '0 0 20px rgba(0,80,255,0.20)',
+        boxShadow: '0 0 20px rgba(249,115,22,0.20)',
     },
     secondary: {
-        background: 'rgba(255,255,255,0.04)',
+
         color: 'rgba(255,255,255,0.70)',
         border: '1px solid rgba(255,255,255,0.08)',
         boxShadow: 'none',
     },
     ghost: {
-        background: 'rgba(0,214,255,0.07)',
-        color: '#00D6FF',
-        border: '1px solid rgba(0,214,255,0.28)',
+
+        color: '#fb923c',
+        border: '1px solid rgba(249,115,22,0.28)',
         boxShadow: 'none',
     },
     danger: {
-        background: 'rgba(251,113,133,0.08)',
+
         color: '#fb7185',
         border: '1px solid rgba(251,113,133,0.25)',
         boxShadow: 'none',
-    },
+    }
 }
 
 const HOVER_STYLES = {
-    primary: { boxShadow: '0 0 36px rgba(0,80,255,0.30)', transform: 'translateY(-1px)' },
-    secondary: { borderColor: 'rgba(0,214,255,0.22)', color: '#fff', boxShadow: '0 0 16px rgba(0,214,255,0.08)' },
-    ghost: { background: 'rgba(0,214,255,0.12)', boxShadow: '0 0 16px rgba(0,214,255,0.14)' },
-    danger: { background: 'rgba(251,113,133,0.14)', boxShadow: '0 0 14px rgba(251,113,133,0.20)' },
+    primary: { boxShadow: '0 0 36px rgba(249,115,22,0.30)', transform: 'translateY(-1px)' },
+    secondary: { borderColor: 'rgba(249,115,22,0.22)', color: '#fff', boxShadow: '0 0 16px rgba(249,115,22,0.08)' },
+    ghost: { boxShadow: '0 0 16px rgba(249,115,22,0.14)' },
+    danger: { boxShadow: '0 0 14px rgba(251,113,133,0.20)' },
 }
 
 export default function MagneticButton({
@@ -100,7 +100,7 @@ export default function MagneticButton({
                 justifyContent: 'center',
                 gap: '0.5rem',
                 padding: '10px 24px',
-                fontFamily: 'DELTHA, sans-serif',
+                fontFamily: 'var(--font-display)',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 letterSpacing: '0.02em',
@@ -127,7 +127,6 @@ export default function MagneticButton({
                     style={{
                         position: 'absolute',
                         borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.25)',
                         left: r.x - 6,
                         top: r.y - 6,
                         pointerEvents: 'none',

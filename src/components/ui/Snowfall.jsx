@@ -7,13 +7,13 @@ import { useEffect, useRef } from 'react'
    ├── cursor.x / cursor.y        → repulsion center
    ├── cursor.speed               → turbulence strength
    ├── cursor.click               → shockwave scatter
-   ├── cursor.hovered             → subtle glow increase
-   └── cursor.pulse               → pulse-sync glow flicker
+   ├── cursor.hovered             → subtle  increase
+   └── cursor.pulse               → pulse-sync  flicker
 
    Features:
    • Repulsion field (inverse-square force)
    • Click shockwave → explosive scatter
-   • Proximity glow (cyan → white gradient)
+   • Proximity  (cyan → white gradient)
    • Turbulence trail on fast move
    • Pulse-sync brightness flicker
    • 60fps canvas 2D — zero framework overhead
@@ -21,7 +21,7 @@ import { useEffect, useRef } from 'react'
 
 const REPEL_RADIUS = 110   // px — repulsion zone
 const REPEL_STRENGTH = 2.6
-const GLOW_RADIUS = 160   // px — glow tint zone
+const GLOW_RADIUS = 160   // px —  tint zone
 const SHOCK_RADIUS = 200   // px — click shockwave scatter zone
 
 const COUNT = 70

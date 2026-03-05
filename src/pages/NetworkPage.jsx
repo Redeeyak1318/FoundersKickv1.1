@@ -10,14 +10,14 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion'
 ──────────────────────────────────────────────────────────────────── */
 
 const INITIAL_PEOPLE = [
-    { id: 1, name: 'Sarah Chen', role: 'CEO @ NexaAI', initials: 'SC', color: '#6c5ce7', mutual: 12, state: 'connected' },
-    { id: 2, name: 'Marcus Rivera', role: 'CTO @ FlowStack', initials: 'MR', color: '#22d3ee', mutual: 8, state: 'connected' },
+    { id: 1, name: 'Sarah Chen', role: 'CEO @ NexaAI', initials: 'SC', color: '#F97316', mutual: 12, state: 'connected' },
+    { id: 2, name: 'Marcus Rivera', role: 'CTO @ FlowStack', initials: 'MR', color: '#3B82F6', mutual: 8, state: 'connected' },
     { id: 3, name: 'Emily Zhang', role: 'Founder @ GreenLoop', initials: 'EZ', color: '#f472b6', mutual: 15, state: 'connected' },
     { id: 4, name: 'Raj Patel', role: 'Builder @ DevForge', initials: 'RP', color: '#34d399', mutual: 5, state: 'pending' },
     { id: 5, name: 'Aisha Williams', role: 'PM @ CloudBase', initials: 'AW', color: '#fbbf24', mutual: 3, state: 'pending' },
-    { id: 6, name: 'Tom Wright', role: 'Designer @ PixelLab', initials: 'TW', color: '#a78bfa', mutual: 9, state: 'idle' },
+    { id: 6, name: 'Tom Wright', role: 'Designer @ PixelLab', initials: 'TW', color: '#fb923c', mutual: 9, state: 'idle' },
     { id: 7, name: 'Luna Kim', role: 'Growth @ RapidScale', initials: 'LK', color: '#f472b6', mutual: 7, state: 'idle' },
-    { id: 8, name: 'Jake Morrison', role: 'Engineer @ ByteCraft', initials: 'JM', color: '#22d3ee', mutual: 4, state: 'idle' },
+    { id: 8, name: 'Jake Morrison', role: 'Engineer @ ByteCraft', initials: 'JM', color: '#3B82F6', mutual: 4, state: 'idle' },
 ]
 
 /* ─────────────────────── Tiny Particle Burst ─────────────────────── */
@@ -88,10 +88,9 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                 onClick={handleConnect}
                 style={{
                     padding: '7px 18px', borderRadius: 10, fontSize: '0.75rem',
-                    fontWeight: 600, fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                    background: 'rgba(0,214,255,0.08)',
-                    border: '1px solid rgba(0,214,255,0.3)',
-                    color: '#00D6FF', transition: 'all 0.25s ease',
+                    fontWeight: 600, fontFamily: 'var(--font-display)', cursor: 'pointer',
+                    border: '1px solid rgba(249,115,22,0.3)',
+                    color: '#fb923c', transition: 'all 0.25s ease',
                     whiteSpace: 'nowrap',
                 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
@@ -112,9 +111,8 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                 style={{
                     display: 'flex', alignItems: 'center', gap: 7,
                     padding: '7px 16px', borderRadius: 10,
-                    background: 'rgba(255,255,255,0.04)',
                     border: '1px solid rgba(255,255,255,0.1)',
-                    fontSize: '0.75rem', fontWeight: 500, fontFamily: 'DELTHA, sans-serif',
+                    fontSize: '0.75rem', fontWeight: 500, fontFamily: 'var(--font-display)',
                     color: 'var(--color-text-secondary)', whiteSpace: 'nowrap',
                     cursor: 'default',
                 }}
@@ -151,7 +149,7 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                     onClick={handleAccept}
                     style={{
                         padding: '7px 14px', borderRadius: 10, fontSize: '0.75rem',
-                        fontWeight: 600, fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
+                        fontWeight: 600, fontFamily: 'var(--font-display)', cursor: 'pointer',
                         background: 'linear-gradient(90deg, #059669, #34d399)',
                         border: 'none', color: '#fff',
                         boxShadow: '0 2px 10px rgba(52,211,153,0.2)',
@@ -159,7 +157,7 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                         transition: 'all 0.25s ease', whiteSpace: 'nowrap',
                     }}
                 >
-                    {/* glow sweep on accept click */}
+                    {/*  sweep on accept click */}
                     <AnimatePresence>
                         {glowSweep && (
                             <motion.div
@@ -185,8 +183,7 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                     onClick={handleReject}
                     style={{
                         padding: '7px 12px', borderRadius: 10, fontSize: '0.75rem',
-                        fontWeight: 500, fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                        background: 'rgba(251,113,133,0.06)',
+                        fontWeight: 500, fontFamily: 'var(--font-display)', cursor: 'pointer',
                         border: '1px solid rgba(251,113,133,0.2)',
                         color: 'rgba(251,113,133,0.65)',
                         transition: 'all 0.25s ease', whiteSpace: 'nowrap',
@@ -220,10 +217,9 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                     style={{
                         display: 'flex', alignItems: 'center', gap: 6,
                         padding: '7px 14px', borderRadius: 10,
-                        background: 'rgba(52,211,153,0.1)',
                         border: '1px solid rgba(52,211,153,0.3)',
                         fontSize: '0.75rem', fontWeight: 600,
-                        fontFamily: 'DELTHA, sans-serif',
+                        fontFamily: 'var(--font-display)',
                         color: '#34d399', cursor: 'default', whiteSpace: 'nowrap',
                     }}
                 >
@@ -245,8 +241,7 @@ function ConnectButton({ state, onConnect, onAccept, onReject, color }) {
                     whileTap={{ scale: 0.92 }}
                     style={{
                         padding: '7px 12px', borderRadius: 10, fontSize: '0.75rem',
-                        fontWeight: 500, fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                        background: 'rgba(255,255,255,0.04)',
+                        fontWeight: 500, fontFamily: 'var(--font-display)', cursor: 'pointer',
                         border: '1px solid rgba(255,255,255,0.09)',
                         color: 'var(--color-text-tertiary)',
                         transition: 'all 0.2s ease', whiteSpace: 'nowrap',
@@ -303,8 +298,8 @@ function ConnectionCard({ person, onStateChange }) {
                         ? 'rgba(251,191,36,0.04)'
                         : 'rgba(255,255,255,0.025)',
                 border: `1px solid ${state === 'connected' ? 'rgba(52,211,153,0.15)'
-                        : state === 'pending' ? 'rgba(251,191,36,0.15)'
-                            : 'rgba(255,255,255,0.07)'}`,
+                    : state === 'pending' ? 'rgba(251,191,36,0.15)'
+                        : 'rgba(255,255,255,0.07)'}`,
                 borderRadius: 18, padding: '1.1rem 1.25rem',
                 position: 'relative', overflow: 'hidden',
                 transition: 'background 0.5s ease, border-color 0.5s ease',
@@ -336,7 +331,7 @@ function ConnectionCard({ person, onStateChange }) {
                                 animate={{ opacity: 1, scale: 1 }}
                                 style={{
                                     fontSize: '0.6rem', padding: '2px 8px', borderRadius: 999,
-                                    background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.3)',
+                                    border: '1px solid rgba(251,191,36,0.3)',
                                     color: '#fbbf24', fontWeight: 600
                                 }}
                             >
@@ -392,7 +387,7 @@ function NetworkGraph() {
             vx: (Math.random() - 0.5) * 0.45,
             vy: (Math.random() - 0.5) * 0.45,
             radius: 2.5 + Math.random() * 4,
-            color: ['#6c5ce7', '#a78bfa', '#22d3ee', '#f472b6', '#34d399'][i % 5],
+            color: ['#F97316', '#fb923c', '#3B82F6', '#ea580c', '#34d399'][i % 5],
         }))
 
         let animId
@@ -437,7 +432,6 @@ function NetworkGraph() {
     return (
         <canvas ref={canvasRef} style={{
             width: '100%', height: 220, borderRadius: 20,
-            background: 'rgba(10,10,16,0.5)',
             border: '1px solid rgba(255,255,255,0.07)',
         }} />
     )
@@ -457,7 +451,7 @@ function PulsingBadge({ count }) {
             }}
             transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
             style={{
-                marginLeft: 7, background: 'rgba(251,191,36,0.9)',
+                marginLeft: 7,
                 color: '#0A0A0C', borderRadius: 99, padding: '1px 7px',
                 fontSize: '0.58rem', fontWeight: 800, display: 'inline-block',
                 verticalAlign: 'middle', lineHeight: '1.4',
@@ -506,7 +500,7 @@ export default function NetworkPage() {
             >
                 <h1 style={{
                     fontSize: '1.6rem', fontWeight: 800,
-                    fontFamily: 'DELTHA, sans-serif', marginBottom: '0.25rem'
+                    fontFamily: 'var(--font-display)', marginBottom: '0.25rem'
                 }}>Network</h1>
                 <p style={{ color: 'var(--color-text-tertiary)', fontSize: '0.85rem' }}>
                     {connectedCount} connections &mdash; grow your founder network
@@ -531,15 +525,14 @@ export default function NetworkPage() {
                 {[
                     { label: 'Connected', value: connectedCount, color: '#34d399' },
                     { label: 'Pending', value: pendingCount, color: '#fbbf24' },
-                    { label: 'To Discover', value: people.filter(p => p.state === 'idle').length, color: '#00D6FF' },
+                    { label: 'To Discover', value: people.filter(p => p.state === 'idle').length, color: '#fb923c' },
                 ].map(stat => (
                     <div key={stat.label} style={{
                         flex: 1, minWidth: 100, padding: '1rem',
-                        background: 'rgba(255,255,255,0.025)',
                         border: `1px solid ${stat.color}25`,
                         borderRadius: 14, textAlign: 'center'
                     }}>
-                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: stat.color, fontFamily: 'DELTHA, sans-serif' }}>{stat.value}</div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: stat.color, fontFamily: 'var(--font-display)' }}>{stat.value}</div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>{stat.label}</div>
                     </div>
                 ))}
@@ -561,7 +554,7 @@ export default function NetworkPage() {
                             position: 'relative', padding: '0.65rem 1.1rem',
                             background: 'none', border: 'none', cursor: 'pointer',
                             fontSize: '0.82rem', fontWeight: filter === tab.key ? 600 : 400,
-                            fontFamily: 'DELTHA, sans-serif',
+                            fontFamily: 'var(--font-display)',
                             color: filter === tab.key ? '#fff' : 'var(--color-text-tertiary)',
                             transition: 'color 0.2s ease',
                         }}
@@ -576,8 +569,8 @@ export default function NetworkPage() {
                                     layoutId="network-tab-line"
                                     style={{
                                         position: 'absolute', bottom: -1, left: 0, right: 0, height: 2,
-                                        background: 'linear-gradient(90deg, #0050FF, #00D6FF)',
-                                        borderRadius: 1, boxShadow: '0 0 8px rgba(0,214,255,0.4)',
+                                        background: 'linear-gradient(90deg, #F97316, #fb923c)',
+                                        borderRadius: 1, boxShadow: '0 0 8px rgba(249,115,22,0.4)',
                                     }}
                                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                                 />

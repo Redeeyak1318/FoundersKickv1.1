@@ -6,7 +6,7 @@ import GlassCard from '../components/ui/GlassCard'
 const mockStartups = [
     {
         id: 1, name: 'NexaAI', desc: 'Autonomous AI agents for enterprise workflow automation',
-        stage: 'Scale', emoji: '🤖', color: '#6c5ce7',
+        stage: 'Scale', emoji: '🤖', color: '#F97316',
         founders: ['SC', 'MR'], tags: ['AI', 'Enterprise'],
     },
     {
@@ -16,7 +16,7 @@ const mockStartups = [
     },
     {
         id: 3, name: 'FlowStack', desc: 'Developer-first API infrastructure with built-in monitoring',
-        stage: 'MVP', emoji: '⚡', color: '#22d3ee',
+        stage: 'MVP', emoji: '⚡', color: '#3B82F6',
         founders: ['MR', 'JM'], tags: ['DevTools', 'API'],
     },
     {
@@ -31,7 +31,7 @@ const mockStartups = [
     },
     {
         id: 6, name: 'CloudBase', desc: 'Serverless database platform with real-time sync',
-        stage: 'MVP', emoji: '☁️', color: '#a78bfa',
+        stage: 'MVP', emoji: '☁️', color: '#fb923c',
         founders: ['AW', 'TW'], tags: ['Infrastructure', 'Database'],
     },
 ]
@@ -108,10 +108,10 @@ function LaunchModal({ isOpen, onClose }) {
             <div style={{ marginBottom: '1.25rem', position: 'relative' }}>
                 <label style={{
                     display: 'block', fontSize: '0.75rem', color: 'var(--color-text-secondary)',
-                    marginBottom: '0.5rem', fontFamily: 'DELTHA, sans-serif', textTransform: 'uppercase',
+                    marginBottom: '0.5rem', fontFamily: 'var(--font-display)', textTransform: 'uppercase',
                     letterSpacing: '0.05em'
                 }}>
-                    {label} {required && <span style={{ color: '#00D6FF' }}>*</span>}
+                    {label} {required && <span style={{ color: '#fb923c' }}>*</span>}
                 </label>
                 <div style={{ position: 'relative' }}>
                     {isTextArea ? (
@@ -123,17 +123,16 @@ function LaunchModal({ isOpen, onClose }) {
                             rows={4}
                             style={{
                                 width: '100%',
-                                background: 'rgba(255, 255, 255, 0.03)',
-                                border: `1px solid ${focused ? '#00D6FF' : 'rgba(255, 255, 255, 0.1)'}`,
+                                border: `1px solid ${focused ? '#fb923c' : 'rgba(255, 255, 255, 0.1)'}`,
                                 borderRadius: '8px',
                                 padding: '12px 16px',
                                 color: '#fff',
                                 fontSize: '0.9rem',
-                                fontFamily: 'DELTHA, sans-serif',
+                                fontFamily: 'var(--font-display)',
                                 outline: 'none',
                                 transition: 'all 0.3s ease',
                                 boxSizing: 'border-box',
-                                boxShadow: focused ? '0 0 15px rgba(0, 214, 255, 0.15)' : 'none',
+                                boxShadow: focused ? '0 0 15px rgba(249, 115, 22, 0.15)' : 'none',
                                 resize: 'vertical'
                             }}
                         />
@@ -146,17 +145,16 @@ function LaunchModal({ isOpen, onClose }) {
                             onBlur={() => setFocusedField(null)}
                             style={{
                                 width: '100%',
-                                background: 'rgba(255, 255, 255, 0.03)',
-                                border: `1px solid ${focused ? '#00D6FF' : 'rgba(255, 255, 255, 0.1)'}`,
+                                border: `1px solid ${focused ? '#fb923c' : 'rgba(255, 255, 255, 0.1)'}`,
                                 borderRadius: '8px',
                                 padding: '12px 16px',
                                 color: '#fff',
                                 fontSize: '0.9rem',
-                                fontFamily: 'DELTHA, sans-serif',
+                                fontFamily: 'var(--font-display)',
                                 outline: 'none',
                                 boxSizing: 'border-box',
                                 transition: 'all 0.3s ease',
-                                boxShadow: focused ? '0 0 15px rgba(0, 214, 255, 0.15)' : 'none'
+                                boxShadow: focused ? '0 0 15px rgba(249, 115, 22, 0.15)' : 'none'
                             }}
                         />
                     )}
@@ -169,7 +167,7 @@ function LaunchModal({ isOpen, onClose }) {
                                 style={{
                                     position: 'absolute', right: 16, top: isTextArea ? 24 : '50%',
                                     transform: isTextArea ? 'none' : 'translateY(-50%)',
-                                    color: '#00D6FF', fontSize: '1.2rem',
+                                    color: '#fb923c', fontSize: '1.2rem',
                                     pointerEvents: 'none'
                                 }}
                             >
@@ -183,9 +181,9 @@ function LaunchModal({ isOpen, onClose }) {
     };
 
     const getBgGradient = () => {
-        if (step === 1) return 'radial-gradient(circle at 50% 0%, rgba(0, 80, 255, 0.15) 0%, transparent 70%)';
-        if (step === 2) return 'radial-gradient(circle at 100% 50%, rgba(0, 214, 255, 0.15) 0%, transparent 70%)';
-        if (step === 3) return 'radial-gradient(circle at 0% 100%, rgba(108, 92, 231, 0.15) 0%, transparent 70%)';
+        if (step === 1) return 'radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.15) 0%, transparent 70%)';
+        if (step === 2) return 'radial-gradient(circle at 100% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 70%)';
+        if (step === 3) return 'radial-gradient(circle at 0% 100%, rgba(249, 115, 22, 0.12) 0%, transparent 70%)';
         return 'none';
     };
 
@@ -200,8 +198,8 @@ function LaunchModal({ isOpen, onClose }) {
                         exit={{ opacity: 0 }}
                         onClick={!isSuccess ? onClose : undefined}
                         style={{
-                            position: 'fixed', inset: 0, background: 'rgba(5, 5, 5, 0.85)',
-                            backdropFilter: 'blur(20px)', zIndex: 9999,
+                            position: 'fixed', inset: 0,
+                            zIndex: 9999,
                         }}
                     />
 
@@ -221,7 +219,7 @@ function LaunchModal({ isOpen, onClose }) {
                                 borderRadius: '24px',
                                 padding: '3rem',
                                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.02) inset',
-                                fontFamily: 'DELTHA, sans-serif'
+                                fontFamily: 'var(--font-display)'
                             }}
                             className="hide-scrollbar"
                         >
@@ -268,10 +266,10 @@ function LaunchModal({ isOpen, onClose }) {
                                         transition={{ duration: 1, times: [0, 0.8, 1] }}
                                         style={{
                                             width: 100, height: 100, borderRadius: '50%',
-                                            background: 'linear-gradient(135deg, #0050FF, #00D6FF)',
+                                            background: 'linear-gradient(135deg, #F97316, #fb923c)',
                                             margin: '0 auto 2rem', display: 'flex', alignItems: 'center',
                                             justifyContent: 'center', fontSize: '3rem', color: '#fff',
-                                            boxShadow: '0 0 40px rgba(0, 214, 255, 0.5)'
+                                            boxShadow: '0 0 40px rgba(249, 115, 22, 0.4)'
                                         }}
                                     >
                                         🚀
@@ -290,12 +288,12 @@ function LaunchModal({ isOpen, onClose }) {
                                                 <motion.div
                                                     style={{
                                                         width: s === step ? 40 : 12, height: 4, borderRadius: 2,
-                                                        background: s <= step ? '#00D6FF' : 'rgba(255, 255, 255, 0.1)',
-                                                        boxShadow: s === step ? '0 0 10px rgba(0, 214, 255, 0.5)' : 'none'
+                                                        background: s <= step ? '#fb923c' : 'rgba(255, 255, 255, 0.1)',
+                                                        boxShadow: s === step ? '0 0 10px rgba(249, 115, 22, 0.4)' : 'none'
                                                     }}
                                                     animate={{
                                                         width: s === step ? 40 : 12,
-                                                        background: s <= step ? '#00D6FF' : 'rgba(255, 255, 255, 0.1)',
+                                                        background: s <= step ? '#fb923c' : 'rgba(255, 255, 255, 0.1)',
                                                     }}
                                                     transition={{ duration: 0.4, ease: "anticipate" }}
                                                 />
@@ -329,20 +327,20 @@ function LaunchModal({ isOpen, onClose }) {
                                                         <div style={{ gridColumn: '1 / -1', marginBottom: '1.25rem' }}>
                                                             <label style={{
                                                                 display: 'block', fontSize: '0.75rem', color: 'var(--color-text-secondary)',
-                                                                marginBottom: '0.5rem', fontFamily: 'DELTHA, sans-serif', textTransform: 'uppercase',
+                                                                marginBottom: '0.5rem', fontFamily: 'var(--font-display)', textTransform: 'uppercase',
                                                                 letterSpacing: '0.05em'
                                                             }}>
-                                                                Stage <span style={{ color: '#00D6FF' }}>*</span>
+                                                                Stage <span style={{ color: '#fb923c' }}>*</span>
                                                             </label>
                                                             <div style={{ position: 'relative' }}>
                                                                 <select
                                                                     value={formData.stage}
                                                                     onChange={(e) => handleInputChange('stage', e.target.value)}
                                                                     style={{
-                                                                        width: '100%', background: 'rgba(255, 255, 255, 0.03)',
+                                                                        width: '100%',
                                                                         border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px',
                                                                         padding: '12px 16px', color: '#fff', fontSize: '0.9rem',
-                                                                        fontFamily: 'DELTHA, sans-serif', outline: 'none', appearance: 'none',
+                                                                        fontFamily: 'var(--font-display)', outline: 'none', appearance: 'none',
                                                                         cursor: 'pointer',
                                                                         boxSizing: 'border-box'
                                                                     }}
@@ -403,7 +401,7 @@ function LaunchModal({ isOpen, onClose }) {
                                             onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
                                             style={{
                                                 background: 'transparent', color: 'var(--color-text-secondary)',
-                                                border: 'none', fontSize: '0.9rem', fontFamily: 'DELTHA, sans-serif',
+                                                border: 'none', fontSize: '0.9rem', fontFamily: 'var(--font-display)',
                                                 cursor: 'pointer', padding: '12px 24px', transition: 'color 0.3s ease'
                                             }}
                                             onMouseEnter={(e) => e.target.style.color = '#fff'}
@@ -417,11 +415,11 @@ function LaunchModal({ isOpen, onClose }) {
                                             whileTap={{ scale: 0.98 }}
                                             onClick={step === 3 ? handleSubmit : handleNext}
                                             style={{
-                                                background: 'linear-gradient(90deg, #0050FF, #00D6FF)',
+                                                background: 'linear-gradient(90deg, #F97316, #fb923c)',
                                                 color: '#fff', border: 'none', borderRadius: '12px',
                                                 padding: '12px 32px', fontSize: '0.9rem', fontWeight: 600,
-                                                fontFamily: 'DELTHA, sans-serif', cursor: 'pointer',
-                                                boxShadow: '0 8px 16px rgba(0, 80, 255, 0.3)',
+                                                fontFamily: 'var(--font-display)', cursor: 'pointer',
+                                                boxShadow: '0 8px 16px rgba(249, 115, 22, 0.3)',
                                                 opacity: validateStep(step) ? 1 : 0.5,
                                                 pointerEvents: validateStep(step) ? 'auto' : 'none'
                                             }}
@@ -526,7 +524,6 @@ export default function Startups() {
                                     {startup.tags.map(tag => (
                                         <span key={tag} style={{
                                             padding: '3px 10px', borderRadius: 'var(--radius-full)',
-                                            background: 'rgba(108, 92, 231, 0.08)',
                                             fontSize: '0.65rem', color: 'var(--color-text-tertiary)',
                                             fontWeight: 500,
                                         }}>
@@ -539,8 +536,8 @@ export default function Startups() {
                                     <div className="startup-card-founders">
                                         {startup.founders.map((f, fi) => (
                                             <div key={fi} className="startup-founder-avatar" style={{
-                                                background: `linear-gradient(135deg, ${['#6c5ce7', '#22d3ee', '#f472b6', '#34d399'][fi % 4]
-                                                    }, ${['#a78bfa', '#67e8f9', '#fb7185', '#6ee7b7'][fi % 4]
+                                                background: `linear-gradient(135deg, ${['#F97316', '#3B82F6', '#fb7185', '#34d399'][fi % 4]
+                                                    }, ${['#fb923c', '#60a5fa', '#fb7185', '#6ee7b7'][fi % 4]
                                                     })`
                                             }}>
                                                 {f}
