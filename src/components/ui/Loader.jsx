@@ -18,7 +18,7 @@ export default function Loader() {
                         width: 60,
                         height: 60,
                         borderRadius: 14,
-                        background: 'linear-gradient(135deg, #6c5ce7, #a78bfa, #22d3ee)',
+                        background: 'linear-gradient(135deg, #F97316, #fb923c, #3B82F6)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

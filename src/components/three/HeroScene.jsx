@@ -58,7 +58,7 @@ function ParticleField({ count = 300 }) {
             </bufferGeometry>
             <pointsMaterial
                 size={0.04}
-                color="#a78bfa"
+                color="#fb923c"
                 transparent
                 opacity={0.6}
                 sizeAttenuation
@@ -168,7 +168,7 @@ function ConnectionLines({ nodes }) {
                 return (
                     <line key={i} geometry={geometry}>
                         <lineBasicMaterial
-                            color="#6c5ce7"
+                            color="#F97316"
                             transparent
                             opacity={0.08}
                             blending={THREE.AdditiveBlending}
@@ -182,7 +182,7 @@ function ConnectionLines({ nodes }) {
 }
 
 /* =========================================================
-   NEBULA BACKGROUND — Volumetric glow clouds
+   NEBULA BACKGROUND — Volumetric  clouds
    ========================================================= */
 function NebulaCloud({ position, color, scale }) {
     const meshRef = useRef()
@@ -229,7 +229,7 @@ function CameraRig({ mouseNormalized }) {
    MAIN SCENE — Assembled 3D Hero
    ========================================================= */
 function HeroSceneContent({ mouseNormalized }) {
-    const nodeColors = ['#6c5ce7', '#a78bfa', '#22d3ee', '#f472b6', '#34d399', '#c4b5fd']
+    const nodeColors = ['#F97316', '#fb923c', '#3B82F6', '#fb7185', '#34d399', '#ea580c']
 
     const nodes = useMemo(() => {
         const result = []
@@ -251,9 +251,9 @@ function HeroSceneContent({ mouseNormalized }) {
         <>
             {/* Lighting */}
             <ambientLight intensity={0.15} />
-            <pointLight position={[10, 10, 10]} intensity={0.5} color="#6c5ce7" />
-            <pointLight position={[-10, -5, 5]} intensity={0.3} color="#22d3ee" />
-            <pointLight position={[0, 5, -10]} intensity={0.2} color="#f472b6" />
+            <pointLight position={[10, 10, 10]} intensity={0.5} color="#F97316" />
+            <pointLight position={[-10, -5, 5]} intensity={0.3} color="#3B82F6" />
+            <pointLight position={[0, 5, -10]} intensity={0.2} color="#fb7185" />
 
             {/* Camera */}
             <CameraRig mouseNormalized={mouseNormalized} />
@@ -273,9 +273,9 @@ function HeroSceneContent({ mouseNormalized }) {
             <ParticleField count={250} />
 
             {/* Nebula clouds */}
-            <NebulaCloud position={[-5, 3, -10]} color="#6c5ce7" scale={4} />
-            <NebulaCloud position={[6, -2, -12]} color="#22d3ee" scale={3} />
-            <NebulaCloud position={[0, -4, -8]} color="#f472b6" scale={3.5} />
+            <NebulaCloud position={[-5, 3, -10]} color="#F97316" scale={4} />
+            <NebulaCloud position={[6, -2, -12]} color="#3B82F6" scale={3} />
+            <NebulaCloud position={[0, -4, -8]} color="#fb7185" scale={3.5} />
 
             {/* Founder nodes */}
             {nodes.map((node, i) => (

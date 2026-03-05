@@ -3,8 +3,8 @@ import { useRef, useState, useCallback } from 'react'
 
 /* ──────────────────────────────────────────────────────────────
    GlassCard — Design System aligned
-   - Soft glow border on hover (no heavy shadow)
-   - Subtle mouse-tracking glow (no aggressive tilt)
+   - Soft  border on hover (no heavy shadow)
+   - Subtle mouse-tracking  (no aggressive tilt)
    - Unified easing: cubic-bezier(0.22, 1, 0.36, 1)
 ────────────────────────────────────────────────────────────── */
 
@@ -32,7 +32,7 @@ export default function GlassCard({
     return (
         <motion.div
             ref={cardRef}
-            className={`glass-card ${className}`}
+            className={`-card ${className}`}
             onMouseMove={handleMouseMove}
             onHoverStart={() => setHovered(true)}
             onHoverEnd={() => setHovered(false)}
@@ -49,7 +49,7 @@ export default function GlassCard({
             }}
             {...props}
         >
-            {/* Mouse-tracking ambient glow blob */}
+            {/* Mouse-tracking ambient  blob */}
             {!disableGlow && (
                 <div
                     aria-hidden
@@ -74,7 +74,7 @@ export default function GlassCard({
                 />
             )}
 
-            {/* Content sits above glow */}
+            {/* Content sits above  */}
             <div style={{ position: 'relative', zIndex: 1 }}>
                 {children}
             </div>

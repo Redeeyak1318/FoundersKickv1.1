@@ -5,10 +5,10 @@
  *
  * Features:
  *   • 72 nodes drifting with subtle autonomous velocity
- *   • Distance-based glow connections (threshold 200px)
+ *   • Distance-based  connections (threshold 200px)
  *   • Line alpha + width falloff by distance
  *   • Parallax drift toward cursor (depth illusion)
- *   • Node glow via shadowBlur — brighter near cursor
+ *   • Node  via shadowBlur — brighter near cursor
  *   • Pulse wave on AI cursor pulse event
  *   • Hover-nearest: topmost nodes highlight on proximity
  *   • Zero React re-renders on hot path
@@ -44,7 +44,7 @@ export default function NeuralGrid() {
             vx: (Math.random() - .5) * .38,
             vy: (Math.random() - .5) * .38,
             r: 1.5 + Math.random() * 2.2,   // base radius
-            brightness: Math.random(),         // base glow level
+            brightness: Math.random(),         // base  level
             phase: Math.random() * Math.PI * 2,
             /* Parallax depth layer (0=foreground, 1=background) */
             depth: Math.random(),
@@ -90,11 +90,11 @@ export default function NeuralGrid() {
                 const drawX = n.x + offsetX * layerStr
                 const drawY = n.y + offsetY * layerStr
 
-                /* Cursor proximity glow */
+                /* Cursor proximity  */
                 const dCursor = Math.hypot(drawX - cursor.x, drawY - cursor.y)
                 const cursorProx = Math.max(0, 1 - dCursor / 280)
                 const baseBright = .12 + n.brightness * .22
-                const glow = baseBright + cursorProx * .55 + cursor.pulse * .35
+                const  = baseBright + cursorProx * .55 + cursor.pulse * .35
                     + Math.sin(T * 1.1 + n.phase) * .08
 
                 /* ── Connections ── */
@@ -107,7 +107,7 @@ export default function NeuralGrid() {
 
                     if (d < CONNECT_DIST) {
                         const t = 1 - d / CONNECT_DIST
-                        const lineAlpha = t * t * (glow + .25 * cursorProx) * .7
+                        const lineAlpha = t * t * ( + .25 * cursorProx) * .7
 
                         /* Pick color: cyan → violet gradient by connection length */
                         const colorT = d / CONNECT_DIST
@@ -134,7 +134,7 @@ export default function NeuralGrid() {
 
                 /* ── Node dot ── */
                 const nr = n.r * (1 + cursorProx * 1.1)
-                const nAlpha = Math.min(glow + .1, .85)
+                const nAlpha = Math.min( + .1, .85)
 
                 ctx.beginPath()
                 ctx.arc(drawX, drawY, nr, 0, Math.PI * 2)

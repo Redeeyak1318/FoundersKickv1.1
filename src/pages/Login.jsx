@@ -12,9 +12,9 @@ function AuthParticles() {
             <div style={{
                 position: 'absolute', inset: 0,
                 background: `
-          radial-gradient(ellipse at 20% 50%, rgba(108, 92, 231, 0.12) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 50%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
-          radial-gradient(ellipse at 50% 80%, rgba(244, 114, 182, 0.06) 0%, transparent 40%)
+          radial-gradient(ellipse at 20% 50%, rgba(249, 115, 22, 0.12) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 80%, rgba(249, 115, 22, 0.06) 0%, transparent 40%)
         `,
             }} />
 
@@ -27,7 +27,7 @@ function AuthParticles() {
                         width: 2 + Math.random() * 4,
                         height: 2 + Math.random() * 4,
                         borderRadius: '50%',
-                        background: ['#6c5ce7', '#a78bfa', '#22d3ee', '#f472b6'][i % 4],
+                        background: ['#F97316', '#fb923c', '#3B82F6', '#ea580c'][i % 4],
                         left: `${Math.random() * 100}%`,
                         top: `${Math.random() * 100}%`,
                         opacity: 0.3,
@@ -74,10 +74,10 @@ export default function Login() {
                         width: 36, height: 36, borderRadius: 10,
                         background: 'var(--gradient-primary)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.9rem',
+                        fontFamily: 'var(--font-serif, Playfair Display, serif)', fontWeight: 500, fontSize: '0.9rem',
                         boxShadow: 'var(--shadow-glow)',
                     }}>FK</div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem' }}>
+                    <span style={{ fontFamily: 'var(--font-serif, Playfair Display, serif)', fontWeight: 500, fontSize: '1.1rem' }}>
                         FoundersKick
                     </span>
                 </Link>
@@ -145,7 +145,7 @@ export default function Login() {
                         marginBottom: '1.5rem', marginTop: '-0.5rem'
                     }}>
                         <a href="#" style={{
-                            fontSize: '0.8rem', color: 'var(--color-accent-secondary)',
+                            fontSize: '0.8rem', color: 'var(--color-accent-primary)',
                             transition: 'color 0.2s',
                         }}>
                             Forgot password?

@@ -263,7 +263,7 @@ const FRAGMENT = /* glsl */`
         /* Scroll warm-shift */
         col += vec3(.28, 0., -.08) * uScrollVel * (1.-NdV) * .5;
 
-        /* Fresnel glow edge */
+        /* Fresnel  edge */
         col += uColorB * fresnel * 1.6;
         col += plasma  * fresnel * .5;
 
@@ -288,7 +288,7 @@ const FRAGMENT = /* glsl */`
       }
     }
 
-    /* ── Volumetric halo glow (outside march) ── */
+    /* ── Volumetric halo  (outside march) ── */
     float halo    = smoothstep(hoverR * 3.8, 0., dist2D)
                   * (1. - smoothstep(hoverR * .85, hoverR * 1.15, dist2D));
     float farGlow = exp(-dist2D / (hoverR * 2.8)) * .14;
@@ -338,7 +338,7 @@ const FRAGMENT = /* glsl */`
       col    = mix(col, diskHot, diskAlpha * .75);
       alpha  = max(alpha, diskAlpha * .78 * uFadeIn);
 
-      /* Inner disk glow */
+      /* Inner disk  */
       float innerDiskD = max(diskD * .6, 0.);
       float innerGlow  = exp(-innerDiskD / (hoverR * .18)) * bh * .4;
       col  += vec3(.4,.9,1.) * innerGlow;
