@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Component as HeroSlider } from "../components/ui/lumina-interactive-list"
 import { ShuffleHero } from "../components/ui/shuffle-grid"
+import FoundersKickBackground from "../components/backgrounds/FoundersKickBackground"
 import "../cinematic.css"
 
 /* =========================================================
@@ -65,42 +66,60 @@ export default function Landing() {
             {/* ===== HERO (LUMINA SLIDER) ===== */}
             <HeroSlider />
 
-            {/* ===== SHUFFLE GRID HERO — THREE PILLARS ===== */}
-            <ShuffleHero />
+            {/* ===== PILLARS + FOOTER SECTION ===== */}
+            <div
+                style={{
+                    position: "relative",
+                    overflow: "hidden"
+                }}
+            >
 
-            {/* ===== FOOTER ===== */}
-            <footer className="cinematic-footer">
-                <div className="cinematic-footer__inner">
-                    <div className="cinematic-footer__grid">
-                        <div className="cinematic-footer__brand-col">
-                            <div className="cinematic-footer__brand">FoundersKick</div>
-                            <p className="cinematic-footer__desc">
-                                The platform where founders connect, commit, and collaborate to build the future.
-                            </p>
-                        </div>
+                {/* EFFECT */}
+                <FoundersKickBackground />
 
-                        <div className="cinematic-footer__links-col">
-                            <div className="cinematic-footer__section">
-                                <div className="cinematic-footer__section-title">Platform</div>
-                                <a className="cinematic-footer__link">Explore Startups</a>
-                                <a className="cinematic-footer__link">Find Co-Founders</a>
-                                <a className="cinematic-footer__link">Launch Startup</a>
+                {/* CONTENT */}
+                <div style={{ position: "relative", zIndex: 10 }}>
+
+                    {/* PILLARS */}
+                    <ShuffleHero />
+
+                    {/* FOOTER */}
+                    <footer className="cinematic-footer">
+                        <div className="cinematic-footer__inner">
+                            <div className="cinematic-footer__grid">
+                                <div className="cinematic-footer__brand-col">
+                                    <div className="cinematic-footer__brand">FoundersKick</div>
+                                    <p className="cinematic-footer__desc">
+                                        The platform where founders connect, commit, and collaborate to build the future.
+                                    </p>
+                                </div>
+
+                                <div className="cinematic-footer__links-col">
+                                    <div className="cinematic-footer__section">
+                                        <div className="cinematic-footer__section-title">Platform</div>
+                                        <a className="cinematic-footer__link">Explore Startups</a>
+                                        <a className="cinematic-footer__link">Find Co-Founders</a>
+                                        <a className="cinematic-footer__link">Launch Startup</a>
+                                    </div>
+
+                                    <div className="cinematic-footer__section">
+                                        <div className="cinematic-footer__section-title">Company</div>
+                                        <a className="cinematic-footer__link">About</a>
+                                        <a className="cinematic-footer__link">Careers</a>
+                                        <a className="cinematic-footer__link">Contact</a>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="cinematic-footer__section">
-                                <div className="cinematic-footer__section-title">Company</div>
-                                <a className="cinematic-footer__link">About</a>
-                                <a className="cinematic-footer__link">Careers</a>
-                                <a className="cinematic-footer__link">Contact</a>
+                            <div className="cinematic-footer__bottom">
+                                <span>© 2026 FoundersKick. All rights reserved.</span>
                             </div>
                         </div>
-                    </div>
+                    </footer>
 
-                    <div className="cinematic-footer__bottom">
-                        <span>© 2026 FoundersKick. All rights reserved.</span>
-                    </div>
                 </div>
-            </footer>
+
+            </div>
         </div>
     )
 }
