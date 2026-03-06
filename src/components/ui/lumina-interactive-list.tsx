@@ -6,7 +6,12 @@ declare const THREE: any;
 export function Component() {
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const initializedRef = useRef(false);
+
     useEffect(() => {
+        if (initializedRef.current) return;
+        initializedRef.current = true;
+
         // --- DYNAMIC SCRIPT LOADING ---
         const loadScripts = async () => {
             const loadScript = (src: string, globalName: string) => new Promise<void>((res, rej) => {
@@ -41,12 +46,12 @@ export function Component() {
             // --- MAIN LOGIC ---
             const SLIDER_CONFIG: any = {
                 media: [
-                    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
-                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-                    "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91",
-                    "https://images.unsplash.com/photo-1517841905240-472988babdf9",
-                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1",
-                    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e"
+                    "/hero/FoundersKIck.webp",
+                    "/hero/Connect.webp",
+                    "/hero/Commit.webp",
+                    "/hero/Collaborate.webp",
+                    "/hero/Build the future together.webp",
+                    "/hero/About.webp"
                 ],
                 settings: {
                     transitionDuration: 2.5, autoSlideSpeed: 5000, currentEffect: "glass", currentEffectPreset: "Default",
@@ -254,15 +259,15 @@ export function Component() {
             };
 
             const navigateToSlide = (targetIndex: number) => {
-                if (isTransitioning || targetIndex === currentSlideIndex) return; // BLOCKING LOGIC
+                if (!texturesLoaded || !sliderEnabled || isTransitioning || targetIndex === currentSlideIndex) return;
+                gsap.killTweensOf(shaderMaterial.uniforms.uProgress);
+                isTransitioning = true;
                 stopAutoSlideTimer();
                 quickResetProgress(currentSlideIndex);
 
                 const currentTexture = slideTextures[currentSlideIndex];
                 const targetTexture = slideTextures[targetIndex];
-                if (!currentTexture || !targetTexture) return;
-
-                isTransitioning = true;
+                if (!currentTexture || !targetTexture) { isTransitioning = false; return; }
                 shaderMaterial.uniforms.uTexture1.value = currentTexture;
                 shaderMaterial.uniforms.uTexture2.value = targetTexture;
                 shaderMaterial.uniforms.uTexture1Size.value = currentTexture.userData.size;
@@ -306,11 +311,10 @@ export function Component() {
                     item.innerHTML = `<div class="slide-progress-line"><div class="slide-progress-fill"></div></div><div class="slide-nav-title">${slide.title}</div>`;
                     item.addEventListener("click", (e) => {
                         e.stopPropagation();
-                        if (!isTransitioning && i !== currentSlideIndex) {
-                            stopAutoSlideTimer();
-                            quickResetProgress(currentSlideIndex);
-                            navigateToSlide(i);
-                        }
+                        if (!texturesLoaded || isTransitioning || i === currentSlideIndex) return;
+                        stopAutoSlideTimer();
+                        quickResetProgress(currentSlideIndex);
+                        navigateToSlide(i);
                     });
                     nav.appendChild(item);
                 });
@@ -373,17 +377,25 @@ export function Component() {
                 });
                 scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
 
-                for (const s of slides) { try { slideTextures.push(await loadImageTexture(s.media)); } catch { console.warn("Failed texture"); } }
-                if (slideTextures.length >= 2) {
+                const loadAllTextures = async () => {
+                    const promises = slides.map(s => loadImageTexture(s.media));
+                    slideTextures = await Promise.all(promises);
+
                     shaderMaterial.uniforms.uTexture1.value = slideTextures[0];
                     shaderMaterial.uniforms.uTexture2.value = slideTextures[1];
                     shaderMaterial.uniforms.uTexture1Size.value = slideTextures[0].userData.size;
                     shaderMaterial.uniforms.uTexture2Size.value = slideTextures[1].userData.size;
-                    texturesLoaded = true; sliderEnabled = true;
-                    updateShaderUniforms(); // Apply config
-                    document.querySelector(".slider-wrapper")?.classList.add("loaded"); // Fade in immediately
+
+                    texturesLoaded = true;
+                    sliderEnabled = true;
+
+                    updateShaderUniforms();
+                    document.querySelector(".slider-wrapper")?.classList.add("loaded");
+
                     safeStartTimer(500);
-                }
+                };
+
+                loadAllTextures();
 
                 const render = () => { requestAnimationFrame(render); renderer.render(scene, camera); };
                 render();
