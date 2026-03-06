@@ -65,7 +65,7 @@
 
 /* ─── Cinematic Landing Container ─── */
 .cinematic-landing {
-    background: var(--cin-bg);
+    background: transparent;
     color: var(--cin-text-primary);
     font-family: var(--cin-font);
     -webkit-font-smoothing: antialiased;
@@ -633,7 +633,7 @@
     position: fixed;
     inset: 0;
     z-index: 10000;
-    background: var(--cin-bg);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -781,7 +781,7 @@
    ========================================================= */
 .cinematic-footer {
     position: relative;
-    background: var(--cin-bg);
+    background: transparent;
     border-top: 1px solid var(--cin-border);
     padding: 80px 0 40px;
 }
@@ -1068,7 +1068,7 @@
 }
 
 .cinematic-landing::-webkit-scrollbar-track {
-    background: var(--cin-bg);
+    background: transparent;
 }
 
 .cinematic-landing::-webkit-scrollbar-thumb {
@@ -1183,7 +1183,7 @@
     z-index: 5;
     padding: 100px 0 120px;
     overflow: hidden;
-    background: var(--cin-bg);
+    background: transparent;
 }
 
 .shuffle-hero-inner {
