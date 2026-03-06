@@ -46,7 +46,7 @@ const useInstanceId = () => {
 
 export function Component({
     sizing = "fill",
-    color = "rgba(249,115,22,1)",
+    color = "rgba(128, 128, 128, 1)",
     animation,
     noise,
     style,

@@ -14,7 +14,7 @@ export default function FoundersKickBackground() {
             }}
         >
             <EtheralShadow
-                color="rgba(173, 144, 144, 1)"
+                color="rgba(128, 128, 128, 1)"
                 animation={{ scale: 80, speed: 70 }}
                 noise={{ opacity: 0.35, scale: 1.2 }}
                 sizing="fill"
