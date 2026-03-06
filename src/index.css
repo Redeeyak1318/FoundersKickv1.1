@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 
 /* =========================================================
@@ -244,6 +242,23 @@ ol {
 
 .border-glow {
   box-shadow: var(--shadow-glow), inset 0 0 30px rgba(249, 115, 22, 0.05);
+}
+
+/* =========================================================
+   FOOTER CARD
+   ========================================================= */
+
+.footer-card {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: radial-gradient(35% 128px at 50% 0%, rgba(255, 255, 255, 0.08), transparent), rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 1.5rem 1.5rem 0 0;
+  padding: 2.5rem 3rem 1.5rem 3rem;
 }
 
 /* =========================================================
@@ -1538,52 +1553,6 @@ ol {
   margin-top: var(--space-lg);
 }
 
-/* ---- Footer ---- */
-.story-footer {
-  border-top: 1px solid var(--color-border);
-  padding: var(--space-4xl) 24px var(--space-2xl);
-  background: var(--color-bg-secondary);
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: var(--space-3xl);
-  margin-bottom: var(--space-3xl);
-}
-
-.footer-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-sm);
-  margin-bottom: var(--space-lg);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-primary);
-}
-
-.footer-link {
-  display: block;
-  font-size: var(--text-sm);
-  color: var(--color-text-tertiary);
-  padding: var(--space-xs) 0;
-  transition: color var(--duration-base);
-}
-
-.footer-link:hover {
-  color: var(--color-accent-secondary);
-}
-
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: var(--space-xl);
-  border-top: 1px solid var(--color-border);
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-}
-
 /* ---- Nav (shared) ---- */
 .landing-nav {
   position: fixed;
@@ -2050,17 +2019,6 @@ ol {
 
   .journey-node-dot {
     left: 16px;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2xl);
-  }
-
-  .footer-bottom {
-    flex-direction: column;
-    gap: var(--space-md);
-    text-align: center;
   }
 
   .nav-links {
