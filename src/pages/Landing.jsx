@@ -137,7 +137,7 @@ export default function Landing() {
             <section ref={heroRef} className="relative h-screen flex items-center justify-start overflow-hidden cinematic-layer px-8 md:px-20">
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="/hero/FoundersKIck.webp"
+                        src="/hero/FoundersKick.png"
                         alt="Hero Visual"
                         className="hero-image w-full h-full object-cover opacity-60 mix-blend-luminosity brightness-50"
                     />
@@ -180,7 +180,7 @@ export default function Landing() {
                     </div>
                     <div className="md:w-1/2 w-full relative h-[600px] overflow-hidden group">
                         <img
-                            src="/hero/About.webp"
+                            src="/hero/Features.png"
                             alt="Ecosystem"
                             className="cinematic-img w-full h-[120%] object-cover absolute top-[-10%] mix-blend-exclusion grayscale group-hover:grayscale-0 transition-all duration-1000"
                         />
@@ -198,7 +198,7 @@ export default function Landing() {
                 <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16 md:gap-32">
                     <div className="md:w-1/2 w-full relative h-[700px] overflow-hidden">
                         <img
-                            src="/hero/Collaborate.webp"
+                            src="/hero/Network.png"
                             alt="Dashboard Features"
                             className="cinematic-img w-full h-[120%] object-cover absolute top-[-10%] brightness-75 contrast-125 saturate-50"
                         />
@@ -230,7 +230,7 @@ export default function Landing() {
             <section ref={networkRef} className="relative h-screen flex items-center justify-center overflow-hidden cinematic-layer border-t border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="/hero/Connect.webp"
+                        src="/hero/About.png"
                         alt="Network Connections"
                         className="cinematic-img w-full h-[120%] absolute top-[-10%] object-cover opacity-30 mix-blend-screen"
                     />
@@ -267,7 +267,7 @@ export default function Landing() {
                     </div>
                     <div className="relative w-full h-[70vh] overflow-hidden group">
                         <img
-                            src="/hero/Build the future together.webp"
+                            src="/hero/Launch.png"
                             alt="Launch Growth"
                             className="cinematic-img w-full h-[120%] absolute top-[-10%] object-cover grayscale brightness-90 contrast-125 saturate-0 group-hover:saturate-50 transition-all duration-1000"
                         />
