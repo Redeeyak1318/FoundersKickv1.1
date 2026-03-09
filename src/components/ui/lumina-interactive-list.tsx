@@ -46,12 +46,12 @@ export function Component() {
             // --- MAIN LOGIC ---
             const SLIDER_CONFIG: any = {
                 media: [
-                    "/hero/FoundersKIck.webp",
-                    "/hero/Connect.webp",
-                    "/hero/Commit.webp",
-                    "/hero/Collaborate.webp",
-                    "/hero/Build the future together.webp",
-                    "/hero/About.webp"
+                    "/hero/FoundersKick.png",
+                    "/hero/Features.png",
+                    "/hero/Network.png",
+                    "/hero/About.png",
+                    "/hero/Launch.png",
+                    "/hero/CTA_Future.png",
                 ],
                 settings: {
                     transitionDuration: 2.5, autoSlideSpeed: 5000, currentEffect: "glass", currentEffectPreset: "Default",
