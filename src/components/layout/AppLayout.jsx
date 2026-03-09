@@ -61,7 +61,7 @@ export default function AppLayout() {
                     <div className="w-8 h-8 rounded-lg accent-gradient flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.3)]">
                         <Rocket className="text-white w-4 h-4" />
                     </div>
-                    <span className="font-bold text-xl tracking-tight text-white">FounderKick</span>
+                    <span className="font-bold text-xl tracking-tight text-white">FoundersKick</span>
                 </div>
 
                 <nav className="flex-1 px-4 py-2 overflow-y-auto space-y-1">
@@ -101,7 +101,7 @@ export default function AppLayout() {
                     <div className="w-8 h-8 rounded-lg accent-gradient flex items-center justify-center">
                         <Rocket className="text-white w-4 h-4" />
                     </div>
-                    <span className="font-bold text-lg text-white">FounderKick</span>
+                    <span className="font-bold text-lg text-white">FoundersKick</span>
                 </div>
             </header>
 

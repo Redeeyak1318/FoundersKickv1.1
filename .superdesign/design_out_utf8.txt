@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FounderKick Dashboard</title>
+    <title>FoundersKick Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,7 +63,7 @@
                 <div class="w-8 h-8 rounded-lg accent-gradient flex items-center justify-center">
                     <iconify-icon icon="lucide:rocket" class="text-white text-lg"></iconify-icon>
                 </div>
-                <span class="font-bold text-xl tracking-tight">FounderKick</span>
+                <span class="font-bold text-xl tracking-tight">FoundersKick</span>
             </div>
 
             <nav class="flex-1 px-4 space-y-1 mt-4">

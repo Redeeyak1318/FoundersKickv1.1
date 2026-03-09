@@ -1,4 +1,4 @@
-# FounderKick Design System
+# FoundersKick Design System
 
 ## Aesthetic Direction
 * **Style:** Dark neumorphic + glassmorphism dashboard aesthetic with subtle futuristic influence.
