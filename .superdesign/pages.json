@@ -1,0 +1,38 @@
+[
+    {
+        "title": "Network",
+        "prompt": "Design the Network page. Discover founders, investors, and collaborators with filters, mutual connections, follow suggestions, and profile previews. Maintain the dark neumorphic + glassmorphism aesthetic."
+    },
+    {
+        "title": "Startups",
+        "prompt": "Design the Startups showcase page. Display startup cards with metrics (MRR, traction, stage, team size) and tags. Include explore and saved views."
+    },
+    {
+        "title": "Launchpad",
+        "prompt": "Design the Launchpad page. Show a product launch timeline with milestones, roadmap previews, and feedback threads."
+    },
+    {
+        "title": "Messages",
+        "prompt": "Design the Messages chat UI. Left sidebar for conversations, right side for threading, typing states, media sharing, and presence indicators."
+    },
+    {
+        "title": "Insights",
+        "prompt": "Design the Insights / Analytics visual dashboard. Show charts/metrics for engagement, growth, traction, and performance metrics."
+    },
+    {
+        "title": "Resources",
+        "prompt": "Design the Resources page. Show curated tools, funding links, templates, and learning cards for founders."
+    },
+    {
+        "title": "Notifications",
+        "prompt": "Design the Notifications page. Organized activity-based alerts grouped by relevance."
+    },
+    {
+        "title": "Profile Dashboard",
+        "prompt": "Design the founder Profile Dashboard. Show bio, achievements, projects, metrics, highlights, and timeline."
+    },
+    {
+        "title": "Settings",
+        "prompt": "Design the Settings page. Clean system and account controls UI."
+    }
+]

@@ -1,17 +1,19 @@
+# Application Routes
+
+## Source: `src/App.jsx`
+Routing is handled using React Router DOM.
+
+```jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import NetworkPage from './pages/NetworkPage'
-import Startups from './pages/Startups'
-import Launchpad from './pages/Launchpad'
-import Messages from './pages/Messages'
-import Insights from './pages/Insights'
-import Resources from './pages/Resources'
-import Notifications from './pages/Notifications'
 import Profile from './pages/Profile'
-import Settings from './pages/Settings'
+import Startups from './pages/Startups'
+import About from './pages/About'
+import Messages from './pages/Messages'
 import AppLayout from './components/layout/AppLayout'
 
 export default function App() {
@@ -27,16 +29,13 @@ export default function App() {
                 <Route element={<AppLayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/network" element={<NetworkPage />} />
-                    <Route path="/startups" element={<Startups />} />
-                    <Route path="/launchpad" element={<Launchpad />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/insights" element={<Insights />} />
-                    <Route path="/resources" element={<Resources />} />
-                    <Route path="/notifications" element={<Notifications />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/startups" element={<Startups />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/about" element={<About />} />
                 </Route>
             </Routes>
         </Router>
     )
 }
+```

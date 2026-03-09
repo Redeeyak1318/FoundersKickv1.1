@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FounderKick Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0E1116;
+            --bg-panel: #16181D;
+            --accent-coral: linear-gradient(135deg, #F43F5E 0%, #FB7185 100%);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: #E2E8F0;
+        }
+        .glass-panel {
+            background: rgba(22, 24, 29, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.4), inset 1px 1px 0px rgba(255, 255, 255, 0.02);
+        }
+        .neumorphic-input {
+            background: #111418;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5), inset -1px -1px 2px rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .accent-gradient {
+            background: var(--accent-coral);
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+        }
+        .sidebar-link {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #F43F5E;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D3139;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col md:flex-row bg-[#0E1116] text-[#E2E8F0]">
+        <!-- Left Navigation Sidebar -->
+        <aside class="w-full md:w-64 border-r border-white/5 flex flex-col h-screen sticky top-0 bg-[#0E1116] z-40">
+            <div class="p-6 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg accent-gradient flex items-center justify-center">
+                    <iconify-icon icon="lucide:rocket" class="text-white text-lg"></iconify-icon>
+                </div>
+                <span class="font-bold text-xl tracking-tight">FounderKick</span>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-1 mt-4">
+                <a href="#" id="nav-feed" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-rose-500 bg-rose-500/5 font-medium">
+                    <iconify-icon icon="lucide:layout-grid" class="text-xl"></iconify-icon>
+                    <span>Feed</span>
+                </a>
+                <a href="#" id="nav-discover" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400">
+                    <iconify-icon icon="lucide:compass" class="text-xl"></iconify-icon>
+                    <span>Discover</span>
+                </a>
+                <a href="#" id="nav-analytics" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400">
+                    <iconify-icon icon="lucide:bar-chart-3" class="text-xl"></iconify-icon>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" id="nav-messages" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400">
+                    <iconify-icon icon="lucide:message-circle" class="text-xl"></iconify-icon>
+                    <span>Messages</span>
+                </a>
+                <a href="#" id="nav-portfolio" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400">
+                    <iconify-icon icon="lucide:briefcase" class="text-xl"></iconify-icon>
+                    <span>Portfolio</span>
+                </a>
+            </nav>
+
+            <div class="p-4 mb-4">
+                <div class="glass-panel rounded-2xl p-4">
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">User Tier</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-semibold">Pro Founder</span>
+                        <span class="text-[10px] bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full">ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col lg:flex-row relative">
+            <!-- Central Feed Section -->
+            <section class="flex-1 max-w-3xl mx-auto px-4 md:px-8 py-8 w-full">
+                <!-- Header -->
+                <header class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">Morning, Sarah</h1>
+                        <p class="text-gray-500 text-sm mt-1">Here's what happened in the ecosystem overnight.</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
+                            <iconify-icon icon="lucide:search" class="text-gray-400"></iconify-icon>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 relative">
+                            <iconify-icon icon="lucide:bell" class="text-gray-400"></iconify-icon>
+                            <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#0E1116]"></span>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Post Composer -->
+                <div class="glass-panel rounded-2xl p-5 mb-8">
+                    <div class="flex gap-4">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah" class="w-12 h-12 rounded-xl object-cover">
+                        <div class="flex-1">
+                            <textarea class="w-full bg-transparent border-none focus:ring-0 text-lg placeholder-gray-600 resize-none h-20" placeholder="Share a milestone or insight..."></textarea>
+                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
+                                <div class="flex items-center gap-4 text-gray-400">
+                                    <button class="hover:text-rose-500 transition-colors">
+                                        <iconify-icon icon="lucide:image" class="text-xl"></iconify-icon>
+                                    </button>
+                                    <button class="hover:text-rose-500 transition-colors">
+                                        <iconify-icon icon="lucide:bar-chart-2" class="text-xl"></iconify-icon>
+                                    </button>
+                                    <button class="hover:text-rose-500 transition-colors">
+                                        <iconify-icon icon="lucide:link-2" class="text-xl"></iconify-icon>
+                                    </button>
+                                </div>
+                                <button class="accent-gradient px-6 py-2.5 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                                    Post Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed Cards -->
+                <div class="space-y-6">
+                    <!-- Card 1: Metric Driven -->
+                    <article class="glass-panel rounded-2xl p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex gap-3">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="Alex" class="w-11 h-11 rounded-xl object-cover">
+                                <div>
+                                    <h3 class="font-bold flex items-center gap-2">
+                                        Alex Chen <iconify-icon icon="lucide:badge-check" class="text-rose-500 text-sm"></iconify-icon>
+                                    </h3>
+                                    <p class="text-xs text-gray-500 font-medium">Founder @ CloudFlow ΓÇó 2h ago</p>
+                                </div>
+                            </div>
+                            <button class="text-gray-600 hover:text-white">
+                                <iconify-icon icon="lucide:more-horizontal" class="text-xl"></iconify-icon>
+                            </button>
+                        </div>
+                        <p class="text-[15px] leading-relaxed mb-4 text-gray-300">
+                            Just crossed <span class="text-white font-semibold">$45k MRR</span> after 14 months of grinding. The key was moving from a flat subscription to usage-based pricing. The feedback loop is now 3x faster.
+                        </p>
+                        <div class="bg-[#111418] rounded-xl p-4 border border-white/5 mb-4 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                    <iconify-icon icon="lucide:trending-up" class="text-green-500 text-xl"></iconify-icon>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Growth Velocity</p>
+                                    <p class="text-lg font-bold text-white">+12.4% <span class="text-xs text-gray-500 font-normal ml-1 text-green-500">W-o-W</span></p>
+                                </div>
+                            </div>
+                            <div class="h-8 w-24 bg-white/5 rounded flex items-end gap-1 p-1 px-2">
+                                <div class="w-2 h-3 bg-rose-500/20 rounded-sm"></div>
+                                <div class="w-2 h-4 bg-rose-500/40 rounded-sm"></div>
+                                <div class="w-2 h-6 bg-rose-500/60 rounded-sm"></div>
+                                <div class="w-2 h-5 bg-rose-500/80 rounded-sm"></div>
+                                <div class="w-2 h-7 bg-rose-500 rounded-sm"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6 text-gray-500 pt-4 border-t border-white/5">
+                            <button class="flex items-center gap-2 hover:text-rose-500 transition-colors group">
+                                <iconify-icon icon="lucide:heart" class="text-lg group-hover:scale-110 transition-transform"></iconify-icon>
+                                <span class="text-sm">124</span>
+                            </button>
+                            <button class="flex items-center gap-2 hover:text-rose-500 transition-colors group">
+                                <iconify-icon icon="lucide:message-square" class="text-lg group-hover:scale-110 transition-transform"></iconify-icon>
+                                <span class="text-sm">18</span>
+                            </button>
+                            <button class="flex items-center gap-2 hover:text-rose-500 transition-colors group">
+                                <iconify-icon icon="lucide:share-2" class="text-lg group-hover:scale-110 transition-transform"></iconify-icon>
+                                <span class="text-sm">4</span>
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Card 2: Status Update -->
+                    <article class="glass-panel rounded-2xl p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex gap-3">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus" alt="Marcus" class="w-11 h-11 rounded-xl object-cover">
+                                <div>
+                                    <h3 class="font-bold">Marcus Thorne</h3>
+                                    <p class="text-xs text-gray-500 font-medium">CPO @ VectorAI ΓÇó 5h ago</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[15px] leading-relaxed mb-4 text-gray-300 italic">
+                            "The best startups aren't built on secret ideas, they are built on public accountability."
+                        </p>
+                        <p class="text-sm text-gray-400 mb-4">
+                            Opening our internal dashboard to early investors today. Nervous but the transparency is going to drive us faster.
+                        </p>
+                        <div class="flex items-center gap-6 text-gray-500 pt-4 border-t border-white/5">
+                            <button class="flex items-center gap-2 hover:text-rose-500 transition-colors">
+                                <iconify-icon icon="lucide:heart" class="text-lg"></iconify-icon>
+                                <span class="text-sm">89</span>
+                            </button>
+                            <button class="flex items-center gap-2 hover:text-rose-500 transition-colors">
+                                <iconify-icon icon="lucide:message-square" class="text-lg"></iconify-icon>
+                                <span class="text-sm">12</span>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Right Sidebar: Widgets -->
+            <aside class="w-full lg:w-[360px] px-4 md:px-8 py-8 space-y-8 bg-[#0E1116] border-l border-white/5 overflow-y-auto h-screen sticky top-0">
+                <!-- Quick Insight Card -->
+                <div class="glass-panel rounded-3xl p-6 relative overflow-hidden">
+                    <div class="absolute -top-12 -right-12 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl"></div>
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">My Ecosystem Health</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-400">Network Value</span>
+                            <span class="text-sm font-bold text-white">$12.4M</span>
+                        </div>
+                        <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-rose-500 h-full w-2/3"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-400">Referral Rank</span>
+                            <span class="text-sm font-bold text-white">Top 5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trending Topics -->
+                <div class="glass-panel rounded-3xl p-6">
+                    <h4 class="text-sm font-bold mb-5 flex items-center justify-between">
+                        Trending Now
+                        <iconify-icon icon="lucide:sparkles" class="text-rose-500"></iconify-icon>
+                    </h4>
+                    <div class="space-y-5">
+                        <a href="#" id="trend-saas" class="block group">
+                            <p class="text-xs text-gray-500 font-medium mb-1">#SaaS</p>
+                            <h5 class="text-sm font-semibold group-hover:text-rose-500 transition-colors">The rise of vertically integrated AI workflow tools.</h5>
+                            <p class="text-[10px] text-gray-600 mt-1">2.4k Founders discussing</p>
+                        </a>
+                        <a href="#" id="trend-funding" class="block group">
+                            <p class="text-xs text-gray-500 font-medium mb-1">#Funding</p>
+                            <h5 class="text-sm font-semibold group-hover:text-rose-500 transition-colors">Bridge rounds vs. Flat rounds in Q3 2024.</h5>
+                            <p class="text-[10px] text-gray-600 mt-1">1.1k Founders discussing</p>
+                        </a>
+                        <a href="#" id="trend-bootstrapping" class="block group">
+                            <p class="text-xs text-gray-500 font-medium mb-1">#Bootstrapping</p>
+                            <h5 class="text-sm font-semibold group-hover:text-rose-500 transition-colors">Reaching $10k MRR without outside capital.</h5>
+                            <p class="text-[10px] text-gray-600 mt-1">890 Founders discussing</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Suggested Founders -->
+                <div class="glass-panel rounded-3xl p-6">
+                    <h4 class="text-sm font-bold mb-5">Founders to Connect</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elena" alt="Elena" class="w-9 h-9 rounded-lg">
+                                <div>
+                                    <p class="text-sm font-semibold">Elena Vance</p>
+                                    <p class="text-[10px] text-gray-500">Web3 Infrastructure</p>
+                                </div>
+                            </div>
+                            <button class="px-3 py-1.5 bg-white/5 hover:bg-rose-500/10 hover:text-rose-500 rounded-lg text-xs font-bold transition-all border border-white/5">
+                                Follow
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Julian" alt="Julian" class="w-9 h-9 rounded-lg">
+                                <div>
+                                    <p class="text-sm font-semibold">Julian Park</p>
+                                    <p class="text-[10px] text-gray-500">FinTech / Seed</p>
+                                </div>
+                            </div>
+                            <button class="px-3 py-1.5 bg-white/5 hover:bg-rose-500/10 hover:text-rose-500 rounded-lg text-xs font-bold transition-all border border-white/5">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="flex items-center justify-center gap-2 py-4">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-[10px] text-gray-600 font-medium uppercase tracking-widest">Ecosystem Operational</span>
+                </div>
+            </aside>
+        </main>
+    </div>
+</body>
+</html>
