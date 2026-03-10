@@ -16,6 +16,13 @@ export default function Landing() {
     const launchRef = useRef(null)
     const ctaRef = useRef(null)
 
+    // Canvas animation refs
+    const canvasRef = useRef(null)
+    const imagesRef = useRef([])
+    const frameState = useRef({ current: 1, drawn: -1 })
+    const rafRef = useRef(null)
+    const frameCount = 1122
+
     // Setup smooth scrolling with Lenis
     useEffect(() => {
         const lenis = new Lenis({
@@ -111,8 +118,115 @@ export default function Landing() {
         }
     }, [])
 
+    // Canvas Animation specific useEffect
+    useEffect(() => {
+        if (!canvasRef.current || !heroRef.current) return;
+
+        // Progressive image loading to prevent blocking
+        const loadImagesProgressively = async () => {
+            // Load base frame immediately
+            const firstImg = new Image();
+            firstImg.src = `/frames/frame_0001.jpg`;
+            imagesRef.current[1] = firstImg;
+            firstImg.onload = () => {
+                if (frameState.current.current === 1) {
+                    frameState.current.drawn = -1; // force draw
+                }
+            };
+
+            // Fast-load next few frames
+            for (let i = 2; i <= 20; i++) {
+                const img = new Image();
+                img.src = `/frames/frame_${i.toString().padStart(4, '0')}.jpg`;
+                imagesRef.current[i] = img;
+            }
+
+            // Yield and progressively load the rest
+            for (let i = 21; i <= frameCount; i += 10) {
+                for (let j = 0; j < 10 && i + j <= frameCount; j++) {
+                    const img = new Image();
+                    img.src = `/frames/frame_${(i + j).toString().padStart(4, '0')}.jpg`;
+                    imagesRef.current[i + j] = img;
+                }
+                // Yield to main thread
+                await new Promise(r => setTimeout(r, 10));
+            }
+        };
+
+        loadImagesProgressively();
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        // Resize behavior (simulate object-fit: cover)
+        const handleResize = () => {
+            if (canvas) {
+                canvas.width = canvas.offsetWidth || window.innerWidth;
+                canvas.height = canvas.offsetHeight || window.innerHeight;
+                frameState.current.drawn = -1; // force redraw on resize
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial sizing
+
+        // Efficient requestAnimationFrame loop for drawing updates only
+        const renderLoop = () => {
+            if (frameState.current.current !== frameState.current.drawn) {
+                const index = Math.max(1, Math.min(frameCount, Math.round(frameState.current.current)));
+                const img = imagesRef.current[index];
+
+                if (img && img.complete && canvas.width > 0 && canvas.height > 0) {
+                    const cw = canvas.width;
+                    const ch = canvas.height;
+                    const iw = img.width || 1920;
+                    const ih = img.height || 1080;
+
+                    const wrh = iw / ih;
+                    let newWidth = cw;
+                    let newHeight = newWidth / wrh;
+                    if (newHeight < ch) {
+                        newHeight = ch;
+                        newWidth = newHeight * wrh;
+                    }
+                    const xOffset = (cw - newWidth) / 2;
+                    const yOffset = (ch - newHeight) / 2;
+
+                    ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
+                    frameState.current.drawn = index;
+                }
+            }
+            rafRef.current = requestAnimationFrame(renderLoop);
+        };
+
+        rafRef.current = requestAnimationFrame(renderLoop);
+
+        // Map strictly to the ENTIRE page
+        const animationTrigger = ScrollTrigger.create({
+            trigger: pageRef.current,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+            onUpdate: (self) => {
+                // Map linear scroll 0->1 to frames 1->total
+                frameState.current.current = 1 + (self.progress * (frameCount - 1));
+            }
+        });
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            if (animationTrigger) animationTrigger.kill();
+        };
+    }, []);
+
     return (
-        <div className="bg-[#020202] text-[#e2dfce] font-sans selection:bg-[#9b1b30] selection:text-white" ref={pageRef}>
+        <div className="text-[#e2dfce] font-sans selection:bg-[#9b1b30] selection:text-white relative z-0 min-h-screen" ref={pageRef}>
+
+            {/* Background Canvas Layer */}
+            <canvas
+                ref={canvasRef}
+                className="hero-image fixed inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity brightness-50 z-[-1] pointer-events-none"
+            ></canvas>
 
             {/* Cinematic Overlay Entrance */}
             <div className="overlay-entrance fixed inset-0 bg-[#020202] z-[100] transform origin-top pointer-events-none"></div>
@@ -136,11 +250,6 @@ export default function Landing() {
             {/* HERO SECTION */}
             <section ref={heroRef} className="relative h-screen flex items-center justify-start overflow-hidden cinematic-layer px-8 md:px-20">
                 <div className="absolute inset-0 z-0">
-                    <img
-                        src="/hero/FoundersKick.png"
-                        alt="Hero Visual"
-                        className="hero-image w-full h-full object-cover opacity-60 mix-blend-luminosity brightness-50"
-                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-[#020202]/30 to-transparent"></div>
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(155,27,48,0.15)_0%,transparent_60%)]"></div>
                     <div className="torn-edge-bottom"></div>
@@ -166,7 +275,7 @@ export default function Landing() {
             </section>
 
             {/* ABOUT / VALUE SECTION */}
-            <section ref={aboutRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-[#0a0a0a] cinematic-layer border-y border-white/5">
+            <section ref={aboutRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent cinematic-layer border-y border-white/5">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-32">
                     <div className="md:w-1/2 w-full space-y-8">
                         <h2 className="cinematic-text font-serif text-5xl md:text-7xl uppercase leading-none">
@@ -193,7 +302,7 @@ export default function Landing() {
             </section>
 
             {/* FEATURES SECTION */}
-            <section ref={featuresRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-[#020202] overflow-hidden">
+            <section ref={featuresRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent overflow-hidden">
                 <div className="absolute right-0 top-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(74,12,22,0.15)_0%,transparent_70%)] blur-3xl rounded-full"></div>
                 <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16 md:gap-32">
                     <div className="md:w-1/2 w-full relative h-[700px] overflow-hidden">
@@ -254,7 +363,7 @@ export default function Landing() {
             </section>
 
             {/* LAUNCH STARTUPS SECTION */}
-            <section ref={launchRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-[#0a0a0a]">
+            <section ref={launchRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
                         <div>
@@ -283,7 +392,7 @@ export default function Landing() {
             </section>
 
             {/* FINAL CTA SECTION */}
-            <section ref={ctaRef} className="relative py-48 px-8 flex items-center justify-center bg-[#020202] overflow-hidden border-t border-[#121212]">
+            <section ref={ctaRef} className="relative py-48 px-8 flex items-center justify-center bg-transparent overflow-hidden border-t border-[#121212]">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(155,27,48,0.08)_0%,transparent_60%)]"></div>
                 <div className="relative z-10 text-center flex flex-col items-center">
                     <h2 className="cta-text font-serif text-5xl md:text-8xl uppercase tracking-tighter mb-12 flex flex-col items-center">
