@@ -1,4 +1,0 @@
-✓ Project """ created!
-
-Project ID: 366094ef-a3e5-463c-9437-5908a289c5ce
-Project URL: https://app.superdesign.dev/teams/365a5118-aabf-4421-a243-a8a55848a941/projects/366094ef-a3e5-463c-9437-5908a289c5ce
