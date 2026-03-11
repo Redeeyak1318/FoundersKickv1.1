@@ -3,7 +3,6 @@ import {
     MoreHorizontal, TrendingUp, Heart, MessageSquare, Share2, Sparkles
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { MOCK_POSTS, MOCK_TRENDING_TOPICS, MOCK_SUGGESTED_CONNECTIONS, MOCK_SYSTEM_STATUS, MOCK_USERS } from '../data/mockData'
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { supabase } from "../lib/supabase"
@@ -36,8 +35,43 @@ export default function Dashboard() {
         getUser()
     }, [])
 
+    const [posts, setPosts] = useState([])
+    const [trending, setTrending] = useState([])
+    const [connections, setConnections] = useState([])
+    const [status, setStatus] = useState(null)
     const feedRef = useRef(null)
     const widgetRef = useRef(null)
+
+    useEffect(() => {
+        const loadDashboard = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession()
+
+                if (!session) return
+
+                const res = await fetch(
+                    "https://founderskickv11-production.up.railway.app/dashboard",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session.access_token}`
+                        }
+                    }
+                )
+
+                const data = await res.json()
+
+                setPosts(data.posts)
+                setTrending(data.trending)
+                setConnections(data.connections)
+                setStatus(data.status)
+
+            } catch (err) {
+                console.error("dashboard error:", err)
+            }
+        }
+
+        loadDashboard()
+    }, [])
 
     useEffect(() => {
         if (feedRef.current) {
@@ -59,6 +93,8 @@ export default function Dashboard() {
         await supabase.auth.signOut()
         navigate("/login")
     }
+
+
 
     return (
         <section className="flex-1 flex flex-col xl:flex-row relative h-full">
@@ -119,7 +155,7 @@ export default function Dashboard() {
 
                 {/* Feed Cards */}
                 <div className="space-y-6">
-                    {MOCK_POSTS.map(post => (
+                    {posts.map(post => (
                         <article key={post.id} className="glass-panel rounded-2xl p-6">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex gap-3">
@@ -196,19 +232,19 @@ export default function Dashboard() {
                     <div className="space-y-4 relative z-10">
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-400 font-medium">Network Value</span>
-                            <span className="text-sm font-bold text-white">{MOCK_SYSTEM_STATUS.networkValue}</span>
+                            <span className="text-sm font-bold text-white">{status?.networkValue}</span>
                         </div>
                         <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden shrink-0">
                             <motion.div
                                 initial={{ width: 0 }}
-                                animate={{ width: `${MOCK_SYSTEM_STATUS.progress}%` }}
+                                animate={{ width: `${status?.progress}%` }}
                                 transition={{ duration: 1, ease: 'easeOut' }}
                                 className="bg-rose-500 h-full rounded-full"
                             />
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-400 font-medium">Referral Rank</span>
-                            <span className="text-sm font-bold text-white">{MOCK_SYSTEM_STATUS.rank}</span>
+                            <span className="text-sm font-bold text-white">{status?.rank}</span>
                         </div>
                     </div>
                 </div>
@@ -220,7 +256,7 @@ export default function Dashboard() {
                         <Sparkles className="text-rose-500 w-4 h-4" />
                     </h4>
                     <div className="space-y-5">
-                        {MOCK_TRENDING_TOPICS.map(topic => (
+                        {trending.map(topic => (
                             <a href="#" key={topic.id} className="block group">
                                 <p className="text-xs text-rose-500/70 font-bold mb-1 tracking-wide">{topic.tag}</p>
                                 <h5 className="text-sm font-semibold text-gray-300 group-hover:text-rose-500 transition-colors leading-tight">{topic.title}</h5>
@@ -234,7 +270,7 @@ export default function Dashboard() {
                 <div className="glass-panel rounded-3xl p-6">
                     <h4 className="text-sm font-bold mb-5 text-white">Founders to Connect</h4>
                     <div className="space-y-4">
-                        {MOCK_SUGGESTED_CONNECTIONS.map(conn => (
+                        {connections.map(conn => (
                             <div key={conn.id} className="flex items-center justify-between group">
                                 <div className="flex items-center gap-3">
                                     <img src={conn.user.avatar} alt={conn.user.name} className="w-9 h-9 rounded-lg bg-white/10" />
