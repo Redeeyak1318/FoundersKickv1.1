@@ -4,24 +4,61 @@ import {
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { MOCK_POSTS, MOCK_TRENDING_TOPICS, MOCK_SUGGESTED_CONNECTIONS, MOCK_SYSTEM_STATUS, MOCK_USERS } from '../data/mockData'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { supabase } from "../lib/supabase"
+import { useNavigate } from "react-router-dom"
 
 export default function Dashboard() {
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data } = await supabase.auth.getSession()
+
+            if (!data.session) {
+                navigate("/login")
+            }
+        }
+
+        checkUser()
+    }, [navigate])
+
+    const [user, setUser] = useState(null)
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data } = await supabase.auth.getUser()
+            setUser(data.user)
+        }
+
+        getUser()
+    }, [])
+
     const feedRef = useRef(null)
     const widgetRef = useRef(null)
 
     useEffect(() => {
-        // Simple GSAP staggered entrance
-        gsap.fromTo(feedRef.current.children,
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out", delay: 0.2 }
-        )
-        gsap.fromTo(widgetRef.current.children,
-            { x: 30, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out", delay: 0.4 }
-        )
+        if (feedRef.current) {
+            gsap.fromTo(feedRef.current.children,
+                { y: 30, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out", delay: 0.2 }
+            )
+        }
+
+        if (widgetRef.current) {
+            gsap.fromTo(widgetRef.current.children,
+                { x: 30, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out", delay: 0.4 }
+            )
+        }
     }, [])
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        navigate("/login")
+    }
 
     return (
         <section className="flex-1 flex flex-col xl:flex-row relative h-full">
@@ -31,7 +68,7 @@ export default function Dashboard() {
                 {/* Header */}
                 <header className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-white">Morning, {MOCK_USERS.currentUser.name.split(' ')[0]}</h1>
+                        <h1 className="text-2xl font-bold tracking-tight text-white">Morning, {user?.email?.split('@')[0] || "Founder"}</h1>
                         <p className="text-gray-500 text-sm mt-1">Here's what happened in the ecosystem overnight.</p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -45,10 +82,18 @@ export default function Dashboard() {
                     </div>
                 </header>
 
+                <button onClick={handleLogout}>
+                    Logout
+                </button>
+
                 {/* Post Composer */}
                 <div className="glass-panel rounded-2xl p-5 mb-8 focus-within:ring-1 focus-within:ring-rose-500/50 transition-all">
                     <div className="flex gap-4">
-                        <img src={MOCK_USERS.currentUser.avatar} alt="User" className="w-12 h-12 rounded-xl object-cover shadow-sm bg-white/10" />
+                        <img
+                            src={user?.user_metadata?.avatar_url || "/default-avatar.png"}
+                            alt="User"
+                            className="w-12 h-12 rounded-xl object-cover shadow-sm bg-white/10"
+                        />
                         <div className="flex-1">
                             <textarea
                                 className="w-full bg-transparent border-none focus:ring-0 text-lg placeholder-gray-600 resize-none h-20 text-white outline-none"

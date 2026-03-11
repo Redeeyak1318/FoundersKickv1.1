@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { blurFade } from '../utils/motion'
+import MagneticButton from "../components/ui/MagneticButton"
+import { supabase } from "../lib/supabase"
 
 /* Simple particle background for auth pages */
 function AuthParticles() {
@@ -53,9 +55,17 @@ export default function Login() {
     const [focused, setFocused] = useState(null)
     const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        navigate('/dashboard')
+    const loginWithGoogle = async () => {
+        console.log("clicked")
+
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: "http://localhost:3000/dashboard"
+            }
+        })
+
+        if (error) console.error(error)
     }
 
     return (
@@ -87,6 +97,7 @@ export default function Login() {
                 {/* Google Auth */}
                 <motion.button
                     className="google-btn"
+                    onClick={loginWithGoogle}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >
@@ -102,7 +113,7 @@ export default function Login() {
                 <div className="auth-divider">or</div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit}>
+                <form>
                     <motion.div
                         className="input-group"
                         animate={focused === 'email' ? { scale: 1.01 } : { scale: 1 }}
