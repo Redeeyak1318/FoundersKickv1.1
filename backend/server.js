@@ -13,6 +13,7 @@ import notificationsRoutes from './routes/notificationsRoutes.js';
 import launchpadRoutes from './routes/launchpadRoutes.js';
 import resourcesRoutes from './routes/resourcesRoutes.js';
 import insightsRoutes from './routes/insightsRoutes.js';
+import dashboardRoutes from './routes/dashboard.js';
 
 // ── Middleware imports ───────────────────────────
 import errorHandler from './middleware/errorHandler.js';
@@ -29,6 +30,7 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 
+app.use("/api/dashboard", dashboardRoutes)
 // ── Health check ─────────────────────────────────
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
