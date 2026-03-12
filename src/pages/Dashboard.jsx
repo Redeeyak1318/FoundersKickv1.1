@@ -53,11 +53,11 @@ export default function Dashboard() {
                 const { data: postsData } = await supabase
                     .from("posts")
                     .select(`
-          *,
-          profiles(full_name, avatar_url),
-          post_likes(count),
-          post_comments(count)
-        `)
+                *,
+                profiles:profiles!posts_user_id_fkey(full_name, avatar_url),
+                post_likes(count),
+                post_comments(count)
+                `)
                     .order("created_at", { ascending: false })
 
                 setPosts(postsData || [])
@@ -94,11 +94,11 @@ export default function Dashboard() {
                         const { data } = await supabase
                             .from("posts")
                             .select(`
-              *,
-              profiles(full_name, avatar_url),
-              post_likes(count),
-              post_comments(count)
-            `)
+                            *,
+                            profiles:profiles!posts_user_id_fkey(full_name, avatar_url),
+                            post_likes(count),
+                            post_comments(count)
+                            `)
                             .eq("id", payload.new.id)
                             .single()
 
@@ -158,11 +158,11 @@ export default function Dashboard() {
                 const { data: fullPost } = await supabase
                     .from("posts")
                     .select(`
-          *,
-          profiles(full_name, avatar_url),
-          post_likes(count),
-          post_comments(count)
-        `)
+                    *,
+                    profiles:profiles!posts_user_id_fkey(full_name, avatar_url),
+                    post_likes(count),
+                    post_comments(count)
+                    `)
                     .eq("id", data.id)
                     .single()
 
