@@ -26,6 +26,17 @@ export default function Notifications() {
         }
 
         loadNotifications()
+
+        const channel = supabase
+            .channel('notifications-realtime')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, async () => {
+                // To keep it simple and get fully populated notification objects, just re-fetch
+                const data = await getNotifications()
+                setNotifications(data || [])
+            })
+            .subscribe()
+
+        return () => supabase.removeChannel(channel)
     }, [navigate])
 
     const handleMarkAllRead = async () => {

@@ -53,19 +53,45 @@ export default function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [focused, setFocused] = useState(null)
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     const loginWithGoogle = async () => {
-        console.log("clicked")
-
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: "https://founders-kickv1-1.vercel.app/dashboard"
+                redirectTo: window.location.origin + "/dashboard"
             }
         })
 
-        if (error) console.error(error)
+        if (error) {
+            setError(error.message)
+        }
+    }
+
+    const handleEmailLogin = async (e) => {
+        e.preventDefault()
+        if (!email.trim() || !password.trim()) return
+        setError('')
+        setLoading(true)
+
+        try {
+            const { error: authError } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            })
+
+            if (authError) {
+                setError(authError.message)
+            } else {
+                navigate('/dashboard')
+            }
+        } catch (err) {
+            setError(err?.message || 'Login failed')
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -113,7 +139,13 @@ export default function Login() {
                 <div className="auth-divider">or</div>
 
                 {/* Form */}
-                <form>
+                {error && (
+                    <div style={{ padding: '0.75rem 1rem', borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleEmailLogin}>
                     <motion.div
                         className="input-group"
                         animate={focused === 'email' ? { scale: 1.01 } : { scale: 1 }}
@@ -165,9 +197,10 @@ export default function Login() {
                     <MagneticButton
                         variant="primary"
                         type="submit"
-                        style={{ width: '100%', justifyContent: 'center' }}
+                        disabled={loading}
+                        style={{ width: '100%', justifyContent: 'center', opacity: loading ? 0.6 : 1 }}
                     >
-                        Log In
+                        {loading ? 'Signing in...' : 'Log In'}
                     </MagneticButton>
                 </form>
 

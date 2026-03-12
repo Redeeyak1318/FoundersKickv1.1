@@ -47,6 +47,43 @@ export default function Messages() {
 
         loadData()
     }, [navigate])
+    useEffect(() => {
+        if (!currentUserId) return
+
+        const channel = supabase
+            .channel('messages-realtime')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+                const newMsg = payload.new
+
+                // if it's relevant to me
+                if (newMsg.sender_id === currentUserId || newMsg.receiver_id === currentUserId) {
+                    
+                    // Update active conversation feed
+                    if (activeConv && (newMsg.sender_id === activeConv.user?.id || newMsg.receiver_id === activeConv.user?.id)) {
+                        try {
+                            const { data: profile } = await supabase.from('profiles').select('id, full_name, avatar_url').eq('id', newMsg.sender_id).single()
+                            const formattedMsg = {
+                                id: newMsg.id,
+                                text: newMsg.content,
+                                time: new Date(newMsg.created_at).toLocaleTimeString(),
+                                sender: profile ? { id: profile.id, name: profile.full_name, avatar: profile.avatar_url } : { id: newMsg.sender_id, name: 'Unknown', avatar: '/default-avatar.png' }
+                            }
+                            setMessages(prev => {
+                                if (prev.some(m => m.id === formattedMsg.id)) return prev
+                                return [...prev, formattedMsg]
+                            })
+                        } catch(e) {}
+                    }
+
+                    // Also refresh conversation list to re-order and update last active
+                    const data = await getConversations()
+                    setConversations(data || [])
+                }
+            })
+            .subscribe()
+
+        return () => supabase.removeChannel(channel)
+    }, [currentUserId, activeConv])
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
