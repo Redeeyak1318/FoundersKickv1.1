@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { blurFade } from '../utils/motion'
 import MagneticButton from "../components/ui/MagneticButton"
+import { supabase } from "../lib/supabase"
 
 function AuthParticles() {
     return (
@@ -52,10 +53,51 @@ export default function Signup() {
     const [success, setSuccess] = useState(false)
     const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const loginWithGoogle = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: window.location.origin + "/dashboard"
+            }
+        })
+
+        if (error) {
+            setError(error.message)
+        }
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        setSuccess(true)
-        setTimeout(() => navigate('/dashboard'), 1200)
+        if (!name.trim() || !email.trim() || !password.trim()) return
+        setError('')
+        setLoading(true)
+
+        try {
+            const { data, error: authError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: name,
+                    }
+                }
+            })
+
+            if (authError) {
+                setError(authError.message)
+                setSuccess(false)
+            } else {
+                setSuccess(true)
+                setTimeout(() => navigate('/dashboard'), 1500)
+            }
+        } catch (err) {
+            setError(err?.message || 'Signup failed')
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -85,6 +127,7 @@ export default function Signup() {
 
                 <motion.button
                     className="google-btn"
+                    onClick={loginWithGoogle}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >
@@ -127,69 +170,77 @@ export default function Signup() {
                     </motion.div>
 
                 ) : (
-                    <form onSubmit={handleSubmit}>
-                        <motion.div
-                            className="input-group"
-                            animate={focused === 'name' ? { scale: 1.01 } : { scale: 1 }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        >
-                            <label htmlFor="signup-name">Full Name</label>
-                            <input
-                                id="signup-name"
-                                className="input-field"
-                                type="text"
-                                placeholder="Jane Doe"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                onFocus={() => setFocused('name')}
-                                onBlur={() => setFocused(null)}
-                            />
-                        </motion.div>
+                    <>
+                        {error && (
+                            <div style={{ padding: '0.75rem 1rem', borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                                {error}
+                            </div>
+                        )}
+                        <form onSubmit={handleSubmit}>
+                            <motion.div
+                                className="input-group"
+                                animate={focused === 'name' ? { scale: 1.01 } : { scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                            >
+                                <label htmlFor="signup-name">Full Name</label>
+                                <input
+                                    id="signup-name"
+                                    className="input-field"
+                                    type="text"
+                                    placeholder="Jane Doe"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    onFocus={() => setFocused('name')}
+                                    onBlur={() => setFocused(null)}
+                                />
+                            </motion.div>
 
-                        <motion.div
-                            className="input-group"
-                            animate={focused === 'email' ? { scale: 1.01 } : { scale: 1 }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        >
-                            <label htmlFor="signup-email">Email</label>
-                            <input
-                                id="signup-email"
-                                className="input-field"
-                                type="email"
-                                placeholder="founder@example.com"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                onFocus={() => setFocused('email')}
-                                onBlur={() => setFocused(null)}
-                            />
-                        </motion.div>
+                            <motion.div
+                                className="input-group"
+                                animate={focused === 'email' ? { scale: 1.01 } : { scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                            >
+                                <label htmlFor="signup-email">Email</label>
+                                <input
+                                    id="signup-email"
+                                    className="input-field"
+                                    type="email"
+                                    placeholder="founder@example.com"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    onFocus={() => setFocused('email')}
+                                    onBlur={() => setFocused(null)}
+                                />
+                            </motion.div>
 
-                        <motion.div
-                            className="input-group"
-                            animate={focused === 'password' ? { scale: 1.01 } : { scale: 1 }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        >
-                            <label htmlFor="signup-password">Password</label>
-                            <input
-                                id="signup-password"
-                                className="input-field"
-                                type="password"
-                                placeholder="Min. 8 characters"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                onFocus={() => setFocused('password')}
-                                onBlur={() => setFocused(null)}
-                            />
-                        </motion.div>
+                            <motion.div
+                                className="input-group"
+                                animate={focused === 'password' ? { scale: 1.01 } : { scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                            >
+                                <label htmlFor="signup-password">Password</label>
+                                <input
+                                    id="signup-password"
+                                    className="input-field"
+                                    type="password"
+                                    placeholder="Min. 8 characters"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    onFocus={() => setFocused('password')}
+                                    onBlur={() => setFocused(null)}
+                                />
+                            </motion.div>
 
-                        <MagneticButton
-                            variant="primary"
-                            type="submit"
-                            style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
-                        >
-                            Create Account
-                        </MagneticButton>
-                    </form>
+                            <MagneticButton
+                                variant="primary"
+                                type="submit"
+                                disabled={loading}
+                                style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem', opacity: loading ? 0.6 : 1 }}
+                            >
+                                {loading ? 'Creating...' : 'Create Account'}
+                            </MagneticButton>
+                        </form>
+                    </>
                 )}
 
                 <div className="auth-footer">
