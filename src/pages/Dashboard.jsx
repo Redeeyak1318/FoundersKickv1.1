@@ -50,7 +50,7 @@ export default function Dashboard() {
                 if (!session) return
 
                 const res = await fetch(
-                    "https://founderskickv11-production.up.railway.app/dashboard",
+                    "https://founderskickv11-production.up.railway.app/api/dashboard",
                     {
                         headers: {
                             Authorization: `Bearer ${session.access_token}`
