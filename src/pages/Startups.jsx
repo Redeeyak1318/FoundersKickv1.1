@@ -22,7 +22,7 @@ export default function Startups() {
                 if (!session) { navigate('/login'); return }
 
                 const data = await getStartups()
-                setStartups(data.startups || data || [])
+                setStartups(data || [])
             } catch (err) {
                 console.error('startups error:', err)
             } finally {
@@ -32,6 +32,24 @@ export default function Startups() {
 
         loadStartups()
     }, [navigate])
+
+    useEffect(() => {
+        const channel = supabase
+            .channel("startups-realtime")
+            .on(
+                "postgres_changes",
+                { event: "INSERT", schema: "public", table: "startups" },
+                (payload) => {
+                    setStartups(prev => {
+                        const exists = prev.some(s => s.id === payload.new.id)
+                        return exists ? prev : [payload.new, ...prev]
+                    })
+                }
+            )
+            .subscribe()
+
+        return () => supabase.removeChannel(channel)
+    }, [])
 
     const handleCreate = async () => {
         if (!newStartup.name.trim() || creating) return
@@ -76,7 +94,10 @@ export default function Startups() {
                     animate={{ opacity: 1, y: 0 }}
                     className="glass-panel p-6 rounded-3xl mb-8 relative"
                 >
-                    <button onClick={() => setShowCreate(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white">
+                    <button onClick={() => {
+                        setShowCreate(false)
+                        setNewStartup({ name: '', tagline: '', stage: 'Seed', tags: '' })
+                    }} className="absolute top-4 right-4 text-gray-500 hover:text-white">
                         <X className="w-5 h-5" />
                     </button>
                     <h3 className="text-lg font-bold text-white mb-4">Submit Your Startup</h3>
@@ -144,7 +165,7 @@ export default function Startups() {
                             key={startup.id}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
+                            transition={{ delay: Math.min(idx * 0.05, 0.4) }}
                             className="glass-panel p-6 rounded-3xl relative overflow-hidden group"
                         >
                             {/* Glow Effect */}
@@ -158,7 +179,7 @@ export default function Startups() {
                                         <p className="text-sm text-gray-400 mt-0.5">{startup.tagline}</p>
                                     </div>
                                 </div>
-                                <button className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${startup.bookmark ? 'text-rose-500 bg-rose-500/10' : 'text-gray-500 hover:bg-white/5'}`}>
+                                <button className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-white/5">
                                     <Bookmark className="w-4 h-4" />
                                 </button>
                             </div>
@@ -167,21 +188,11 @@ export default function Startups() {
                                 {startup.stage && (
                                     <span className="px-3 py-1 bg-white/5 rounded-lg text-xs font-semibold tracking-wide text-gray-300 border border-white/5">{startup.stage}</span>
                                 )}
-                                {(startup.tags || []).map(tag => (
+                                {(Array.isArray(startup.tags) ? startup.tags : []).map(tag => (
                                     <span key={tag} className="px-3 py-1 bg-[#111418] rounded-lg text-xs font-medium text-gray-500 border border-white/5">{tag}</span>
                                 ))}
                             </div>
 
-                            {startup.metrics && startup.metrics.length > 0 && (
-                                <div className="grid grid-cols-3 gap-3 mb-6">
-                                    {startup.metrics.map(m => (
-                                        <div key={m.label} className="bg-[#111418] rounded-xl p-3 border border-white/5 text-center">
-                                            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mb-1">{m.label}</p>
-                                            <p className="text-base font-bold text-white">{m.value}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
 
                             <button className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-semibold text-sm transition-colors border border-white/5 flex items-center justify-center gap-2">
                                 View Deep Dive <ChevronRight className="w-4 h-4" />
