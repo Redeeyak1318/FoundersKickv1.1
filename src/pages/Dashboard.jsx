@@ -56,7 +56,20 @@ export default function Dashboard() {
                 // ✅ POSTS WITH AUTHOR + COUNTS
                 const { data: postsData } = await supabase
                     .from("posts")
-                    .select(`id, content, image, created_at, user_id, profiles:profiles!posts_user_id_fkey(id,full_name,avatar_url), post_likes(count), post_comments(count)`)
+                    .select(`
+  id,
+  content,
+  image,
+  created_at,
+  user_id,
+  profiles!posts_user_id_fkey (
+    id,
+    name,
+    avatar_url
+  ),
+  post_likes(count),
+  post_comments(count)
+`)
                     .order("created_at", { ascending: false })
 
                 setPosts(postsData || [])
@@ -87,7 +100,20 @@ export default function Dashboard() {
                 if (payload.eventType === "INSERT") {
                     const { data } = await supabase
                         .from("posts")
-                        .select(`id, content, image, created_at, user_id, profiles:profiles!posts_user_id_fkey(id,full_name,avatar_url), post_likes(count), post_comments(count)`)
+                        .select(`
+  id,
+  content,
+  image,
+  created_at,
+  user_id,
+  profiles!posts_user_id_fkey (
+    id,
+    name,
+    avatar_url
+  ),
+  post_likes(count),
+  post_comments(count)
+`)
                         .eq("id", payload.new.id)
                         .maybeSingle()
 
@@ -111,7 +137,7 @@ export default function Dashboard() {
                 // Fetch the fully built comment
                 const { data: fullComment } = await supabase
                     .from("post_comments")
-                    .select(`id, content, created_at, profiles:profiles!post_comments_user_id_fkey(full_name,avatar_url)`)
+                    .select(`id, content, created_at, profiles!post_comments_user_id_fkey(name,avatar_url)`)
                     .eq("id", payload.new.id)
                     .maybeSingle()
 
@@ -159,7 +185,20 @@ export default function Dashboard() {
             const { data, error } = await supabase
                 .from("posts")
                 .insert([{ content: postContent, user_id: user.id }])
-                .select(`id, content, image, created_at, user_id, profiles:profiles!posts_user_id_fkey(id,full_name,avatar_url), post_likes(count), post_comments(count)`)
+                .select(`
+  id,
+  content,
+  image,
+  created_at,
+  user_id,
+  profiles!posts_user_id_fkey (
+    id,
+    name,
+    avatar_url
+  ),
+  post_likes(count),
+  post_comments(count)
+`)
                 .maybeSingle()
 
             if (error) throw error
@@ -237,7 +276,7 @@ export default function Dashboard() {
             try {
                 const { data } = await supabase
                     .from("post_comments")
-                    .select(`id, content, created_at, profiles:profiles!post_comments_user_id_fkey(full_name,avatar_url)`)
+                    .select(`id, content, created_at, profiles!post_comments_user_id_fkey(name,avatar_url)`)
                     .eq("post_id", postId)
                     .order("created_at", { ascending: true })
 
@@ -258,7 +297,7 @@ export default function Dashboard() {
             const { data, error } = await supabase
                 .from("post_comments")
                 .insert([{ post_id: postId, user_id: user.id, content: commentText }])
-                .select(`id, content, created_at, profiles:profiles!post_comments_user_id_fkey(full_name,avatar_url)`)
+                .select(`id, content, created_at, profiles!post_comments_user_id_fkey(name,avatar_url)`)
                 .maybeSingle()
 
             if (error) throw error
@@ -374,7 +413,7 @@ export default function Dashboard() {
 
                                     <div>
                                         <h3 className="font-bold text-white">
-                                            {post?.profiles?.full_name || "Founder"}
+                                            {post?.profiles?.name || "Founder"}
                                         </h3>
 
                                         <p className="text-xs text-gray-500 font-medium">
