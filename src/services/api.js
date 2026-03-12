@@ -17,7 +17,7 @@ export async function getPosts() {
             image,
             created_at,
             user_id,
-            profiles:profiles!posts_user_id_fkey(id, full_name, avatar_url),
+            profiles:profiles!posts_user_id_fkey(id, name, avatar_url),
             post_likes(count),
             post_comments(count)
         `)
@@ -38,7 +38,7 @@ export async function createPost({ content, image }) {
             image,
             created_at,
             user_id,
-            profiles:profiles!posts_user_id_fkey(id, full_name, avatar_url),
+            profiles:profiles!posts_user_id_fkey(id, name, avatar_url),
             post_likes(count),
             post_comments(count)
         `)
@@ -111,7 +111,7 @@ export async function getComments(postId) {
             content,
             created_at,
             user_id,
-            profiles:profiles!post_comments_user_id_fkey(full_name, avatar_url)
+            profiles:profiles!post_comments_user_id_fkey(name, avatar_url)
         `)
         .eq("post_id", postId)
         .order("created_at", { ascending: true })
@@ -131,7 +131,7 @@ export async function createComment(postId, content) {
             content,
             created_at,
             user_id,
-            profiles:profiles!post_comments_user_id_fkey(full_name, avatar_url)
+            profiles:profiles!post_comments_user_id_fkey(name, avatar_url)
         `)
         .single()
 
@@ -164,7 +164,7 @@ export async function getMyProfile() {
 
     const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url, bio, location, role, company")
+        .select("id, name, avatar_url, bio, location, role, company")
         .eq("id", userId)
         .maybeSingle()
 
@@ -177,8 +177,7 @@ export async function updateProfile(updates) {
 
     // Map frontend field names to DB columns
     const dbUpdates = {}
-    if (updates.name !== undefined) dbUpdates.full_name = updates.name
-    if (updates.full_name !== undefined) dbUpdates.full_name = updates.full_name
+    if (updates.name !== undefined) dbUpdates.name = updates.name
     if (updates.avatar_url !== undefined) dbUpdates.avatar_url = updates.avatar_url
     if (updates.bio !== undefined) dbUpdates.bio = updates.bio
     if (updates.location !== undefined) dbUpdates.location = updates.location
@@ -189,7 +188,7 @@ export async function updateProfile(updates) {
         .from("profiles")
         .update(dbUpdates)
         .eq("id", userId)
-        .select("id, full_name, avatar_url, bio, location, role, company")
+        .select("id, name, avatar_url, bio, location, role, company")
         .maybeSingle()
 
     if (error) throw error
@@ -203,7 +202,7 @@ export async function getNetworkSuggestions() {
     // Get all profiles except current user
     const { data: profiles, error } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url, bio, location, role, company")
+        .select("id, name, avatar_url, bio, location, role, company")
         .neq("id", userId)
         .limit(50)
 
@@ -219,7 +218,6 @@ export async function getNetworkSuggestions() {
 
     return (profiles || []).map(p => ({
         ...p,
-        name: p.full_name,
         avatar: p.avatar_url,
         is_following: followingSet.has(p.id)
     }))
@@ -289,12 +287,12 @@ export async function getConversations() {
     const partnerIds = Object.keys(convMap)
     const { data: partners } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url")
+        .select("id, name, avatar_url")
         .in("id", partnerIds)
 
     const partnerMap = {}
     for (const p of (partners || [])) {
-        partnerMap[p.id] = { id: p.id, name: p.full_name, avatar: p.avatar_url }
+        partnerMap[p.id] = { id: p.id, name: p.name, avatar: p.avatar_url }
     }
 
     return Object.values(convMap).map(c => ({
@@ -318,12 +316,12 @@ export async function getConversation(partnerId) {
     const userIds = [...new Set((data || []).map(m => m.sender_id))]
     const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url")
+        .select("id, name, avatar_url")
         .in("id", userIds)
 
     const profileMap = {}
     for (const p of (profiles || [])) {
-        profileMap[p.id] = { id: p.id, name: p.full_name, avatar: p.avatar_url }
+        profileMap[p.id] = { id: p.id, name: p.name, avatar: p.avatar_url }
     }
 
     return (data || []).map(m => ({
@@ -368,12 +366,12 @@ export async function getNotifications() {
     const actorIds = [...new Set(data.map(n => n.actor_id).filter(Boolean))]
     const { data: actorProfiles } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url")
+        .select("id, name, avatar_url")
         .in("id", actorIds.length > 0 ? actorIds : ['__none__'])
 
     const actorMap = {}
     for (const p of (actorProfiles || [])) {
-        actorMap[p.id] = { id: p.id, name: p.full_name, avatar: p.avatar_url }
+        actorMap[p.id] = { id: p.id, name: p.name, avatar: p.avatar_url }
     }
 
     const typeToIcon = { like: 'heart', follow: 'user-plus', comment: 'message-square' }
