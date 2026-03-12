@@ -424,16 +424,18 @@ export async function getStartups() {
 export async function createStartup(startup) {
     const userId = await getCurrentUserId()
 
+    const payload = {
+        name: startup.name,
+        tagline: startup.tagline ?? null,
+        stage: startup.stage ?? "Seed",
+        tags: startup.tags ?? [],
+        user_id: userId
+    }
+
     const { data, error } = await supabase
         .from("startups")
-        .insert({
-            name: startup.name,
-            tagline: startup.tagline || null,
-            stage: startup.stage || 'Seed',
-            tags: startup.tags || [],
-            user_id: userId
-        }, { defaultToNull: false })
-        .select("id, name, tagline, stage, tags, logo, user_id, created_at")
+        .insert(payload)
+        .select()
         .single()
 
     if (error) throw error
