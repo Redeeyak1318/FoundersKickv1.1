@@ -236,7 +236,7 @@ export async function followUser(targetId) {
     try {
         await supabase.from("notifications").insert([{
             user_id: targetId,
-            type: "follow",
+            type: "follow" || "general",
             actor_id: userId
         }])
     } catch (_) { /* non-critical */ }
