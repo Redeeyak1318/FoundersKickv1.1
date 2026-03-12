@@ -96,7 +96,6 @@ export default function NetworkPage() {
 
         return (
             user.name?.toLowerCase().includes(q) ||
-            user.full_name?.toLowerCase().includes(q) ||
             user.role?.toLowerCase().includes(q) ||
             user.company?.toLowerCase().includes(q) ||
             user.industry?.toLowerCase().includes(q) ||
