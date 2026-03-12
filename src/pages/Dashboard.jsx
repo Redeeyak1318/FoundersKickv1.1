@@ -102,8 +102,10 @@ export default function Dashboard() {
                             .eq("id", payload.new.id)
                             .single()
 
+                        if (!data) return
+
                         setPosts(prev => {
-                            const exists = prev.some(p => p.id === data.id)
+                            const exists = prev.some(p => p?.id === data.id)
                             if (exists) return prev
                             return [data, ...prev]
                         })
@@ -164,6 +166,7 @@ export default function Dashboard() {
                     .eq("id", data.id)
                     .single()
 
+                if (!fullPost) return
                 setPosts(prev => [fullPost, ...prev])
                 setPostContent('')
             }
@@ -282,22 +285,22 @@ export default function Dashboard() {
                             <h3 className="text-lg font-bold text-gray-300 mb-2">No posts yet</h3>
                             <p className="text-sm text-gray-500">Be the first to share an update with the ecosystem.</p>
                         </div>
-                    ) : posts.map(post => (
+                    ) : posts.filter(Boolean).map(post => (
                         <article key={post.id} className="glass-panel rounded-2xl p-6">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex gap-3">
                                     <img
-                                        src={post.profiles?.avatar_url || "/default-avatar.png"}
+                                        src={post?.profiles?.avatar_url || "/default-avatar.png"}
                                         className="w-11 h-11 rounded-xl object-cover bg-white/10"
                                     />
 
                                     <div>
                                         <h3 className="font-bold text-white">
-                                            {post.profiles?.full_name || "Founder"}
+                                            {post?.profiles?.full_name || "Founder"}
                                         </h3>
 
                                         <p className="text-xs text-gray-500 font-medium">
-                                            {new Date(post.created_at).toLocaleString()}
+                                            {new Date(post?.created_at).toLocaleString()}
                                         </p>
                                     </div>
                                 </div>
@@ -313,11 +316,11 @@ export default function Dashboard() {
                             </div>
 
                             <p className="text-[15px] leading-relaxed mb-4 text-gray-300 whitespace-pre-wrap">
-                                {post.content}
+                                {post?.content}
                             </p>
 
-                            {post.image && (
-                                <img src={post.image} className="w-full h-[250px] object-cover rounded-xl mt-4 mb-4 border border-white/5" />
+                            {post?.image && (
+                                <img src={post?.image} className="w-full h-[250px] object-cover rounded-xl mt-4 mb-4 border border-white/5" />
                             )}
 
 
@@ -328,14 +331,14 @@ export default function Dashboard() {
                                 >
                                     <Heart className="w-[18px] h-[18px]" />
                                     <span className="text-sm font-medium">
-                                        {post.post_likes?.[0]?.count || 0}
+                                        {post?.post_likes?.[0]?.count || 0}
                                     </span>
                                 </button>
 
                                 <button className="flex items-center gap-2 opacity-70 cursor-default">
                                     <MessageSquare className="w-[18px] h-[18px]" />
                                     <span className="text-sm font-medium">
-                                        {post.post_comments?.[0]?.count || 0}
+                                        {post?.post_comments?.[0]?.count || 0}
                                     </span>
                                 </button>
                             </div>
@@ -357,10 +360,10 @@ export default function Dashboard() {
                             {connections.map(conn => (
                                 <div key={conn.id} className="flex items-center gap-3">
                                     <img
-                                        src={conn.avatar_url || "/default-avatar.png"}
+                                        src={conn?.avatar_url || "/default-avatar.png"}
                                         className="w-9 h-9 rounded-lg"
                                     />
-                                    <p className="text-sm text-gray-200">{conn.full_name}</p>
+                                    <p className="text-sm text-gray-200">{conn?.full_name}</p>
                                 </div>
                             ))}
                         </div>
