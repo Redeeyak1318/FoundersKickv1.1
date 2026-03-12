@@ -16,6 +16,21 @@ export const getNotifications = async (userId) => {
 };
 
 /**
+ * Mark a single notification as read.
+ */
+export const markOneRead = async (userId, notificationId) => {
+  const { data, error } = await supabaseAdmin
+    .from(TABLE)
+    .update({ is_read: true })
+    .eq('id', notificationId)
+    .eq('user_id', userId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+/**
  * Mark all unread notifications as read for a user.
  */
 export const markAllRead = async (userId) => {

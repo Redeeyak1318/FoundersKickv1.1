@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authMiddleware);
 
+router.get('/', ctrl.listConversations);
 router.post('/', ctrl.send);
 router.get('/:userId', ctrl.getThread);
 

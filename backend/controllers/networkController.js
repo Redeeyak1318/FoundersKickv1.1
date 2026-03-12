@@ -2,7 +2,27 @@ import * as networkService from '../services/networkService.js';
 import { apiResponse } from '../utils/apiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
-/** POST /api/network/connect */
+/** GET /api/network/suggestions */
+export const suggestions = asyncHandler(async (req, res) => {
+  const data = await networkService.getSuggestions(req.user.id);
+  apiResponse(res, { data: { suggestions: data } });
+});
+
+/** POST /api/network/follow/:id */
+export const follow = asyncHandler(async (req, res) => {
+  const receiverId = req.params.id;
+  const result = await networkService.followUser(req.user.id, receiverId);
+  apiResponse(res, { data: result, message: 'Followed', statusCode: 201 });
+});
+
+/** POST /api/network/unfollow/:id */
+export const unfollow = asyncHandler(async (req, res) => {
+  const receiverId = req.params.id;
+  const result = await networkService.unfollowUser(req.user.id, receiverId);
+  apiResponse(res, { data: result, message: 'Unfollowed' });
+});
+
+/** POST /api/network/connect (legacy) */
 export const connect = asyncHandler(async (req, res) => {
   const { receiver_id } = req.body;
   if (!receiver_id) {

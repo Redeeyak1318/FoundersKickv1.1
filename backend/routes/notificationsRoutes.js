@@ -7,6 +7,8 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/', ctrl.list);
+router.post('/read-all', ctrl.markAllRead);
+router.post('/:id/read', ctrl.markOneRead);
 router.put('/read', ctrl.markRead);
 
 export default router;

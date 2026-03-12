@@ -3,36 +3,101 @@ import { supabaseAdmin } from '../config/supabaseClient.js';
 const TABLE = 'connections';
 
 /**
- * Send a connection request.
+ * Get network suggestions — profiles not already connected/following.
  */
-export const sendConnectionRequest = async (senderId, receiverId) => {
+export const getSuggestions = async (userId) => {
+  // Get IDs of users already connected
+  const { data: existing } = await supabaseAdmin
+    .from(TABLE)
+    .select('sender_id, receiver_id')
+    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+
+  const connectedIds = new Set();
+  (existing || []).forEach((c) => {
+    connectedIds.add(c.sender_id);
+    connectedIds.add(c.receiver_id);
+  });
+  connectedIds.add(userId); // exclude self
+
+  // Get profiles not in connectedIds
+  let query = supabaseAdmin
+    .from('profiles')
+    .select('id, name, avatar_url, bio, location')
+    .limit(20);
+
+  // Filter out connected users
+  const excludeIds = [...connectedIds];
+  if (excludeIds.length > 0) {
+    for (const id of excludeIds) {
+      query = query.neq('id', id);
+    }
+  }
+
+  const { data: profiles, error } = await query;
+  if (error) throw error;
+
+  return (profiles || []).map((p) => ({
+    id: p.id,
+    name: p.name || 'Unnamed',
+    avatar_url: p.avatar_url || '',
+    bio: p.bio || '',
+    location: p.location || '',
+    role: 'Founder',
+    company: '',
+    is_following: false,
+    mutual_count: 0,
+  }));
+};
+
+/**
+ * Follow a user (create connection).
+ */
+export const followUser = async (senderId, receiverId) => {
   if (senderId === receiverId) {
-    const err = new Error('Cannot connect with yourself');
+    const err = new Error('Cannot follow yourself');
     err.statusCode = 400;
     throw err;
   }
 
-  // Check for existing connection in either direction
+  // Check if already exists
   const { data: existing } = await supabaseAdmin
     .from(TABLE)
-    .select('id, status')
-    .or(
-      `and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`,
-    );
+    .select('id')
+    .eq('sender_id', senderId)
+    .eq('receiver_id', receiverId)
+    .maybeSingle();
 
-  if (existing && existing.length > 0) {
-    const err = new Error('Connection already exists');
-    err.statusCode = 409;
-    throw err;
+  if (existing) {
+    return { message: 'Already following' };
   }
 
   const { data, error } = await supabaseAdmin
     .from(TABLE)
-    .insert({ sender_id: senderId, receiver_id: receiverId, status: 'pending' })
+    .insert({ sender_id: senderId, receiver_id: receiverId, status: 'accepted' })
     .select()
     .single();
   if (error) throw error;
   return data;
+};
+
+/**
+ * Unfollow a user (remove connection).
+ */
+export const unfollowUser = async (senderId, receiverId) => {
+  const { error } = await supabaseAdmin
+    .from(TABLE)
+    .delete()
+    .eq('sender_id', senderId)
+    .eq('receiver_id', receiverId);
+  if (error) throw error;
+  return { message: 'Unfollowed' };
+};
+
+/**
+ * Send a connection request (legacy — kept for compatibility).
+ */
+export const sendConnectionRequest = async (senderId, receiverId) => {
+  return followUser(senderId, receiverId);
 };
 
 /**
@@ -52,7 +117,6 @@ export const getConnections = async (userId) => {
  * Accept a pending connection request.
  */
 export const acceptConnection = async (connectionId, userId) => {
-  // Only the receiver can accept
   const { data: conn, error: fetchErr } = await supabaseAdmin
     .from(TABLE)
     .select('*')
