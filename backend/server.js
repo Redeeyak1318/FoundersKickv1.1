@@ -14,6 +14,7 @@ import launchpadRoutes from './routes/launchpadRoutes.js';
 import resourcesRoutes from './routes/resourcesRoutes.js';
 import insightsRoutes from './routes/insightsRoutes.js';
 import dashboardRoutes from './routes/dashboard.js';
+import postsRoutes from './routes/postsRoutes.js';
 
 // ── Middleware imports ───────────────────────────
 import errorHandler from './middleware/errorHandler.js';
@@ -38,6 +39,7 @@ app.get('/api/health', (_req, res) => {
 
 // ── API routes ───────────────────────────────────
 app.use('/api/auth', authRoutes);
+app.use('/api/posts', postsRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/startups', startupsRoutes);
 app.use('/api/network', networkRoutes);

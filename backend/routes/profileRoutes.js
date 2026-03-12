@@ -6,7 +6,9 @@ const router = Router();
 
 router.use(authMiddleware);
 
+// Frontend calls GET /api/profile/me — serve the same as GET /api/profile
 router.get('/', ctrl.getProfile);
+router.get('/me', ctrl.getProfile);
 router.put('/', ctrl.updateProfile);
 
 export default router;

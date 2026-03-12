@@ -7,6 +7,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import Lenis from '@studio-freight/lenis'
+import { supabase } from '../../lib/supabase'
 
 const navTabs = [
     { path: '/dashboard', label: 'Feed', icon: LayoutGrid },
@@ -25,6 +26,22 @@ export default function AppLayout() {
     const location = useLocation()
     const navigate = useNavigate()
     const containerRef = useRef(null)
+    const [user, setUser] = useState(null)
+
+    // Load current user
+    useEffect(() => {
+        const loadUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            setUser(user)
+        }
+        loadUser()
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user || null)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [])
 
     // Smooth Scrolling using Lenis
     useEffect(() => {
@@ -51,6 +68,10 @@ export default function AppLayout() {
             lenis.destroy()
         }
     }, [])
+
+    const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Founder'
+    const displayRole = user?.user_metadata?.role || 'Founder'
+    const displayAvatar = user?.user_metadata?.avatar_url || '/default-avatar.png'
 
     return (
         <div ref={containerRef} className="min-h-screen flex flex-col md:flex-row bg-[#0E1116] text-[#E2E8F0] selection:bg-rose-500/30 font-sans">
@@ -85,10 +106,10 @@ export default function AppLayout() {
                     <div className="glass-panel rounded-2xl p-4 cursor-pointer hover:border-white/10 transition-colors" onClick={() => navigate('/profile')}>
                         <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider mb-2">Logged In As</p>
                         <div className="flex items-center gap-3 mb-3">
-                            <img src="https://i.pravatar.cc/150?img=47" alt="Sarah J." className="w-9 h-9 rounded-xl object-cover" />
+                            <img src={displayAvatar} alt={displayName} className="w-9 h-9 rounded-xl object-cover" />
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">Sarah Jin</p>
-                                <p className="text-xs text-gray-400 truncate">Founder & CEO</p>
+                                <p className="text-sm font-semibold text-white truncate">{displayName}</p>
+                                <p className="text-xs text-gray-400 truncate">{displayRole}</p>
                             </div>
                         </div>
                     </div>

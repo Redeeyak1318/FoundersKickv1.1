@@ -1,6 +1,69 @@
-import { Shield, BellRing, Eye, CreditCard, Monitor, LogOut } from 'lucide-react'
+import { Shield, BellRing, Eye, CreditCard, Monitor, LogOut, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
+import { getMyProfile, updateProfile } from '../services/api'
+import { useNavigate } from 'react-router-dom'
 
 export default function Settings() {
+    const navigate = useNavigate()
+    const [profile, setProfile] = useState(null)
+    const [displayName, setDisplayName] = useState('')
+    const [email, setEmail] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession()
+                if (!session) { navigate('/login'); return }
+
+                const { data: { user } } = await supabase.auth.getUser()
+                setEmail(user?.email || '')
+
+                try {
+                    const data = await getMyProfile()
+                    const p = data.profile || data
+                    setProfile(p)
+                    setDisplayName(p?.name || p?.full_name || user?.user_metadata?.full_name || '')
+                } catch (e) {
+                    setDisplayName(user?.user_metadata?.full_name || user?.email?.split('@')[0] || '')
+                }
+            } catch (err) {
+                console.error('settings error:', err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        load()
+    }, [navigate])
+
+    const handleUpdate = async () => {
+        setSaving(true)
+        try {
+            await updateProfile({ name: displayName })
+            setProfile(prev => ({ ...prev, name: displayName }))
+        } catch (err) {
+            console.error('update error:', err)
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    const handleSignOut = async () => {
+        await supabase.auth.signOut()
+        navigate('/login')
+    }
+
+    if (loading) {
+        return (
+            <section className="flex-1 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-rose-500 animate-spin" />
+            </section>
+        )
+    }
+
     return (
         <section className="flex-1 max-w-5xl mx-auto px-4 md:px-8 py-10 w-full relative">
             <header className="mb-10">
@@ -28,7 +91,7 @@ export default function Settings() {
                             <CreditCard className="w-4 h-4" /> Subscription
                         </button>
                         <div className="my-2 border-t border-white/5" />
-                        <button className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-colors">
+                        <button onClick={handleSignOut} className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-colors">
                             <LogOut className="w-4 h-4" /> Sign out
                         </button>
                     </nav>
@@ -70,15 +133,29 @@ export default function Settings() {
                         <div className="space-y-4 max-w-lg">
                             <div>
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Display Name</label>
-                                <input type="text" value="Sarah Jin" readOnly className="neumorphic-input w-full px-4 py-3 rounded-xl text-white outline-none focus:ring-1 focus:ring-rose-500 text-sm" />
+                                <input
+                                    type="text"
+                                    value={displayName}
+                                    onChange={(e) => setDisplayName(e.target.value)}
+                                    className="neumorphic-input w-full px-4 py-3 rounded-xl text-white outline-none focus:ring-1 focus:ring-rose-500 text-sm"
+                                />
                             </div>
                             <div>
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Email Address</label>
-                                <input type="email" value="sarah@novastack.dev" readOnly className="neumorphic-input w-full px-4 py-3 rounded-xl text-gray-400 outline-none text-sm pointer-events-none" />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    readOnly
+                                    className="neumorphic-input w-full px-4 py-3 rounded-xl text-gray-400 outline-none text-sm pointer-events-none"
+                                />
                             </div>
 
-                            <button className="mt-4 px-6 py-2.5 rounded-xl bg-white/5 border border-white/5 text-white font-semibold text-sm hover:bg-white/10 transition-colors">
-                                Update Data
+                            <button
+                                onClick={handleUpdate}
+                                disabled={saving}
+                                className="mt-4 px-6 py-2.5 rounded-xl bg-white/5 border border-white/5 text-white font-semibold text-sm hover:bg-white/10 transition-colors disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Update Data'}
                             </button>
                         </div>
                     </div>

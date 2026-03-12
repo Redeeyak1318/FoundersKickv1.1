@@ -1,9 +1,108 @@
-import { Search, Filter, MapPin, Briefcase, Link, UserPlus } from 'lucide-react'
+import { Search, Filter, MapPin, Briefcase, Link, UserPlus, UserMinus, Loader2, Users } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { MOCK_USERS, MOCK_SUGGESTED_CONNECTIONS } from '../data/mockData'
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
+import { getNetworkSuggestions, followUser, unfollowUser } from '../services/api'
+import { useNavigate } from 'react-router-dom'
 
 export default function NetworkPage() {
-    const allUsers = Object.values(MOCK_USERS).filter(u => u.id !== 'u_1')
+    const navigate = useNavigate()
+    const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [followingMap, setFollowingMap] = useState({})
+    const [processing, setProcessing] = useState({})
+    const [query, setQuery] = useState("")
+
+    useEffect(() => {
+        const channel = supabase
+            .channel("follows-realtime")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "follows" },
+                (payload) => {
+
+                    // FOLLOWED
+                    if (payload.eventType === "INSERT") {
+                        setFollowingMap(prev => ({
+                            ...prev,
+                            [payload.new.following_id]: true
+                        }))
+                    }
+
+                    // UNFOLLOWED
+                    if (payload.eventType === "DELETE") {
+                        setFollowingMap(prev => ({
+                            ...prev,
+                            [payload.old.following_id]: false
+                        }))
+                    }
+                }
+            )
+            .subscribe()
+
+
+        return () => supabase.removeChannel(channel)
+    }, [])
+
+    useEffect(() => {
+        const loadNetwork = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession()
+                if (!session) { navigate('/login'); return }
+
+                const data = await getNetworkSuggestions()
+                const list = data.suggestions || data || []
+                setUsers(list)
+
+                // Build initial following states
+                const fMap = {}
+                list.forEach(u => { fMap[u.id] = u.is_following || false })
+                setFollowingMap(fMap)
+
+            } catch (err) {
+                console.error('network error:', err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadNetwork()
+    }, [navigate])
+
+    const handleToggleFollow = async (userId) => {
+        if (processing[userId]) return
+
+        const isFollowing = followingMap[userId]
+
+        setProcessing(prev => ({ ...prev, [userId]: true }))
+        setFollowingMap(prev => ({ ...prev, [userId]: !isFollowing }))
+
+        try {
+            if (isFollowing) {
+                await unfollowUser(userId)
+            } else {
+                await followUser(userId)
+            }
+        } catch (err) {
+            setFollowingMap(prev => ({ ...prev, [userId]: isFollowing }))
+            console.error('follow toggle error:', err)
+        } finally {
+            setProcessing(prev => ({ ...prev, [userId]: false }))
+        }
+    }
+
+    const filteredUsers = users.filter(user => {
+        const q = query.toLowerCase()
+
+        return (
+            user.name?.toLowerCase().includes(q) ||
+            user.full_name?.toLowerCase().includes(q) ||
+            user.role?.toLowerCase().includes(q) ||
+            user.company?.toLowerCase().includes(q) ||
+            user.industry?.toLowerCase().includes(q) ||
+            user.location?.toLowerCase().includes(q)
+        )
+    })
 
     return (
         <section className="flex-1 max-w-6xl mx-auto px-4 md:px-8 py-10 w-full">
@@ -16,7 +115,13 @@ export default function NetworkPage() {
                 <div className="flex items-center gap-3">
                     <div className="neumorphic-input flex items-center px-4 py-2.5 rounded-xl w-full md:w-64">
                         <Search className="w-4 h-4 text-gray-400 mr-2" />
-                        <input type="text" placeholder="Search network..." className="bg-transparent border-none text-sm text-white focus:outline-none w-full placeholder:text-gray-600" />
+                        <input
+                            type="text"
+                            placeholder="Search network..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="bg-transparent border-none text-sm text-white focus:outline-none w-full placeholder:text-gray-600"
+                        />
                     </div>
                     <button className="h-10 px-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-gray-300 transition-colors flex items-center gap-2">
                         <Filter className="w-4 h-4" />
@@ -25,51 +130,81 @@ export default function NetworkPage() {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {allUsers.map((user, idx) => (
-                    <motion.div
-                        key={user.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="glass-panel rounded-3xl p-6 group hover:border-[#F43F5E]/30 transition-colors"
-                    >
-                        <div className="flex items-start justify-between mb-4">
-                            <img src={user.avatar} className="w-14 h-14 rounded-2xl object-cover bg-white/10" alt={user.name} />
-                            <button className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-[#F43F5E] hover:bg-[#F43F5E]/10 transition-colors">
-                                <UserPlus className="w-4 h-4" />
-                            </button>
-                        </div>
-
-                        <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-[#F43F5E] transition-colors">{user.name}</h3>
-                        <p className="text-sm text-rose-500/80 font-medium mb-4">{user.role} @ {user.company}</p>
-
-                        <div className="space-y-2 mb-6 text-sm text-gray-400">
-                            <div className="flex items-center gap-2">
-                                <MapPin className="w-3.5 h-3.5" />
-                                <span>{user.location}</span>
+            {loading ? (
+                <div className="flex justify-center py-20">
+                    <Loader2 className="w-8 h-8 text-rose-500 animate-spin" />
+                </div>
+            ) : filteredUsers.length === 0 ? (
+                <div className="glass-panel rounded-3xl p-16 text-center">
+                    <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-bold text-gray-300 mb-2">No network suggestions yet</h3>
+                    <p className="text-sm text-gray-500">As more founders join, you'll see connection suggestions here.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredUsers.map((user, idx) => (
+                        <motion.div
+                            key={user.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="glass-panel rounded-3xl p-6 group hover:border-[#F43F5E]/30 transition-colors"
+                        >
+                            <div className="flex items-start justify-between mb-4">
+                                <img src={user.avatar || user.avatar_url || '/default-avatar.png'} className="w-14 h-14 rounded-2xl object-cover bg-white/10" alt={user.name || 'User'} />
+                                <button
+                                    onClick={() => handleToggleFollow(user.id)}
+                                    disabled={processing[user.id]}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${followingMap[user.id]
+                                        ? 'text-rose-500 bg-rose-500/10 hover:bg-rose-500/20'
+                                        : 'text-gray-400 bg-white/5 hover:text-[#F43F5E] hover:bg-[#F43F5E]/10'
+                                        }`}
+                                >
+                                    {processing[user.id]
+                                        ? <Loader2 className="w-4 h-4 animate-spin" />
+                                        : followingMap[user.id]
+                                            ? <UserMinus className="w-4 h-4" />
+                                            : <UserPlus className="w-4 h-4" />
+                                    }
+                                </button>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Briefcase className="w-3.5 h-3.5" />
-                                <span>Enterprise SaaS, AI</span>
-                            </div>
-                        </div>
 
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="flex -space-x-2">
-                                    <img src="https://i.pravatar.cc/150?img=12" className="w-6 h-6 rounded-full border-2 border-[#16181D]" />
-                                    <img src="https://i.pravatar.cc/150?img=5" className="w-6 h-6 rounded-full border-2 border-[#16181D]" />
+                            <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-[#F43F5E] transition-colors">{user.name || user.full_name || 'Unnamed'}</h3>
+                            <p className="text-sm text-rose-500/80 font-medium mb-4">{user.role || 'Founder'}{user.company ? ` @ ${user.company}` : ''}</p>
+
+                            <div className="space-y-2 mb-6 text-sm text-gray-400">
+                                {user.location && (
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="w-3.5 h-3.5" />
+                                        <span>{user.location}</span>
+                                    </div>
+                                )}
+                                {user.industry && (
+                                    <div className="flex items-center gap-2">
+                                        <Briefcase className="w-3.5 h-3.5" />
+                                        <span>{user.industry}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    {user.mutual_count !== undefined && (
+                                        <span className="text-[10px] text-gray-500 font-medium tracking-wide">{user.mutual_count} MUTUAL</span>
+                                    )}
                                 </div>
-                                <span className="text-[10px] text-gray-500 font-medium tracking-wide">12 MUTUAL</span>
+                                <button
+                                    onClick={() => handleToggleFollow(user.id)}
+                                    disabled={processing[user.id]}
+                                    className="text-[#F43F5E] text-sm font-semibold flex items-center gap-1 hover:opacity-80"
+                                >
+                                    {followingMap[user.id] ? 'Following' : 'Connect'} <Link className="w-3.5 h-3.5" />
+                                </button>
                             </div>
-                            <button className="text-[#F43F5E] text-sm font-semibold flex items-center gap-1 hover:opacity-80">
-                                Connect <Link className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            )}
         </section>
     )
 }
