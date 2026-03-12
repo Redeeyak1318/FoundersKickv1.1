@@ -150,26 +150,26 @@ export default function Dashboard() {
             const { data, error } = await supabase
                 .from("posts")
                 .insert([{ content: postContent, user_id: user.id }])
-                .select()
+                .select(`
+                id,
+                content,
+                image,
+                created_at,
+                user_id,
+                profiles:profiles!posts_user_id_fkey(
+                    id,
+                    full_name,
+                    avatar_url
+                ),
+                post_likes(count),
+                post_comments(count)
+            `)
                 .single()
 
-            if (!error) {
+            if (error) throw error
 
-                const { data: fullPost } = await supabase
-                    .from("posts")
-                    .select(`
-                    *,
-                    profiles:profiles!posts_user_id_fkey(full_name, avatar_url),
-                    post_likes(count),
-                    post_comments(count)
-                    `)
-                    .eq("id", data.id)
-                    .single()
-
-                if (!fullPost) return
-                setPosts(prev => [fullPost, ...prev])
-                setPostContent('')
-            }
+            setPosts(prev => [data, ...prev])   // ✅ ADD THIS
+            setPostContent("")                  // ✅ CLEAR INPUT
 
         } catch (err) {
             console.error("create post error:", err)
@@ -185,7 +185,7 @@ export default function Dashboard() {
             .select("*")
             .eq("post_id", postId)
             .eq("user_id", user.id)
-            .single()
+            .maybeSingle()
 
         if (existing) return
 
