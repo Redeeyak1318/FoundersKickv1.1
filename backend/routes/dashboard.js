@@ -2,7 +2,7 @@ import express from "express"
 
 const router = express.Router()
 
-router.get("/dashboard", async (req, res) => {
+router.get("/", async (req, res) => {
     res.json({
         posts: [],
         trending: [],
