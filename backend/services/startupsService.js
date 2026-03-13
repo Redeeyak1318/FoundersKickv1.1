@@ -2,11 +2,11 @@ import { supabaseAdmin } from '../config/supabaseClient.js';
 
 const TABLE = 'startups';
 
-export const createStartup = async (userId, body) => {
+export const createStartup = async (user, body) => {
   const { name, description, stage, location, website, tags } = body;
   const { data, error } = await supabaseAdmin
     .from(TABLE)
-    .insert({ name, description, stage, location, website, tags: tags || [], created_by: userId })
+    .insert({ name, description, stage, location, website, tags: tags || [], created_by: user.id })
     .select()
     .single();
   if (error) throw error;

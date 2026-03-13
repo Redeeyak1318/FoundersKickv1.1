@@ -429,7 +429,7 @@ export async function createStartup(startup) {
         tagline: startup.tagline ?? null,
         stage: startup.stage ?? "Seed",
         tags: startup.tags ?? [],
-        user_id: userId
+        created_by: userId
     }
 
     const { data, error } = await supabase
@@ -447,7 +447,7 @@ export async function updateStartup(id, updates) {
         .from("startups")
         .update(updates)
         .eq("id", id)
-        .select("id, name, tagline, stage, tags, logo, user_id, created_at")
+        .select("id, name, tagline, stage, tags, logo, created_by, created_at")
         .maybeSingle()
 
     if (error) throw error
