@@ -49,6 +49,12 @@ app.use('/api/launchpad', launchpadRoutes);
 app.use('/api/resources', resourcesRoutes);
 app.use('/api/insights', insightsRoutes);
 
+
+// ── Root route (IMPORTANT for AWS health check) ──
+app.get('/', (_req, res) => {
+  res.send("FoundersKick API running 🚀");
+});
+
 // ── 404 fallback ─────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
@@ -56,6 +62,7 @@ app.use((_req, res) => {
 
 // ── Global error handler (must be last) ──────────
 app.use(errorHandler);
+
 
 // ── Start ────────────────────────────────────────
 app.listen(PORT, () => {
