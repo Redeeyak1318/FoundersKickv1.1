@@ -95,7 +95,7 @@ export default function Dashboard() {
 
                 const { data: fullComment } = await supabase
                     .from("post_comments")
-                    .select(`id, text, created_at, user_id, profiles!post_comments_user_id_fkey(name, avatar_url)`)
+                    .select(`id, content, created_at, user_id, profiles!post_comments_user_id_fkey(name, avatar_url)`)
                     .eq("id", payload.new.id)
                     .maybeSingle()
 

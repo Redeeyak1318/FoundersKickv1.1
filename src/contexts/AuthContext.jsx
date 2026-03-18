@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -9,12 +9,20 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState(null)
 
+    // Prevent duplicate profile fetches (React StrictMode)
+    const profileFetchRef = useRef(null)
+
     // Fetch or auto-create profile row for user
-    const ensureProfile = async (authUser) => {
+    const ensureProfile = useCallback(async (authUser) => {
         if (!authUser) {
             setProfile(null)
+            profileFetchRef.current = null
             return
         }
+
+        // Deduplicate: skip if already fetching for this user
+        if (profileFetchRef.current === authUser.id) return
+        profileFetchRef.current = authUser.id
 
         try {
             // Try to fetch existing profile
@@ -29,7 +37,7 @@ export function AuthProvider({ children }) {
                 return
             }
 
-            // No profile found — auto-create one
+            // No profile found — auto-create one (handle_new_user trigger may not have fired yet)
             const fullName = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || ''
             const avatarUrl = authUser.user_metadata?.avatar_url || ''
 
@@ -61,21 +69,25 @@ export function AuthProvider({ children }) {
             }
         } catch (err) {
             console.error('Profile fetch error:', err)
+            profileFetchRef.current = null // Reset on error to allow retry
         }
-    }
+    }, [])
 
     useEffect(() => {
+        let isMounted = true
+
         // Get initial session
         const initAuth = async () => {
             try {
                 const { data: { session: currentSession } } = await supabase.auth.getSession()
+                if (!isMounted) return
                 setSession(currentSession)
                 setUser(currentSession?.user || null)
                 await ensureProfile(currentSession?.user || null)
             } catch (err) {
                 console.error('Auth init error:', err)
             } finally {
-                setLoading(false)
+                if (isMounted) setLoading(false)
             }
         }
 
@@ -84,45 +96,50 @@ export function AuthProvider({ children }) {
         // Listen for auth state changes (login, logout, token refresh)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, newSession) => {
+                if (!isMounted) return
                 setSession(newSession)
                 setUser(newSession?.user || null)
 
-                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                if (event === 'SIGNED_IN') {
+                    // Reset dedup ref on fresh sign-in so profile fetches again
+                    profileFetchRef.current = null
                     await ensureProfile(newSession?.user || null)
+                } else if (event === 'TOKEN_REFRESHED') {
+                    // Only re-fetch if profile is missing
+                    if (!profile) {
+                        await ensureProfile(newSession?.user || null)
+                    }
                 } else if (event === 'SIGNED_OUT') {
                     setProfile(null)
+                    profileFetchRef.current = null
                 }
             }
         )
 
-        return () => subscription.unsubscribe()
-    }, [])
+        return () => {
+            isMounted = false
+            subscription.unsubscribe()
+        }
+    }, [ensureProfile])
 
-    // Sign out via Supabase client + optionally notify backend
+    // Sign out via Supabase — scope: 'global' invalidates ALL sessions
     const signOut = async () => {
         try {
-            // Try to notify backend to invalidate server-side
-            if (session?.access_token) {
-                try {
-                    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-                    await fetch(`${API_URL}/api/auth/logout`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${session.access_token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    })
-                } catch (_) {
-                    // Backend logout is best-effort
-                }
-            }
-            // Always sign out client-side
-            await supabase.auth.signOut()
+            await supabase.auth.signOut({ scope: 'global' })
         } catch (err) {
             console.error('Sign out error:', err)
-            // Force client-side cleanup even if API fails
-            await supabase.auth.signOut()
+            // Force local cleanup even if global signOut fails
+            try {
+                await supabase.auth.signOut({ scope: 'local' })
+            } catch (_) {
+                // Last resort: clear state manually
+            }
         }
+        // Always clean up local state
+        setUser(null)
+        setSession(null)
+        setProfile(null)
+        profileFetchRef.current = null
     }
 
     // Get current access token for backend API calls
@@ -132,19 +149,23 @@ export function AuthProvider({ children }) {
     }
 
     // Force re-fetch profile from DB (e.g. after an update)
-    const refreshProfile = async () => {
+    const refreshProfile = useCallback(async () => {
         if (!user) return
         try {
+            profileFetchRef.current = null // Allow re-fetch
             const { data } = await supabase
                 .from('profiles')
                 .select('id, name, email, avatar_url, bio, location, role, company, skills')
                 .eq('id', user.id)
                 .maybeSingle()
-            if (data) setProfile(data)
+            if (data) {
+                setProfile(data)
+                profileFetchRef.current = user.id
+            }
         } catch (err) {
             console.error('Profile refresh error:', err)
         }
-    }
+    }, [user])
 
     const value = {
         user,

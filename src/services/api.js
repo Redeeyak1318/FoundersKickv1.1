@@ -459,20 +459,19 @@ export async function updateStartup(id, updates) {
 export async function getInsights() {
     const userId = await getCurrentUserId()
 
-    // Compute real insights from user data
     try {
-        const [postsRes, followersRes, followingRes, likesRes] = await Promise.all([
-            supabase.from("posts").select("id", { count: "exact" }).eq("user_id", userId),
-            supabase.from("follows").select("id", { count: "exact" }).eq("following_id", userId),
-            supabase.from("follows").select("id", { count: "exact" }).eq("follower_id", userId),
-            supabase.from("post_likes").select("id, post_id, posts!inner(user_id)", { count: "exact" }).eq("posts.user_id", userId)
-        ])
+        // Single optimized DB function replaces 4 parallel queries
+        const { data, error } = await supabase.rpc('get_user_insights', {
+            target_user_id: userId
+        })
+
+        if (error) throw error
 
         return [
-            { label: 'Network Growth', value: String((followersRes.count || 0) + (followingRes.count || 0)), iconName: 'Users' },
-            { label: 'Posts', value: String(postsRes.count || 0), iconName: 'Activity' },
-            { label: 'Engagement', value: String(likesRes.count || 0), iconName: 'TrendingUp' },
-            { label: 'Followers', value: String(followersRes.count || 0), iconName: 'BarChart3' }
+            { label: 'Network Growth', value: String(data?.network || 0), iconName: 'Users' },
+            { label: 'Posts', value: String(data?.posts || 0), iconName: 'Activity' },
+            { label: 'Engagement', value: String(data?.engagement || 0), iconName: 'TrendingUp' },
+            { label: 'Followers', value: String(data?.followers || 0), iconName: 'BarChart3' }
         ]
     } catch (_) {
         return []
