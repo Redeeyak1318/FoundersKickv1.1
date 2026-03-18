@@ -3,37 +3,31 @@ import { motion } from 'framer-motion'
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { getConversations, getConversation, sendMessage } from '../services/api'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Messages() {
-    const navigate = useNavigate()
+    const { user } = useAuth()
     const [conversations, setConversations] = useState([])
     const [activeConv, setActiveConv] = useState(null)
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
     const [messageText, setMessageText] = useState('')
     const [sending, setSending] = useState(false)
-    const [currentUserId, setCurrentUserId] = useState(null)
     const messagesEndRef = useRef(null)
+
+    const currentUserId = user?.id
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
+                const convList = await getConversations()
+                setConversations(convList || [])
 
-                const { data: { user } } = await supabase.auth.getUser()
-                setCurrentUserId(user?.id)
-
-                const data = await getConversations()
-                const convList = data.conversations || data || []
-                setConversations(convList)
-
-                if (convList.length > 0) {
+                if (convList && convList.length > 0) {
                     setActiveConv(convList[0])
                     try {
-                        const convData = await getConversation(convList[0].id)
-                        setMessages(convData.messages || [])
+                        const msgs = await getConversation(convList[0].id)
+                        setMessages(msgs || [])
                     } catch (e) {
                         setMessages(convList[0].messages || [])
                     }
@@ -46,7 +40,8 @@ export default function Messages() {
         }
 
         loadData()
-    }, [navigate])
+    }, [])
+
     useEffect(() => {
         if (!currentUserId) return
 
@@ -54,30 +49,27 @@ export default function Messages() {
             .channel('messages-realtime')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
                 const newMsg = payload.new
-
-                // if it's relevant to me
                 if (newMsg.sender_id === currentUserId || newMsg.receiver_id === currentUserId) {
-                    
-                    // Update active conversation feed
                     if (activeConv && (newMsg.sender_id === activeConv.user?.id || newMsg.receiver_id === activeConv.user?.id)) {
                         try {
-                            const { data: profile } = await supabase.from('profiles').select('id, full_name, avatar_url').eq('id', newMsg.sender_id).single()
+                            const { data: prof } = await supabase.from('profiles').select('id, name, avatar_url').eq('id', newMsg.sender_id).single()
                             const formattedMsg = {
                                 id: newMsg.id,
                                 text: newMsg.content,
                                 time: new Date(newMsg.created_at).toLocaleTimeString(),
-                                sender: profile ? { id: profile.id, name: profile.full_name, avatar: profile.avatar_url } : { id: newMsg.sender_id, name: 'Unknown', avatar: '/default-avatar.png' }
+                                sender: prof ? { id: prof.id, name: prof.name, avatar: prof.avatar_url } : { id: newMsg.sender_id, name: 'Unknown', avatar: '/default-avatar.png' }
                             }
                             setMessages(prev => {
                                 if (prev.some(m => m.id === formattedMsg.id)) return prev
                                 return [...prev, formattedMsg]
                             })
-                        } catch(e) {}
+                        } catch (e) { }
                     }
 
-                    // Also refresh conversation list to re-order and update last active
-                    const data = await getConversations()
-                    setConversations(data || [])
+                    try {
+                        const refreshed = await getConversations()
+                        setConversations(refreshed || [])
+                    } catch (_) { }
                 }
             })
             .subscribe()
@@ -92,8 +84,8 @@ export default function Messages() {
     const selectConversation = async (conv) => {
         setActiveConv(conv)
         try {
-            const data = await getConversation(conv.id)
-            setMessages(data.messages || [])
+            const msgs = await getConversation(conv.id)
+            setMessages(msgs || [])
         } catch (e) {
             setMessages(conv.messages || [])
         }
@@ -104,12 +96,17 @@ export default function Messages() {
         setSending(true)
         try {
             const data = await sendMessage({
-                conversation_id: activeConv.id,
-                recipient_id: activeConv.user?.id,
-                text: messageText
+                receiver_id: activeConv.user?.id,
+                content: messageText
             })
-            if (data.message) {
-                setMessages(prev => [...prev, data.message])
+            if (data) {
+                const newMsg = {
+                    id: data.id,
+                    text: data.content,
+                    time: new Date(data.created_at).toLocaleTimeString(),
+                    sender: { id: currentUserId }
+                }
+                setMessages(prev => [...prev, newMsg])
             } else {
                 setMessages(prev => [...prev, { id: Date.now(), sender: { id: currentUserId }, text: messageText, time: 'Just now' }])
             }
@@ -145,7 +142,6 @@ export default function Messages() {
                         <input type="text" placeholder="Search messages..." className="bg-transparent border-none text-sm text-white focus:outline-none w-full placeholder:text-gray-600" />
                     </div>
                 </div>
-
                 <div className="flex-1 overflow-y-auto">
                     {conversations.length === 0 ? (
                         <div className="p-8 text-center">
@@ -179,7 +175,6 @@ export default function Messages() {
             <main className="flex-1 flex flex-col h-full relative z-10 bg-[#0E1116]">
                 {activeConv ? (
                     <>
-                        {/* Chat Header */}
                         <header className="h-[72px] border-b border-white/5 flex items-center justify-between px-6 bg-[#16181D]/50 backdrop-blur-md">
                             <div className="flex items-center gap-3">
                                 <div className="relative">
@@ -198,7 +193,6 @@ export default function Messages() {
                             </div>
                         </header>
 
-                        {/* Messages Feed */}
                         <div className="flex-1 overflow-y-auto p-6 space-y-6">
                             {messages.length === 0 ? (
                                 <div className="flex items-center justify-center h-full">
@@ -239,7 +233,6 @@ export default function Messages() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input Area */}
                         <div className="p-4 border-t border-white/5 bg-[#16181D]/50 backdrop-blur-md">
                             <div className="glass-panel w-full rounded-2xl flex items-end p-2 px-3">
                                 <button className="w-10 h-10 shrink-0 flex items-center justify-center text-gray-400 hover:text-white transition-colors">

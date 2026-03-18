@@ -1,49 +1,26 @@
 import { Shield, BellRing, Eye, CreditCard, Monitor, LogOut, Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { getMyProfile, updateProfile } from '../services/api'
-import { useNavigate } from 'react-router-dom'
+import { updateProfile } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Settings() {
-    const navigate = useNavigate()
-    const [profile, setProfile] = useState(null)
+    const { user, profile, signOut, refreshProfile } = useAuth()
     const [displayName, setDisplayName] = useState('')
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
 
     useEffect(() => {
-        const load = async () => {
-            try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
-                const { data: { user } } = await supabase.auth.getUser()
-                setEmail(user?.email || '')
-
-                try {
-                    const data = await getMyProfile()
-                    const p = data.profile || data
-                    setProfile(p)
-                    setDisplayName(p?.name || p?.full_name || user?.user_metadata?.full_name || '')
-                } catch (e) {
-                    setDisplayName(user?.user_metadata?.full_name || user?.email?.split('@')[0] || '')
-                }
-            } catch (err) {
-                console.error('settings error:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        load()
-    }, [navigate])
+        setEmail(user?.email || '')
+        setDisplayName(profile?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || '')
+        setLoading(false)
+    }, [user, profile])
 
     const handleUpdate = async () => {
         setSaving(true)
         try {
             await updateProfile({ name: displayName })
-            setProfile(prev => ({ ...prev, name: displayName }))
+            await refreshProfile()
         } catch (err) {
             console.error('update error:', err)
         } finally {
@@ -52,8 +29,7 @@ export default function Settings() {
     }
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
-        navigate('/login')
+        await signOut()
     }
 
     if (loading) {

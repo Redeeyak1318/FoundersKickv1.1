@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { blurFade } from '../utils/motion'
 import MagneticButton from "../components/ui/MagneticButton"
 import { supabase } from "../lib/supabase"
+import { useAuth } from "../contexts/AuthContext"
 
 function AuthParticles() {
     return (
@@ -52,9 +53,15 @@ export default function Signup() {
     const [focused, setFocused] = useState(null)
     const [success, setSuccess] = useState(false)
     const navigate = useNavigate()
+    const { user, loading: authLoading } = useAuth()
 
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    // If already logged in, redirect to dashboard
+    if (!authLoading && user) {
+        return <Navigate to="/dashboard" replace />
+    }
 
     const loginWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
@@ -72,6 +79,12 @@ export default function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!name.trim() || !email.trim() || !password.trim()) return
+
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters')
+            return
+        }
+
         setError('')
         setLoading(true)
 
@@ -89,7 +102,13 @@ export default function Signup() {
             if (authError) {
                 setError(authError.message)
                 setSuccess(false)
+            } else if (data?.user?.identities?.length === 0) {
+                // User already exists (Supabase returns empty identities)
+                setError('An account with this email already exists. Please log in instead.')
+                setSuccess(false)
             } else {
+                // Signup successful — AuthContext will auto-create the profile
+                // via the onAuthStateChange listener
                 setSuccess(true)
                 setTimeout(() => navigate('/dashboard'), 1500)
             }
@@ -223,7 +242,7 @@ export default function Signup() {
                                     id="signup-password"
                                     className="input-field"
                                     type="password"
-                                    placeholder="Min. 8 characters"
+                                    placeholder="Min. 6 characters"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                     onFocus={() => setFocused('password')}

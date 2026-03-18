@@ -3,10 +3,10 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getNetworkSuggestions, followUser, unfollowUser } from '../services/api'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function NetworkPage() {
-    const navigate = useNavigate()
+    const { user } = useAuth()
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
     const [followingMap, setFollowingMap] = useState({})
@@ -16,30 +16,15 @@ export default function NetworkPage() {
     useEffect(() => {
         const channel = supabase
             .channel("follows-realtime")
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "follows" },
-                (payload) => {
-
-                    // FOLLOWED
-                    if (payload.eventType === "INSERT") {
-                        setFollowingMap(prev => ({
-                            ...prev,
-                            [payload.new.following_id]: true
-                        }))
-                    }
-
-                    // UNFOLLOWED
-                    if (payload.eventType === "DELETE") {
-                        setFollowingMap(prev => ({
-                            ...prev,
-                            [payload.old.following_id]: false
-                        }))
-                    }
+            .on("postgres_changes", { event: "*", schema: "public", table: "follows" }, (payload) => {
+                if (payload.eventType === "INSERT") {
+                    setFollowingMap(prev => ({ ...prev, [payload.new.following_id]: true }))
                 }
-            )
+                if (payload.eventType === "DELETE") {
+                    setFollowingMap(prev => ({ ...prev, [payload.old.following_id]: false }))
+                }
+            })
             .subscribe()
-
 
         return () => supabase.removeChannel(channel)
     }, [])
@@ -47,18 +32,13 @@ export default function NetworkPage() {
     useEffect(() => {
         const loadNetwork = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
                 const data = await getNetworkSuggestions()
-                const list = data.suggestions || data || []
+                const list = data || []
                 setUsers(list)
 
-                // Build initial following states
                 const fMap = {}
                 list.forEach(u => { fMap[u.id] = u.is_following || false })
                 setFollowingMap(fMap)
-
             } catch (err) {
                 console.error('network error:', err)
             } finally {
@@ -67,11 +47,10 @@ export default function NetworkPage() {
         }
 
         loadNetwork()
-    }, [navigate])
+    }, [])
 
     const handleToggleFollow = async (userId) => {
         if (processing[userId]) return
-
         const isFollowing = followingMap[userId]
 
         setProcessing(prev => ({ ...prev, [userId]: true }))
@@ -91,15 +70,13 @@ export default function NetworkPage() {
         }
     }
 
-    const filteredUsers = users.filter(user => {
+    const filteredUsers = users.filter(u => {
         const q = query.toLowerCase()
-
         return (
-            user.name?.toLowerCase().includes(q) ||
-            user.role?.toLowerCase().includes(q) ||
-            user.company?.toLowerCase().includes(q) ||
-            user.industry?.toLowerCase().includes(q) ||
-            user.location?.toLowerCase().includes(q)
+            u.name?.toLowerCase().includes(q) ||
+            u.role?.toLowerCase().includes(q) ||
+            u.company?.toLowerCase().includes(q) ||
+            u.location?.toLowerCase().includes(q)
         )
     })
 
@@ -110,7 +87,6 @@ export default function NetworkPage() {
                     <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Network</h1>
                     <p className="text-gray-400">Discover founders, investors, and potential collaborators.</p>
                 </div>
-
                 <div className="flex items-center gap-3">
                     <div className="neumorphic-input flex items-center px-4 py-2.5 rounded-xl w-full md:w-64">
                         <Search className="w-4 h-4 text-gray-400 mr-2" />
@@ -141,63 +117,53 @@ export default function NetworkPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredUsers.map((user, idx) => (
+                    {filteredUsers.map((u, idx) => (
                         <motion.div
-                            key={user.id}
+                            key={u.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.05 }}
                             className="glass-panel rounded-3xl p-6 group hover:border-[#F43F5E]/30 transition-colors"
                         >
                             <div className="flex items-start justify-between mb-4">
-                                <img src={user.avatar || user.avatar_url || '/default-avatar.png'} className="w-14 h-14 rounded-2xl object-cover bg-white/10" alt={user.name || 'User'} />
+                                <img src={u.avatar || u.avatar_url || '/default-avatar.png'} className="w-14 h-14 rounded-2xl object-cover bg-white/10" alt={u.name || 'User'} />
                                 <button
-                                    onClick={() => handleToggleFollow(user.id)}
-                                    disabled={processing[user.id]}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${followingMap[user.id]
+                                    onClick={() => handleToggleFollow(u.id)}
+                                    disabled={processing[u.id]}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${followingMap[u.id]
                                         ? 'text-rose-500 bg-rose-500/10 hover:bg-rose-500/20'
                                         : 'text-gray-400 bg-white/5 hover:text-[#F43F5E] hover:bg-[#F43F5E]/10'
                                         }`}
                                 >
-                                    {processing[user.id]
+                                    {processing[u.id]
                                         ? <Loader2 className="w-4 h-4 animate-spin" />
-                                        : followingMap[user.id]
+                                        : followingMap[u.id]
                                             ? <UserMinus className="w-4 h-4" />
                                             : <UserPlus className="w-4 h-4" />
                                     }
                                 </button>
                             </div>
 
-                            <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-[#F43F5E] transition-colors">{user.name || user.full_name || 'Unnamed'}</h3>
-                            <p className="text-sm text-rose-500/80 font-medium mb-4">{user.role || 'Founder'}{user.company ? ` @ ${user.company}` : ''}</p>
+                            <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-[#F43F5E] transition-colors">{u.name || 'Unnamed'}</h3>
+                            <p className="text-sm text-rose-500/80 font-medium mb-4">{u.role || 'Founder'}{u.company ? ` @ ${u.company}` : ''}</p>
 
                             <div className="space-y-2 mb-6 text-sm text-gray-400">
-                                {user.location && (
+                                {u.location && (
                                     <div className="flex items-center gap-2">
                                         <MapPin className="w-3.5 h-3.5" />
-                                        <span>{user.location}</span>
-                                    </div>
-                                )}
-                                {user.industry && (
-                                    <div className="flex items-center gap-2">
-                                        <Briefcase className="w-3.5 h-3.5" />
-                                        <span>{user.industry}</span>
+                                        <span>{u.location}</span>
                                     </div>
                                 )}
                             </div>
 
                             <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    {user.mutual_count !== undefined && (
-                                        <span className="text-[10px] text-gray-500 font-medium tracking-wide">{user.mutual_count} MUTUAL</span>
-                                    )}
-                                </div>
+                                <div className="flex items-center gap-2" />
                                 <button
-                                    onClick={() => handleToggleFollow(user.id)}
-                                    disabled={processing[user.id]}
+                                    onClick={() => handleToggleFollow(u.id)}
+                                    disabled={processing[u.id]}
                                     className="text-[#F43F5E] text-sm font-semibold flex items-center gap-1 hover:opacity-80"
                                 >
-                                    {followingMap[user.id] ? 'Following' : 'Connect'} <Link className="w-3.5 h-3.5" />
+                                    {followingMap[u.id] ? 'Following' : 'Connect'} <Link className="w-3.5 h-3.5" />
                                 </button>
                             </div>
                         </motion.div>

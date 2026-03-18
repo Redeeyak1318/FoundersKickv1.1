@@ -3,21 +3,18 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../services/api'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Notifications() {
-    const navigate = useNavigate()
+    const { user } = useAuth()
     const [notifications, setNotifications] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const loadNotifications = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
                 const data = await getNotifications()
-                setNotifications(data.notifications || data || [])
+                setNotifications(data || [])
             } catch (err) {
                 console.error('notifications error:', err)
             } finally {
@@ -30,14 +27,15 @@ export default function Notifications() {
         const channel = supabase
             .channel('notifications-realtime')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, async () => {
-                // To keep it simple and get fully populated notification objects, just re-fetch
-                const data = await getNotifications()
-                setNotifications(data || [])
+                try {
+                    const data = await getNotifications()
+                    setNotifications(data || [])
+                } catch (_) { }
             })
             .subscribe()
 
         return () => supabase.removeChannel(channel)
-    }, [navigate])
+    }, [])
 
     const handleMarkAllRead = async () => {
         try {
@@ -91,7 +89,7 @@ export default function Notifications() {
                             className={`glass-panel p-5 rounded-2xl flex items-start gap-4 transition-colors cursor-pointer ${n.unread ? 'border-l-[3px] border-l-rose-500 bg-white/[0.03]' : 'opacity-80'}`}
                         >
                             <div className="relative shrink-0">
-                                <img src={n.user?.avatar || n.avatar || '/default-avatar.png'} className="w-12 h-12 rounded-xl object-cover bg-[#111418]" alt={n.user?.name || 'User'} />
+                                <img src={n.user?.avatar || '/default-avatar.png'} className="w-12 h-12 rounded-xl object-cover bg-[#111418]" alt={n.user?.name || 'User'} />
                                 <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#16181D] border border-white/10 flex items-center justify-center">
                                     {n.icon === 'heart' && <Heart className="w-3 h-3 text-rose-500" fill="currentColor" />}
                                     {n.icon === 'user-plus' && <UserPlus className="w-3 h-3 text-blue-500" />}
@@ -113,12 +111,8 @@ export default function Notifications() {
                                 <p className="text-[11px] text-gray-600 mt-2 font-semibold uppercase tracking-wider">{n.time || n.created_at}</p>
                             </div>
 
-                            {!n.unread && (
-                                <div className="shrink-0 w-2 h-2 rounded-full bg-white/5" />
-                            )}
-                            {n.unread && (
-                                <div className="shrink-0 w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]" />
-                            )}
+                            {!n.unread && <div className="shrink-0 w-2 h-2 rounded-full bg-white/5" />}
+                            {n.unread && <div className="shrink-0 w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]" />}
                         </motion.div>
                     ))}
                 </div>

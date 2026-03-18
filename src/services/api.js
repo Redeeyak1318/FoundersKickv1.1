@@ -429,7 +429,8 @@ export async function createStartup(startup) {
         tagline: startup.tagline ?? null,
         stage: startup.stage ?? "Seed",
         tags: startup.tags ?? [],
-        created_by: userId
+        created_by: userId,
+        user_id: userId
     }
 
     const { data, error } = await supabase
@@ -482,12 +483,13 @@ export async function getInsights() {
 export async function getResources() {
     const { data, error } = await supabase
         .from("resources")
-        .select("id, title, type, size, url, icon_name, created_at")
+        .select("id, title, type, size, url, link, icon_name, category, created_at")
         .order("created_at", { ascending: false })
 
     if (error) throw error
     return (data || []).map(r => ({
         ...r,
+        url: r.url || r.link,
         iconName: r.icon_name || 'FileText'
     }))
 }

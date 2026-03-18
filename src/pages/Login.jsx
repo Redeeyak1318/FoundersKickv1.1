@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { blurFade } from '../utils/motion'
 import MagneticButton from "../components/ui/MagneticButton"
 import { supabase } from "../lib/supabase"
+import { useAuth } from "../contexts/AuthContext"
 
 /* Simple particle background for auth pages */
 function AuthParticles() {
@@ -55,7 +56,16 @@ export default function Login() {
     const [focused, setFocused] = useState(null)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const [resetSent, setResetSent] = useState(false)
     const navigate = useNavigate()
+    const location = useLocation()
+    const { user, loading: authLoading } = useAuth()
+
+    // If already logged in, redirect to dashboard (or intended page)
+    const from = location.state?.from?.pathname || '/dashboard'
+    if (!authLoading && user) {
+        return <Navigate to={from} replace />
+    }
 
     const loginWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
@@ -85,10 +95,36 @@ export default function Login() {
             if (authError) {
                 setError(authError.message)
             } else {
-                navigate('/dashboard')
+                navigate(from, { replace: true })
             }
         } catch (err) {
             setError(err?.message || 'Login failed')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleForgotPassword = async (e) => {
+        e.preventDefault()
+        if (!email.trim()) {
+            setError('Please enter your email first, then click "Forgot password?"')
+            return
+        }
+        setError('')
+        setLoading(true)
+
+        try {
+            const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/login',
+            })
+
+            if (resetError) {
+                setError(resetError.message)
+            } else {
+                setResetSent(true)
+            }
+        } catch (err) {
+            setError(err?.message || 'Failed to send reset email')
         } finally {
             setLoading(false)
         }
@@ -145,6 +181,12 @@ export default function Login() {
                     </div>
                 )}
 
+                {resetSent && (
+                    <div style={{ padding: '0.75rem 1rem', borderRadius: 12, background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', color: '#34d399', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                        Password reset email sent! Check your inbox.
+                    </div>
+                )}
+
                 <form onSubmit={handleEmailLogin}>
                     <motion.div
                         className="input-group"
@@ -186,10 +228,14 @@ export default function Login() {
                         display: 'flex', justifyContent: 'flex-end',
                         marginBottom: '1.5rem', marginTop: '-0.5rem'
                     }}>
-                        <a href="#" style={{
-                            fontSize: '0.8rem', color: 'var(--color-accent-primary)',
-                            transition: 'color 0.2s',
-                        }}>
+                        <a
+                            href="#"
+                            onClick={handleForgotPassword}
+                            style={{
+                                fontSize: '0.8rem', color: 'var(--color-accent-primary)',
+                                transition: 'color 0.2s', cursor: 'pointer',
+                            }}
+                        >
                             Forgot password?
                         </a>
                     </div>

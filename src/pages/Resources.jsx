@@ -1,12 +1,11 @@
 import { BookOpen, MonitorPlay, FileText, Download, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { getResources } from '../services/api'
 
 export default function Resources() {
-    const navigate = useNavigate()
+    const { user } = useAuth()
     const [resources, setResources] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -15,24 +14,16 @@ export default function Resources() {
     useEffect(() => {
         const loadResources = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
-                try {
-                    const data = await getResources()
-                    setResources(data.resources || data || [])
-                } catch (e) {
-                    // Endpoint may not exist yet
-                }
-            } catch (err) {
-                console.error('resources error:', err)
+                const data = await getResources()
+                setResources(data || [])
+            } catch (e) {
+                // Table may not exist yet, show empty state
             } finally {
                 setLoading(false)
             }
         }
-
         loadResources()
-    }, [navigate])
+    }, [])
 
     return (
         <section className="flex-1 max-w-5xl mx-auto px-4 md:px-8 py-10 w-full">

@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom'
 import {
     LayoutGrid, Compass, BarChart3, MessageCircle, Briefcase,
-    Bell, Search, Rocket, Zap, Settings, BookOpen, Activity
+    Bell, Search, Rocket, Zap, Settings, BookOpen, Activity, LogOut
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import Lenis from '@studio-freight/lenis'
-import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 
 const navTabs = [
     { path: '/dashboard', label: 'Feed', icon: LayoutGrid },
@@ -26,22 +26,7 @@ export default function AppLayout() {
     const location = useLocation()
     const navigate = useNavigate()
     const containerRef = useRef(null)
-    const [user, setUser] = useState(null)
-
-    // Load current user
-    useEffect(() => {
-        const loadUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            setUser(user)
-        }
-        loadUser()
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user || null)
-        })
-
-        return () => subscription.unsubscribe()
-    }, [])
+    const { user, profile, signOut } = useAuth()
 
     // Smooth Scrolling using Lenis
     useEffect(() => {
@@ -69,9 +54,15 @@ export default function AppLayout() {
         }
     }, [])
 
-    const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Founder'
-    const displayRole = user?.user_metadata?.role || 'Founder'
-    const displayAvatar = user?.user_metadata?.avatar_url || '/default-avatar.png'
+    const handleSignOut = async () => {
+        await signOut()
+        navigate('/login')
+    }
+
+    // Use profile data if available, fall back to auth user metadata
+    const displayName = profile?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Founder'
+    const displayRole = profile?.role || user?.user_metadata?.role || 'Founder'
+    const displayAvatar = profile?.avatar_url || user?.user_metadata?.avatar_url || '/default-avatar.png'
 
     return (
         <div ref={containerRef} className="min-h-screen flex flex-col md:flex-row bg-[#0E1116] text-[#E2E8F0] selection:bg-rose-500/30 font-sans">
@@ -113,6 +104,13 @@ export default function AppLayout() {
                             </div>
                         </div>
                     </div>
+                    <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2 w-full px-4 py-2.5 mt-2 rounded-xl text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 text-sm font-medium"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                    </button>
                 </div>
             </aside>
 
@@ -124,6 +122,13 @@ export default function AppLayout() {
                     </div>
                     <span className="font-bold text-lg text-white">FoundersKick</span>
                 </div>
+                <button
+                    onClick={handleSignOut}
+                    className="p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    title="Sign Out"
+                >
+                    <LogOut className="w-5 h-5" />
+                </button>
             </header>
 
             {/* Main Content Area */}

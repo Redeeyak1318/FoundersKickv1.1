@@ -1,13 +1,12 @@
-import { MapPin, Link2, ExternalLink, MessageSquare, Briefcase, Plus, Loader2, Edit3, Save } from 'lucide-react'
+import { MapPin, ExternalLink, MessageSquare, Briefcase, Plus, Loader2, Edit3, Save } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { getMyProfile, updateProfile, getStartups } from '../services/api'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { getStartups, updateProfile } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
+import { useEffect } from 'react'
 
 export default function Profile() {
-    const navigate = useNavigate()
-    const [profile, setProfile] = useState(null)
+    const { user, profile, refreshProfile } = useAuth()
     const [startup, setStartup] = useState(null)
     const [loading, setLoading] = useState(true)
     const [editing, setEditing] = useState(false)
@@ -15,35 +14,20 @@ export default function Profile() {
     const [saving, setSaving] = useState(false)
 
     useEffect(() => {
-        const loadProfile = async () => {
+        const loadExtras = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
-                const data = await getMyProfile()
-                setProfile(data.profile || data)
-
-                try {
-                    const startupsData = await getStartups()
-                    const list = startupsData.startups || startupsData || []
-                    if (list.length > 0) setStartup(list[0])
-                } catch (e) {
-                    // No startups yet, that's ok
-                }
-
-            } catch (err) {
-                console.error('profile error:', err)
-            } finally {
-                setLoading(false)
-            }
+                const startupsData = await getStartups()
+                const list = startupsData || []
+                if (list.length > 0) setStartup(list[0])
+            } catch (e) { /* No startups yet */ }
+            setLoading(false)
         }
-
-        loadProfile()
-    }, [navigate])
+        loadExtras()
+    }, [])
 
     const handleEdit = () => {
         setEditData({
-            name: profile?.name || profile?.full_name || '',
+            name: profile?.name || user?.user_metadata?.full_name || '',
             bio: profile?.bio || '',
             location: profile?.location || '',
             role: profile?.role || '',
@@ -55,8 +39,8 @@ export default function Profile() {
     const handleSave = async () => {
         setSaving(true)
         try {
-            const data = await updateProfile(editData)
-            setProfile(prev => ({ ...prev, ...editData, ...(data.profile || {}) }))
+            await updateProfile(editData)
+            await refreshProfile()
             setEditing(false)
         } catch (err) {
             console.error('update profile error:', err)
@@ -73,12 +57,12 @@ export default function Profile() {
         )
     }
 
-    const displayName = profile?.name || profile?.full_name || 'Unnamed Founder'
+    const displayName = profile?.name || user?.user_metadata?.full_name || 'Unnamed Founder'
     const displayRole = profile?.role || 'Founder'
     const displayCompany = profile?.company || ''
     const displayBio = profile?.bio || ''
     const displayLocation = profile?.location || ''
-    const displayAvatar = profile?.avatar || profile?.avatar_url || '/default-avatar.png'
+    const displayAvatar = profile?.avatar_url || user?.user_metadata?.avatar_url || '/default-avatar.png'
 
     return (
         <section className="flex-1 w-full relative">
@@ -102,40 +86,11 @@ export default function Profile() {
 
                             {editing ? (
                                 <div className="space-y-3 mb-6">
-                                    <input
-                                        type="text"
-                                        value={editData.name}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50"
-                                        placeholder="Your name"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={editData.role}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, role: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50"
-                                        placeholder="Your role"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={editData.company}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, company: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50"
-                                        placeholder="Company"
-                                    />
-                                    <textarea
-                                        value={editData.bio}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50 resize-none h-20"
-                                        placeholder="Your bio"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={editData.location}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, location: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50"
-                                        placeholder="Location"
-                                    />
+                                    <input type="text" value={editData.name} onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50" placeholder="Your name" />
+                                    <input type="text" value={editData.role} onChange={(e) => setEditData(prev => ({ ...prev, role: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50" placeholder="Your role" />
+                                    <input type="text" value={editData.company} onChange={(e) => setEditData(prev => ({ ...prev, company: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50" placeholder="Company" />
+                                    <textarea value={editData.bio} onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50 resize-none h-20" placeholder="Your bio" />
+                                    <input type="text" value={editData.location} onChange={(e) => setEditData(prev => ({ ...prev, location: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-rose-500/50" placeholder="Location" />
                                     <div className="flex gap-2">
                                         <button onClick={handleSave} disabled={saving} className="flex-1 accent-gradient h-10 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                                             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
@@ -247,7 +202,6 @@ export default function Profile() {
                                 <p className="text-xs text-gray-500 mt-1">Founders post updates to build in public here.</p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -1,36 +1,27 @@
 import { BarChart3, TrendingUp, Users, Activity, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { getInsights } from '../services/api'
 
 export default function Insights() {
-    const navigate = useNavigate()
+    const { user } = useAuth()
     const [kpis, setKpis] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const loadInsights = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
-                try {
-                    const data = await getInsights()
-                    setKpis(data.kpis || data || [])
-                } catch (e) {
-                    // API may not exist yet, show empty state
-                }
-            } catch (err) {
-                console.error('insights error:', err)
+                const data = await getInsights()
+                setKpis(data || [])
+            } catch (e) {
+                // API may return error for new tables, show empty state
             } finally {
                 setLoading(false)
             }
         }
-
         loadInsights()
-    }, [navigate])
+    }, [])
 
     const iconMap = { Users, Activity, TrendingUp, BarChart3 }
 
@@ -85,7 +76,7 @@ export default function Insights() {
                                 { label: 'Profile Views', icon: Activity },
                                 { label: 'Engagement', icon: TrendingUp },
                                 { label: 'Score', icon: BarChart3 }
-                            ].map((item, idx) => (
+                            ].map((item) => (
                                 <div key={item.label} className="glass-panel p-6 rounded-3xl">
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">

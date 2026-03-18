@@ -1,36 +1,27 @@
 import { Rocket, Target, CheckCircle2, ChevronRight, Clock, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { getLaunchpad } from '../services/api'
 
 export default function Launchpad() {
-    const navigate = useNavigate()
+    const { user } = useAuth()
     const [milestones, setMilestones] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const loadLaunchpad = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) { navigate('/login'); return }
-
-                try {
-                    const data = await getLaunchpad()
-                    setMilestones(data.milestones || data || [])
-                } catch (e) {
-                    // Endpoint might not exist yet
-                }
-            } catch (err) {
-                console.error('launchpad error:', err)
+                const data = await getLaunchpad()
+                setMilestones(data || [])
+            } catch (e) {
+                // Table might not exist yet
             } finally {
                 setLoading(false)
             }
         }
-
         loadLaunchpad()
-    }, [navigate])
+    }, [])
 
     return (
         <section className="flex-1 max-w-4xl mx-auto px-4 md:px-8 py-10 w-full relative">

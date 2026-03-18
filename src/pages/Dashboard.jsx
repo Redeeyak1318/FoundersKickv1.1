@@ -7,81 +7,51 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { supabase } from "../lib/supabase"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
+import {
+    getPosts, createPost, deletePost, toggleLike,
+    getComments, createComment, getNetworkSuggestions
+} from '../services/api'
 
 export default function Dashboard() {
-
     const navigate = useNavigate()
+    const { user, profile } = useAuth()
 
-    useEffect(() => {
-        const checkUser = async () => {
-            const { data } = await supabase.auth.getSession()
-
-            if (!data.session) {
-                navigate("/login")
-            }
-        }
-
-        checkUser()
-    }, [navigate])
-
-    const [user, setUser] = useState(null)
     const [posts, setPosts] = useState([])
     const [connections, setConnections] = useState([])
     const [loading, setLoading] = useState(true)
     const [postContent, setPostContent] = useState('')
     const [posting, setPosting] = useState(false)
-    const [activeComments, setActiveComments] = useState(null) // postId
-    const [comments, setComments] = useState({}) // { postId: [] }
+    const [activeComments, setActiveComments] = useState(null)
+    const [comments, setComments] = useState({})
     const [commentText, setCommentText] = useState('')
     const [commenting, setCommenting] = useState(false)
+    const [likedPosts, setLikedPosts] = useState(new Set())
 
     const feedRef = useRef(null)
     const widgetRef = useRef(null)
 
-    useEffect(() => {
-        const getUser = async () => {
-            const { data } = await supabase.auth.getUser()
-            setUser(data.user)
-        }
-
-        getUser()
-    }, [])
-
+    // Load dashboard data
     useEffect(() => {
         const loadDashboard = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (!session) return
-
-                // ✅ POSTS WITH AUTHOR + COUNTS
-                const { data: postsData } = await supabase
-                    .from("posts")
-                    .select(`
-  id,
-  content,
-  image,
-  created_at,
-  user_id,
-  profiles!posts_user_id_fkey (
-    id,
-    name,
-    avatar_url
-  ),
-  post_likes(count),
-  post_comments(count)
-`)
-                    .order("created_at", { ascending: false })
-
+                const postsData = await getPosts()
                 setPosts(postsData || [])
 
-                // ✅ CONNECTION SUGGESTIONS (REAL)
-                const { data: connData } = await supabase
-                    .from("profiles")
-                    .select("*")
-                    .neq("id", session.user.id)
-                    .limit(5)
+                // Check which posts the current user has liked
+                if (user) {
+                    const { data: userLikes } = await supabase
+                        .from('post_likes')
+                        .select('post_id')
+                        .eq('user_id', user.id)
+                    setLikedPosts(new Set((userLikes || []).map(l => l.post_id)))
+                }
 
-                setConnections(connData || [])
+                // Connection suggestions
+                try {
+                    const connData = await getNetworkSuggestions()
+                    setConnections((connData || []).slice(0, 5))
+                } catch (_) { }
 
             } catch (err) {
                 console.error("dashboard error:", err)
@@ -91,8 +61,9 @@ export default function Dashboard() {
         }
 
         loadDashboard()
-    }, [])
+    }, [user])
 
+    // Realtime subscriptions
     useEffect(() => {
         const channel = supabase
             .channel("dashboard-realtime")
@@ -101,24 +72,15 @@ export default function Dashboard() {
                     const { data } = await supabase
                         .from("posts")
                         .select(`
-  id,
-  content,
-  image,
-  created_at,
-  user_id,
-  profiles!posts_user_id_fkey (
-    id,
-    name,
-    avatar_url
-  ),
-  post_likes(count),
-  post_comments(count)
-`)
+                            id, content, image, created_at, user_id,
+                            profiles!posts_user_id_fkey(id, name, avatar_url),
+                            post_likes(count),
+                            post_comments(count)
+                        `)
                         .eq("id", payload.new.id)
                         .maybeSingle()
 
                     if (!data) return
-
                     setPosts(prev => {
                         if (prev.some(p => p?.id === data.id)) return prev
                         return [data, ...prev]
@@ -128,16 +90,12 @@ export default function Dashboard() {
                     setPosts(prev => prev.filter(p => p.id !== payload.old.id))
                 }
             })
-            .on("postgres_changes", { event: "*", schema: "public", table: "post_likes" }, async () => {
-                // Refresh post likes count globally (or we can do it locally on the client, doing it client is better for instant, but realtime catches other users' likes)
-            })
             .on("postgres_changes", { event: "INSERT", schema: "public", table: "post_comments" }, async (payload) => {
                 const postId = payload.new.post_id
 
-                // Fetch the fully built comment
                 const { data: fullComment } = await supabase
                     .from("post_comments")
-                    .select(`id, content, created_at, profiles!post_comments_user_id_fkey(name,avatar_url)`)
+                    .select(`id, text, created_at, user_id, profiles!post_comments_user_id_fkey(name, avatar_url)`)
                     .eq("id", payload.new.id)
                     .maybeSingle()
 
@@ -147,7 +105,6 @@ export default function Dashboard() {
                         if (existing.some(c => c.id === fullComment.id)) return prev
                         return { ...prev, [postId]: [...existing, fullComment].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)) }
                     })
-                    // Also bump comment count on post
                     setPosts(prev => prev.map(p => p.id === postId ? { ...p, post_comments: [{ count: (p.post_comments?.[0]?.count || 0) + 1 }] } : p))
                 }
             })
@@ -156,6 +113,7 @@ export default function Dashboard() {
         return () => supabase.removeChannel(channel)
     }, [])
 
+    // GSAP animations
     useEffect(() => {
         if (feedRef.current && !loading) {
             gsap.fromTo(feedRef.current.children,
@@ -163,7 +121,6 @@ export default function Dashboard() {
                 { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out", delay: 0.2 }
             )
         }
-
         if (widgetRef.current && !loading) {
             gsap.fromTo(widgetRef.current.children,
                 { x: 30, opacity: 0 },
@@ -172,37 +129,11 @@ export default function Dashboard() {
         }
     }, [loading])
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
-        navigate("/login")
-    }
-
     const handleCreatePost = async () => {
         if (!postContent.trim() || posting || !user) return
         setPosting(true)
-
         try {
-            const { data, error } = await supabase
-                .from("posts")
-                .insert([{ content: postContent, user_id: user.id }])
-                .select(`
-  id,
-  content,
-  image,
-  created_at,
-  user_id,
-  profiles!posts_user_id_fkey (
-    id,
-    name,
-    avatar_url
-  ),
-  post_likes(count),
-  post_comments(count)
-`)
-                .maybeSingle()
-
-            if (error) throw error
-
+            const data = await createPost({ content: postContent })
             if (data) {
                 setPosts(prev => {
                     if (prev.some(p => p.id === data.id)) return prev
@@ -210,7 +141,6 @@ export default function Dashboard() {
                 })
             }
             setPostContent("")
-
         } catch (err) {
             console.error("create post error:", err)
         } finally {
@@ -220,36 +150,21 @@ export default function Dashboard() {
 
     const handleLike = async (postId) => {
         if (!user) return
-
         try {
-            const { data: existing } = await supabase
-                .from("post_likes")
-                .select("*")
-                .eq("post_id", postId)
-                .eq("user_id", user.id)
-                .maybeSingle()
+            const wasLiked = likedPosts.has(postId)
 
-            if (existing) {
-                // Unlike
-                setPosts(prev => prev.map(p => p.id === postId ? { ...p, post_likes: [{ count: Math.max(0, (p.post_likes?.[0]?.count || 0) - 1) }] } : p))
-                await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", user.id)
-            } else {
-                // Like
-                setPosts(prev => prev.map(p => p.id === postId ? { ...p, post_likes: [{ count: (p.post_likes?.[0]?.count || 0) + 1 }] } : p))
+            // Optimistic update
+            setPosts(prev => prev.map(p => p.id === postId ? {
+                ...p,
+                post_likes: [{ count: Math.max(0, (p.post_likes?.[0]?.count || 0) + (wasLiked ? -1 : 1)) }]
+            } : p))
+            setLikedPosts(prev => {
+                const next = new Set(prev)
+                wasLiked ? next.delete(postId) : next.add(postId)
+                return next
+            })
 
-                await supabase.from("post_likes").insert([{ post_id: postId, user_id: user.id }])
-
-                // Add notification
-                const post = posts.find(p => p.id === postId)
-                if (post && post.user_id !== user.id) {
-                    await supabase.from("notifications").insert([{
-                        user_id: post.user_id,
-                        type: "like",
-                        actor_id: user.id,
-                        post_id: postId
-                    }])
-                }
-            }
+            await toggleLike(postId)
         } catch (err) {
             console.error("like error", err)
         }
@@ -257,32 +172,23 @@ export default function Dashboard() {
 
     const handleDelete = async (postId) => {
         try {
-            // Optimistic update
             setPosts(prev => prev.filter(p => p.id !== postId))
-            await supabase.from("posts").delete().eq("id", postId)
+            await deletePost(postId)
         } catch (e) {
             console.error(e)
         }
     }
 
-    const toggleComments = async (postId) => {
+    const toggleCommentsPanel = async (postId) => {
         if (activeComments === postId) {
             setActiveComments(null)
             return
         }
-
         setActiveComments(postId)
         if (!comments[postId]) {
             try {
-                const { data } = await supabase
-                    .from("post_comments")
-                    .select(`id, content, created_at, profiles!post_comments_user_id_fkey(name,avatar_url)`)
-                    .eq("post_id", postId)
-                    .order("created_at", { ascending: true })
-
-                if (data) {
-                    setComments(prev => ({ ...prev, [postId]: data }))
-                }
+                const data = await getComments(postId)
+                setComments(prev => ({ ...prev, [postId]: data || [] }))
             } catch (err) {
                 console.error("fetch comments error", err)
             }
@@ -292,16 +198,8 @@ export default function Dashboard() {
     const handlePostComment = async (postId) => {
         if (!commentText.trim() || commenting || !user) return
         setCommenting(true)
-
         try {
-            const { data, error } = await supabase
-                .from("post_comments")
-                .insert([{ post_id: postId, user_id: user.id, content: commentText }])
-                .select(`id, content, created_at, profiles!post_comments_user_id_fkey(name,avatar_url)`)
-                .maybeSingle()
-
-            if (error) throw error
-
+            const data = await createComment(postId, commentText)
             if (data) {
                 setComments(prev => {
                     const existing = prev[postId] || []
@@ -311,24 +209,15 @@ export default function Dashboard() {
                 setPosts(prev => prev.map(p => p.id === postId ? { ...p, post_comments: [{ count: (p.post_comments?.[0]?.count || 0) + 1 }] } : p))
             }
             setCommentText("")
-
-            // Notification
-            const post = posts.find(p => p.id === postId)
-            if (post && post.user_id !== user.id) {
-                await supabase.from("notifications").insert([{
-                    user_id: post.user_id,
-                    type: "comment",
-                    actor_id: user.id,
-                    post_id: postId
-                }])
-            }
-
         } catch (err) {
             console.error("post comment error", err)
         } finally {
             setCommenting(false)
         }
     }
+
+    const displayName = profile?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Founder"
+    const displayAvatar = profile?.avatar_url || user?.user_metadata?.avatar_url || "/default-avatar.png"
 
     return (
         <section className="flex-1 flex flex-col xl:flex-row relative h-full">
@@ -338,7 +227,7 @@ export default function Dashboard() {
                 {/* Header */}
                 <header className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-white">Welcome, {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Founder"}</h1>
+                        <h1 className="text-2xl font-bold tracking-tight text-white">Welcome, {displayName}</h1>
                         <p className="text-gray-500 text-sm mt-1">Here's what happened in the ecosystem overnight.</p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -351,18 +240,10 @@ export default function Dashboard() {
                     </div>
                 </header>
 
-                <button onClick={handleLogout} className="text-gray-500 text-sm hover:text-white transition-colors mb-4">
-                    Logout
-                </button>
-
                 {/* Post Composer */}
                 <div className="glass-panel rounded-2xl p-5 mb-8 focus-within:ring-1 focus-within:ring-rose-500/50 transition-all">
                     <div className="flex gap-4">
-                        <img
-                            src={user?.user_metadata?.avatar_url || "/default-avatar.png"}
-                            alt="User"
-                            className="w-12 h-12 rounded-xl object-cover shadow-sm bg-white/10"
-                        />
+                        <img src={displayAvatar} alt="User" className="w-12 h-12 rounded-xl object-cover shadow-sm bg-white/10" />
                         <div className="flex-1">
                             <textarea
                                 className="w-full bg-transparent border-none focus:ring-0 text-lg placeholder-gray-600 resize-none h-20 text-white outline-none"
@@ -410,23 +291,17 @@ export default function Dashboard() {
                                         src={post?.profiles?.avatar_url || "/default-avatar.png"}
                                         className="w-11 h-11 rounded-xl object-cover bg-white/10"
                                     />
-
                                     <div>
                                         <h3 className="font-bold text-white">
                                             {post?.profiles?.name || "Founder"}
                                         </h3>
-
                                         <p className="text-xs text-gray-500 font-medium">
                                             {new Date(post?.created_at).toLocaleString()}
                                         </p>
                                     </div>
                                 </div>
-
                                 {post.user_id === user?.id && (
-                                    <button
-                                        onClick={() => handleDelete(post.id)}
-                                        className="text-gray-600 hover:text-red-500"
-                                    >
+                                    <button onClick={() => handleDelete(post.id)} className="text-gray-600 hover:text-red-500">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 )}
@@ -440,20 +315,19 @@ export default function Dashboard() {
                                 <img src={post?.image} className="w-full h-[250px] object-cover rounded-xl mt-4 mb-4 border border-white/5" />
                             )}
 
-
                             <div className="flex items-center gap-6 text-gray-500 pt-4 border-t border-white/5 mb-2">
                                 <button
                                     onClick={() => handleLike(post.id)}
-                                    className="flex items-center gap-2 hover:text-rose-500 transition-colors group"
+                                    className={`flex items-center gap-2 transition-colors group ${likedPosts.has(post.id) ? 'text-rose-500' : 'hover:text-rose-500'}`}
                                 >
-                                    <Heart className="w-[18px] h-[18px]" />
+                                    <Heart className="w-[18px] h-[18px]" fill={likedPosts.has(post.id) ? 'currentColor' : 'none'} />
                                     <span className="text-sm font-medium">
                                         {post?.post_likes?.[0]?.count || 0}
                                     </span>
                                 </button>
 
                                 <button
-                                    onClick={() => toggleComments(post.id)}
+                                    onClick={() => toggleCommentsPanel(post.id)}
                                     className="flex items-center gap-2 hover:text-emerald-500 transition-colors group"
                                 >
                                     <MessageSquare className="w-[18px] h-[18px]" />
@@ -480,10 +354,10 @@ export default function Dashboard() {
                                                         <img src={comment.profiles?.avatar_url || '/default-avatar.png'} className="w-8 h-8 rounded-full bg-white/5 object-cover" />
                                                         <div className="bg-white/5 rounded-xl px-4 py-2 flex-1">
                                                             <div className="flex justify-between items-baseline mb-1">
-                                                                <span className="text-sm font-bold text-white">{comment.profiles?.full_name || 'Founder'}</span>
+                                                                <span className="text-sm font-bold text-white">{comment.profiles?.name || 'Founder'}</span>
                                                                 <span className="text-[10px] text-gray-500">{new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                             </div>
-                                                            <p className="text-sm text-gray-300">{comment.content}</p>
+                                                            <p className="text-sm text-gray-300">{comment.content || comment.text}</p>
                                                         </div>
                                                     </div>
                                                 ))
@@ -510,7 +384,6 @@ export default function Dashboard() {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-
                         </article>
                     ))}
                 </div>
@@ -518,7 +391,6 @@ export default function Dashboard() {
 
             {/* Right Sidebar: Widgets */}
             <aside className="w-full xl:w-[360px] px-4 md:px-8 xl:pr-8 py-8 space-y-8 border-l border-white/5 bg-[#0E1116]" ref={widgetRef}>
-
                 {/* Suggested Founders */}
                 <div className="glass-panel rounded-3xl p-6">
                     <h4 className="text-sm font-bold mb-5 text-white">Founders to Connect</h4>
@@ -528,11 +400,11 @@ export default function Dashboard() {
                         <div className="space-y-4">
                             {connections.map(conn => (
                                 <div key={conn.id} className="flex items-center gap-3">
-                                    <img
-                                        src={conn?.avatar_url || "/default-avatar.png"}
-                                        className="w-9 h-9 rounded-lg"
-                                    />
-                                    <p className="text-sm text-gray-200">{conn?.full_name}</p>
+                                    <img src={conn?.avatar_url || conn?.avatar || "/default-avatar.png"} className="w-9 h-9 rounded-lg object-cover" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm text-gray-200 truncate">{conn?.name || 'Founder'}</p>
+                                        {conn?.role && <p className="text-xs text-gray-500 truncate">{conn.role}</p>}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -544,7 +416,6 @@ export default function Dashboard() {
                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                     <span className="text-[10px] text-gray-600 font-medium uppercase tracking-widest">Ecosystem Operational</span>
                 </div>
-
             </aside>
         </section>
     )

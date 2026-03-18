@@ -13,12 +13,20 @@ export const getSession = async (token) => {
  * Sign out — revokes the session server-side.
  */
 export const logout = async (token) => {
-  // Admin client can revoke any session
-  const { error } = await supabaseAdmin.auth.admin.signOut(token);
-  if (error) {
-    // Fallback: sign out via the public client scoped to the token
-    const { error: fallbackErr } = await supabase.auth.signOut();
-    if (fallbackErr) throw fallbackErr;
+  try {
+    // Get user from token to find their ID
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
+    if (userError || !user) {
+      // Token is already invalid/expired — treat as logged out
+      return true;
+    }
+    // Sign out all sessions for this user using admin API
+    const { error } = await supabaseAdmin.auth.admin.signOut(user.id, 'global');
+    if (error) {
+      console.warn('Admin signOut failed, token may already be expired:', error.message);
+    }
+  } catch (err) {
+    console.warn('Logout warning:', err.message);
   }
   return true;
 };
