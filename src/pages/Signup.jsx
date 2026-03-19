@@ -133,10 +133,10 @@ export default function Signup() {
                         width: 36, height: 36, borderRadius: 10,
                         background: 'var(--gradient-primary)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-serif, Playfair Display, serif)', fontWeight: 500, fontSize: '0.9rem',
+                        fontFamily: 'var(--font-serif, Gavency, Helvetica)', fontWeight: 500, fontSize: '0.9rem',
                         boxShadow: 'var(--shadow-glow)',
                     }}>FK</div>
-                    <span style={{ fontFamily: 'var(--font-serif, Playfair Display, serif)', fontWeight: 500, fontSize: '1.1rem' }}>
+                    <span style={{ fontFamily: 'var(--font-serif, Gavency, Helvetica)', fontWeight: 500, fontSize: '1.1rem' }}>
                         FoundersKick
                     </span>
                 </Link>
