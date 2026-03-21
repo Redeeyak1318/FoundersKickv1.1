@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { gsap } from "gsap"
 import Lenis from "lenis"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowRight } from "lucide-react"
-import ScrollHero from "../components/ScrollHero"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -15,16 +14,17 @@ export default function Landing() {
     const networkRef = useRef(null)
     const launchRef = useRef(null)
     const ctaRef = useRef(null)
-    const [heroDone, setHeroDone] = useState(false)
+    const videoRef = useRef(null)
+
 
     // Setup smooth scrolling with Lenis
     useEffect(() => {
-        if (!heroDone) return;
-
         const lenis = new Lenis({
             duration: 1.2,
             smooth: true,
         });
+
+        gsap.ticker.lagSmoothing(0);
 
         lenis.on('scroll', ScrollTrigger.update);
 
@@ -32,12 +32,69 @@ export default function Landing() {
             lenis.raf(time * 1000);
         });
 
+        gsap.ticker.fps(60);
+
         return () => {
             lenis.destroy();
             ScrollTrigger.killAll();
         };
-    }, [heroDone]);
+    }, []);
 
+    useEffect(() => {
+        const video = videoRef.current
+        if (!video) return
+
+        video.setAttribute("playsinline", "")
+        video.setAttribute("webkit-playsinline", "")
+
+
+        const handleLoaded = () => {
+            const duration = video.duration
+
+            video.currentTime = 0.01
+            video.pause()
+
+            gsap.ticker.lagSmoothing(0)
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".hero-sticky",
+                    start: "top top",
+                    end: "+=3000",
+                    scrub: true,
+                    invalidateOnRefresh: true
+                }
+            })
+
+            tl.to({}, {
+                duration: 1,
+                ease: "none",
+                onUpdate: function () {
+                    const t = this.progress() * duration
+                    video.currentTime = t
+                }
+            }, 0)
+
+            // ENTER TEXT EARLY
+            tl.fromTo(".hero-line",
+                { y: 120, opacity: 0 },
+                { y: 0, opacity: 1, stagger: 0.2, ease: "power3.out" },
+                0.1
+            )
+
+            // EXIT TEXT EARLIER (IMPORTANT)
+            tl.to(".hero-line",
+                { y: -120, opacity: 0, stagger: 0.1, ease: "power3.in" },
+                0.55
+            )
+        }
+
+        video.addEventListener("loadedmetadata", handleLoaded)
+
+        return () => {
+            video.removeEventListener("loadedmetadata", handleLoaded)
+        }
+    }, [])
 
     // Intro animation simulating Barba.js entrance
     useEffect(() => {
@@ -124,7 +181,7 @@ export default function Landing() {
             <div className="film-grain"></div>
 
             {/* Navbar */}
-            <nav className="nav-entrance fixed top-0 w-full z-[10000] px-8 py-6 flex justify-between items-center">
+            <nav className="nav-entrance fixed top-0 w-full z-[50] px-8 py-6 flex justify-between items-center">
                 <Link to="/" className="font-serif text-2xl tracking-widest font-bold text-white uppercase italic">
                     FoundersKick
                 </Link>
@@ -137,13 +194,42 @@ export default function Landing() {
             </nav>
 
             {/* HERO SECTION */}
-            <ScrollHero
-                startFrame={1}
-                endFrame={1122}
-                onComplete={() => setHeroDone(true)}
-            />
+            <section className="relative h-[500vh]">
 
-            <div className={heroDone ? "block" : "hidden"}>
+                {/* PINNED HERO */}
+                <div className="sticky top-0 h-screen w-full overflow-hidden hero-sticky">
+
+                    <video
+                        ref={videoRef}
+                        className="absolute inset-0 w-full h-full object-cover will-change-transform"
+                        style={{ transform: "translate3d(0,0,0)" }}
+                        src="/hero.mp4"
+                        muted
+                        playsInline
+                        preload="auto"
+                        disablePictureInPicture
+                    />
+
+                    <div className="absolute inset-0 bg-black/40"></div>
+
+                    {/* TEXT */}
+                    <div className="relative z-10 h-full flex items-center px-10">
+                        <div>
+                            <p className="hero-subtitle text-sm tracking-widest mb-4 text-[#a3a195]">
+                                Chapter I. The Anomaly
+                            </p>
+
+                            <h1 className="text-7xl font-bold leading-tight text-white">
+                                <span className="hero-line">FORGING</span><br />
+                                <span className="hero-line text-[#9b1b30] italic">THE FUTURE</span><br />
+                                <span className="hero-line">LEGACY</span>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div>
                 {/* ABOUT / VALUE SECTION */}
                 <section ref={aboutRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent cinematic-layer border-y border-white/5">
                     <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-32">
