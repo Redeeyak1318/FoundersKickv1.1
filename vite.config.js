@@ -9,6 +9,9 @@ export default defineConfig({
     port: 3000,
     open: true
   },
+  optimizeDeps: {
+    include: ['lucide-react', 'framer-motion', 'gsap'],
+  },
   build: {
     rollupOptions: {
       output: {

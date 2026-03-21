@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "./src";
 
 @theme {
     --font-serif: "Gavency", Helvetica, Arial, sans-serif;
