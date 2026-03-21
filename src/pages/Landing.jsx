@@ -58,11 +58,15 @@ export default function Landing() {
 
             const tl = gsap.timeline({
                 scrollTrigger: {
-                    trigger: ".hero-sticky",
+                    trigger: ".hero-section",
                     start: "top top",
-                    end: "+=3000",
-                    scrub: true,
-                    invalidateOnRefresh: true
+                    end: "+=5000",
+                    scrub: 1,
+                    pin: true,
+                    pinSpacing: true,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true,
+                    fastScrollEnd: true
                 }
             })
 
@@ -75,17 +79,20 @@ export default function Landing() {
                 }
             }, 0)
 
-            // ENTER TEXT EARLY
             tl.fromTo(".hero-line",
                 { y: 120, opacity: 0 },
-                { y: 0, opacity: 1, stagger: 0.2, ease: "power3.out" },
-                0.1
+                {
+                    y: 0,
+                    opacity: 1,
+                    stagger: 0.2,
+                    immediateRender: true
+                },
+                0
             )
 
-            // EXIT TEXT EARLIER (IMPORTANT)
             tl.to(".hero-line",
-                { y: -120, opacity: 0, stagger: 0.1, ease: "power3.in" },
-                0.55
+                { y: -120, opacity: 0, stagger: 0.1 },
+                0.4
             )
         }
 
@@ -93,6 +100,8 @@ export default function Landing() {
 
         return () => {
             video.removeEventListener("loadedmetadata", handleLoaded)
+
+            ScrollTrigger.getAll().forEach(t => t.kill())
         }
     }, [])
 
@@ -194,10 +203,9 @@ export default function Landing() {
             </nav>
 
             {/* HERO SECTION */}
-            <section className="relative h-[500vh]">
+            <section className="relative hero-section">
 
-                {/* PINNED HERO */}
-                <div className="sticky top-0 h-screen w-full overflow-hidden hero-sticky">
+                <div className="h-screen w-full overflow-hidden hero-sticky">
 
                     <video
                         ref={videoRef}
