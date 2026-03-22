@@ -71,10 +71,14 @@ export default function Landing() {
         const context = canvas.getContext("2d");
 
         // 🔥 RENDER FUNCTION (safe)
+        let lastFrame = -1;
         const render = () => {
-            const img = images[imageSeq.current.frame];
-            if (!img || !img.complete) return;
+            const frameIndex = Math.floor(imageSeq.current.frame);
+            if (frameIndex === lastFrame) return;
+            lastFrame = frameIndex;
 
+            const img = images[frameIndex];
+            if (!img || !img.complete) return;
             const scale = Math.max(
                 canvas.width / img.width,
                 canvas.height / img.height
@@ -104,7 +108,7 @@ export default function Landing() {
         window.addEventListener("resize", resizeCanvas);
 
         // 🔥 LOAD FIRST FEW FRAMES IMMEDIATELY
-        const preloadCount = isMobile ? 5 : 10;
+        const preloadCount = isMobile ? 8 : 20;
 
         for (let i = 0; i < preloadCount; i++) {
             const img = new Image();
@@ -145,12 +149,18 @@ export default function Landing() {
         const trigger = ScrollTrigger.create({
             trigger: ".hero-section",
             start: "top top",
-            end: isMobile ? "+=1200" : `+=${frameCount * 28}`,
-            scrub: 0.4,
+            end: isMobile ? "+=1500" : `+=${frameCount * 35}`,
+            scrub: 0.8,
             pin: true,
             anticipatePin: 1,
             onUpdate: (self) => {
-                imageSeq.current.frame = Math.floor(self.progress * (frameCount - 1));
+                const targetFrame = self.progress * (frameCount - 1);
+
+                // smooth interpolation (LERP)
+                imageSeq.current.frame += (targetFrame - imageSeq.current.frame) * 0.15;
+
+                // clamp
+                imageSeq.current.frame = Math.max(0, Math.min(frameCount - 1, imageSeq.current.frame));
                 render();
 
                 const progress = self.progress;
@@ -306,7 +316,7 @@ export default function Landing() {
 
                     <canvas
                         ref={canvasRef}
-                        className="absolute inset-0 w-full h-full"
+                        className="absolute inset-0 w-full h-full will-change-transform"
                     />
 
                     <div className="absolute inset-0 bg-black/40"></div>
