@@ -9,10 +9,12 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Landing() {
     const pageRef = useRef(null)
-    const aboutRef = useRef(null)
+    const realityRef = useRef(null)
+    const whatIsRef = useRef(null)
+    const howRef = useRef(null)
+    const communityRef = useRef(null)
     const featuresRef = useRef(null)
-    const networkRef = useRef(null)
-    const launchRef = useRef(null)
+    const proofRef = useRef(null)
     const ctaRef = useRef(null)
     const canvasRef = useRef(null)
 
@@ -142,7 +144,7 @@ export default function Landing() {
         tlIntro.fromTo(".hero-image", { scale: 1.1, opacity: 0 }, { scale: 1, opacity: 0.6, duration: 2, ease: "power2.out" }, "-=1.5")
         tlIntro.fromTo(".hero-subtitle", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, "-=1")
 
-        const sections = [aboutRef, featuresRef, networkRef, launchRef]
+        const sections = [realityRef, whatIsRef, howRef, communityRef, featuresRef, proofRef]
 
         sections.forEach((sec) => {
             if (sec.current) {
@@ -258,140 +260,209 @@ export default function Landing() {
             </section>
 
             <div>
-                {/* ABOUT / VALUE SECTION */}
-                <section ref={aboutRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent cinematic-layer border-y border-white/5">
-                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-32">
+                {/* 1. PROBLEM / REALITY SECTION */}
+                <section ref={realityRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent cinematic-layer border-y border-white/5">
+                    <div className="absolute inset-0 bg-[#020202]"></div>
+                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-32 relative z-10">
                         <div className="md:w-1/2 w-full space-y-8">
-                            <h2 className="cinematic-text font-serif text-5xl md:text-7xl uppercase leading-none">
-                                A Genesis <br /><span className="italic text-[#a3a195]">Of Visionaries</span>
+                            <h2 className="cinematic-text font-sans text-5xl md:text-7xl font-bold uppercase leading-none tracking-tight">
+                                <span className="text-[#a3a195] block mb-2 text-3xl md:text-5xl font-normal">STUCK IN</span> 
+                                THE LOOP.
                             </h2>
-                            <div className="w-16 h-px bg-[#4a0c16] my-8 cinematic-text"></div>
-                            <p className="cinematic-text text-xl font-light text-[#a3a195] font-sans tracking-wide leading-relaxed">
-                                We discard the rigid matrices of traditional accelerators. FoundersKick is a brutal crucible for ideas—where raw passion converges with untempered ambition. We connect the outliers.
+                            <div className="w-16 h-px bg-[#9b1b30] my-8 cinematic-text"></div>
+                            <p className="cinematic-text text-xl font-light text-[#e2dfce] font-sans tracking-wide leading-relaxed">
+                                Endlessly consuming content. Theorizing without execution. The ecosystem is soft, bloated, and afraid of real work. 
                             </p>
-                            <p className="cinematic-text text-sm uppercase tracking-[0.2em] text-[#9b1b30] pt-4">Rule 01: Defy Convention</p>
+                            <p className="cinematic-text text-xl font-bold text-[#e2dfce] font-sans tracking-wide leading-relaxed">
+                                You lack accountability. We fix that.
+                            </p>
                         </div>
                         <div className="md:w-1/2 w-full relative h-[600px] overflow-hidden group">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(155,27,48,0.2)_0%,transparent_70%)] blur-3xl rounded-full"></div>
                             <img
                                 src="/hero/Features.png"
-                                alt="Ecosystem"
-                                className="cinematic-img w-full h-[120%] object-cover absolute top-[-10%] mix-blend-exclusion grayscale group-hover:grayscale-0 transition-all duration-1000"
+                                alt="Reality"
+                                className="cinematic-img w-full h-[120%] object-cover absolute top-[-10%] mix-blend-difference grayscale group-hover:grayscale-0 transition-all duration-1000"
                             />
-                            <div className="absolute inset-0 bg-[#020202]/10 mix-blend-overlay"></div>
-                            <div className="absolute bottom-0 left-0 p-6 bg-[#020202]/80 backdrop-blur-sm border-t border-r border-white/10">
-                                <p className="text-xs uppercase tracking-[0.2em] text-[#e2dfce]">Fig 1. The Ecosystem</p>
+                            <div className="absolute inset-0 bg-[#020202]/30 mix-blend-multiply"></div>
+                            <div className="absolute bottom-0 left-0 p-6 bg-[#020202]/90 border border-white/5">
+                                <p className="text-[10px] uppercase font-mono tracking-[0.2em] text-[#9b1b30]">Sys.Diag // The Default Path</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* FEATURES SECTION */}
-                <section ref={featuresRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent overflow-hidden">
-                    <div className="absolute right-0 top-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(74,12,22,0.15)_0%,transparent_70%)] blur-3xl rounded-full"></div>
-                    <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16 md:gap-32">
-                        <div className="md:w-1/2 w-full relative h-[700px] overflow-hidden">
+                {/* 2. WHAT FOUNDERSKICK IS */}
+                <section ref={whatIsRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-[#020202] overflow-hidden">
+                    <div className="max-w-7xl mx-auto text-center space-y-12">
+                        <p className="cinematic-text text-[#9b1b30] text-sm uppercase font-mono tracking-[0.3em]">The Alternative</p>
+                        <h2 className="cinematic-text font-sans text-6xl md:text-8xl font-black uppercase leading-none tracking-tighter">
+                            A BUILDER-FIRST <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-500">ECOSYSTEM.</span>
+                        </h2>
+                        <div className="cinematic-text max-w-3xl mx-auto flex flex-col md:flex-row gap-8 mt-16 text-left">
+                            <div className="flex-1 p-8 border border-white/5 bg-white/[0.02]">
+                                <h3 className="text-xl font-bold text-white mb-4 uppercase tracking-widest">Network.</h3>
+                                <p className="text-[#a3a195]">Surround yourself with people who ship code, not just tweet about it.</p>
+                            </div>
+                            <div className="flex-1 p-8 border border-white/5 bg-white/[0.02]">
+                                <h3 className="text-xl font-bold text-white mb-4 uppercase tracking-widest">Execution.</h3>
+                                <p className="text-[#a3a195]">Ideas are useless. Execution is the only metric that matters here.</p>
+                            </div>
+                            <div className="flex-1 p-8 border border-[#9b1b30]/20 bg-[#9b1b30]/5">
+                                <h3 className="text-xl font-bold text-[#9b1b30] mb-4 uppercase tracking-widest">Accountability.</h3>
+                                <p className="text-[#a3a195]">Brutal honesty and feedback loops. Survive the crucible.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3. HOW IT WORKS */}
+                <section ref={howRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent cinematic-layer">
+                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent hidden md:block"></div>
+                    <div className="max-w-5xl mx-auto">
+                        <h2 className="cinematic-text font-sans text-4xl md:text-5xl font-bold uppercase mb-24 md:text-center tracking-tight">The Protocol</h2>
+                        
+                        <div className="space-y-24">
+                            <div className="cinematic-text flex flex-col md:flex-row items-center gap-12 group">
+                                <div className="md:w-1/2 text-left md:text-right">
+                                    <h3 className="text-4xl font-bold text-white mb-4">JOIN.</h3>
+                                    <p className="text-[#a3a195] text-lg">Enter the syndicate. Verify your identity as a creator, founder, or engineer.</p>
+                                </div>
+                                <div className="flex-none w-16 h-16 rounded-full bg-[#0a0a0a] border border-[#9b1b30] flex items-center justify-center relative z-10 group-hover:bg-[#9b1b30] transition-colors duration-500">
+                                    <span className="font-mono text-white text-sm">01</span>
+                                </div>
+                                <div className="md:w-1/2"></div>
+                            </div>
+                            
+                            <div className="cinematic-text flex flex-col md:flex-row-reverse items-center gap-12 group">
+                                <div className="md:w-1/2 text-left">
+                                    <h3 className="text-4xl font-bold text-white mb-4">CONNECT.</h3>
+                                    <p className="text-[#a3a195] text-lg">Find your squad. Align with outliers who match your intensity.</p>
+                                </div>
+                                <div className="flex-none w-16 h-16 rounded-full bg-[#0a0a0a] border border-white/20 flex items-center justify-center relative z-10 group-hover:border-white transition-colors duration-500">
+                                    <span className="font-mono text-white text-sm">02</span>
+                                </div>
+                                <div className="md:w-1/2"></div>
+                            </div>
+
+                            <div className="cinematic-text flex flex-col md:flex-row items-center gap-12 group">
+                                <div className="md:w-1/2 text-left md:text-right">
+                                    <h3 className="text-4xl font-bold text-white mb-4">BUILD.</h3>
+                                    <p className="text-[#a3a195] text-lg">Ship features, not decks. We prioritize product over presentation.</p>
+                                </div>
+                                <div className="flex-none w-16 h-16 rounded-full bg-[#0a0a0a] border border-white/20 flex items-center justify-center relative z-10 group-hover:border-white transition-colors duration-500">
+                                    <span className="font-mono text-white text-sm">03</span>
+                                </div>
+                                <div className="md:w-1/2"></div>
+                            </div>
+
+                            <div className="cinematic-text flex flex-col md:flex-row-reverse items-center gap-12 group">
+                                <div className="md:w-1/2 text-left">
+                                    <h3 className="text-4xl font-bold text-white mb-4 text-[#9b1b30]">LAUNCH.</h3>
+                                    <p className="text-[#a3a195] text-lg">Unleash it. Get users. Adapt or die.</p>
+                                </div>
+                                <div className="flex-none w-16 h-16 rounded-full bg-[#9b1b30]/10 border border-[#9b1b30] flex items-center justify-center relative z-10 shadow-[0_0_30px_rgba(155,27,48,0.5)]">
+                                    <span className="font-mono text-[#9b1b30] font-bold text-sm">04</span>
+                                </div>
+                                <div className="md:w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 4. COMMUNITY / NETWORK */}
+                <section ref={communityRef} className="relative py-32 md:py-48 px-8 bg-[#0a0a0a] overflow-hidden border-y border-white/5">
+                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
+                        <div className="md:w-5/12 space-y-8 z-10">
+                            <h2 className="cinematic-text text-5xl md:text-7xl font-sans font-black uppercase leading-none tracking-tighter">
+                                NOT FOR <br/><span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600">TOURISTS.</span>
+                            </h2>
+                            <p className="cinematic-text text-lg text-[#a3a195]">
+                                The room you sit in determines your trajectory. We curate founders, hardcore developers, rogue designers, and operators who bleed their craft.
+                            </p>
+                            <div className="cinematic-text grid grid-cols-2 gap-4 pt-8">
+                                <div className="border-l-2 border-[#9b1b30] pl-4">
+                                    <span className="block text-3xl font-bold text-white">400+</span>
+                                    <span className="text-xs uppercase tracking-widest text-[#a3a195]">Active Builders</span>
+                                </div>
+                                <div className="border-l-2 border-[#333] pl-4">
+                                    <span className="block text-3xl font-bold text-white">24/7</span>
+                                    <span className="text-xs uppercase tracking-widest text-[#a3a195]">Global Relay</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="md:w-7/12 w-full relative h-[500px]">
                             <img
                                 src="/hero/Network.png"
-                                alt="Dashboard Features"
-                                className="cinematic-img w-full h-[120%] object-cover absolute top-[-10%] brightness-75 contrast-125 saturate-50"
+                                alt="Network"
+                                className="cinematic-img w-full h-[120%] absolute top-[-10%] object-cover opacity-60 mix-blend-lighten grayscale contrast-125"
                             />
-                            <div className="absolute top-8 left-8 p-4 border border-[#9b1b30]/30 bg-[#020202]/50 backdrop-blur-md">
-                                <p className="text-[10px] uppercase font-mono tracking-widest text-[#9b1b30]">Sys.Override // Active</p>
-                            </div>
-                        </div>
-                        <div className="md:w-1/2 w-full space-y-12 shrink-0">
-                            <h2 className="cinematic-text font-serif text-5xl md:text-6xl uppercase leading-none">
-                                Unfiltered <span className="block text-[#9b1b30] italic mt-2">Intelligence</span>
-                            </h2>
-                            <ul className="space-y-8 border-l-2 border-[#121212] pl-8">
-                                <li className="cinematic-text relative">
-                                    <span className="absolute -left-[35px] top-6 w-2 h-2 rounded-full bg-[#9b1b30]"></span>
-                                    <h3 className="text-2xl font-serif uppercase mb-2">Architectural Blueprint</h3>
-                                    <p className="text-[#a3a195] text-sm tracking-wide">A dashboard devoid of noise. Absolute control over your trajectory.</p>
-                                </li>
-                                <li className="cinematic-text relative">
-                                    <span className="absolute -left-[35px] top-6 w-2 h-2 rounded-full bg-[#121212]"></span>
-                                    <h3 className="text-2xl font-serif uppercase mb-2">Metrics That Bleed</h3>
-                                    <p className="text-[#a3a195] text-sm tracking-wide">Engage with data that dictates survival and dominance.</p>
-                                </li>
-                            </ul>
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10"></div>
                         </div>
                     </div>
                 </section>
 
-                {/* NETWORK PREVIEW SECTION */}
-                <section ref={networkRef} className="relative h-screen flex items-center justify-center overflow-hidden cinematic-layer border-t border-white/5">
-                    <div className="absolute inset-0 z-0">
-                        <img
-                            src="/hero/About.png"
-                            alt="Network Connections"
-                            className="cinematic-img w-full h-[120%] absolute top-[-10%] object-cover opacity-30 mix-blend-screen"
-                        />
-                        <div className="absolute inset-0 bg-[#020202]/80"></div>
-                    </div>
-                    <div className="relative z-10 text-center max-w-4xl px-8">
-                        <p className="cinematic-text text-[#9b1b30] text-sm tracking-[0.3em] uppercase mb-8">The Syndicate</p>
-                        <h2 className="cinematic-text font-serif text-6xl md:text-8xl flex flex-col uppercase leading-[0.9]">
-                            <span>A Network</span>
-                            <span className="italic text-[#e2dfce]/50">Of Consequences</span>
-                        </h2>
-                        <p className="cinematic-text mt-8 text-lg md:text-xl font-light text-[#a3a195] max-w-2xl mx-auto tracking-wide">
-                            You do not merely exist within FoundersKick. You are woven into a visceral tapestry of founders, investors, and rogue visionaries.
-                        </p>
-                        <div className="cinematic-text mt-12 flex justify-center">
-                            <Link to="/network" className="btn-brutal">
-                                <span>Explore the Network</span>
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-
-                {/* LAUNCH STARTUPS SECTION */}
-                <section ref={launchRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent">
+                {/* 5. FEATURES / VALUE GRID */}
+                <section ref={featuresRef} className="relative py-32 md:py-48 px-8 md:px-20 bg-transparent">
                     <div className="max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-                            <div>
-                                <p className="cinematic-text text-sm text-[#9b1b30] uppercase tracking-[0.2em] mb-4">Protocol: Initiation</p>
-                                <h2 className="cinematic-text font-serif text-5xl md:text-7xl uppercase">Catalyst <br /><span className="italic text-[#a3a195]">Phase</span></h2>
+                        <h2 className="cinematic-text font-sans text-4xl md:text-5xl font-bold uppercase mb-16 tracking-tight">The Arsenal</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            
+                            <div className="cinematic-text p-8 bg-[#040404] border border-white/5 hover:border-[#9b1b30]/50 transition-colors group">
+                                <div className="w-10 h-10 mb-8 border border-white/10 flex items-center justify-center group-hover:bg-[#9b1b30]/10 transition-colors">
+                                  <div className="w-3 h-3 bg-white group-hover:bg-[#9b1b30]"></div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-wide">Co-Build Sessions</h3>
+                                <p className="text-sm text-[#a3a195] leading-relaxed">Pair up with complementary skills. Stop building in a silo. Real-time collaboration.</p>
                             </div>
-                            <p className="cinematic-text max-w-md text-[#a3a195] text-right text-base tracking-wide">
-                                Submit your vision to the ether. The Launch protocol accelerates your evolution from concept to dominion.
-                            </p>
-                        </div>
-                        <div className="relative w-full h-[70vh] overflow-hidden group">
-                            <img
-                                src="/hero/Launch.png"
-                                alt="Launch Growth"
-                                className="cinematic-img w-full h-[120%] absolute top-[-10%] object-cover grayscale brightness-90 contrast-125 saturate-0 group-hover:saturate-50 transition-all duration-1000"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent opacity-80"></div>
-                            <div className="absolute bottom-12 left-12">
-                                <Link to="/startups" className="cinematic-text font-sans uppercase text-3xl md:text-5xl font-bold tracking-widest text-[#e2dfce] hover:text-[#9b1b30] transition-colors flex items-center gap-6">
-                                    Commence Launch <ArrowRight size={40} className="text-[#9b1b30]" />
-                                </Link>
+                            
+                            <div className="cinematic-text p-8 bg-[#040404] border border-white/5 hover:border-[#9b1b30]/50 transition-colors group">
+                                <div className="w-10 h-10 mb-8 border border-white/10 flex items-center justify-center group-hover:bg-[#9b1b30]/10 transition-colors">
+                                  <div className="w-3 h-3 bg-white group-hover:bg-[#9b1b30]"></div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-wide">Brutal Feedback</h3>
+                                <p className="text-sm text-[#a3a195] leading-relaxed">No ego padding. Get tear-downs on your UI, pitch, and architecture from veterans.</p>
                             </div>
-                            <div className="torn-edge-top"></div>
+                            
+                            <div className="cinematic-text p-8 bg-[#040404] border border-white/5 hover:border-[#9b1b30]/50 transition-colors group">
+                                <div className="w-10 h-10 mb-8 border border-white/10 flex items-center justify-center group-hover:bg-[#9b1b30]/10 transition-colors">
+                                  <div className="w-3 h-3 bg-white group-hover:bg-[#9b1b30]"></div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-wide">Project Board</h3>
+                                <p className="text-sm text-[#a3a195] leading-relaxed">Discover alpha stages. Join as an early contibutor or recruit for your own mission.</p>
+                            </div>
+
                         </div>
                     </div>
                 </section>
 
-                {/* FINAL CTA SECTION */}
-                <section ref={ctaRef} className="relative py-48 px-8 flex items-center justify-center bg-transparent overflow-hidden border-t border-[#121212]">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(155,27,48,0.08)_0%,transparent_60%)]"></div>
+                {/* 6. SOCIAL PROOF */}
+                <section ref={proofRef} className="relative py-24 md:py-32 px-8 bg-[#0a0a0a] border-y border-white/5">
+                    <div className="max-w-4xl mx-auto text-center cinematic-text">
+                        <p className="text-2xl md:text-4xl font-light italic text-[#e2dfce] leading-relaxed">
+                            "I stopped reading startup advice and just shipped. FoundersKick was the catalyst."
+                        </p>
+                        <p className="mt-8 text-sm font-bold uppercase tracking-[0.2em] text-[#9b1b30]">Class 01 Alumni</p>
+                    </div>
+                </section>
+
+                {/* 7. FINAL CTA SECTION */}
+                <section ref={ctaRef} className="relative py-48 px-8 flex items-center justify-center bg-[#020202] overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(155,27,48,0.15)_0%,transparent_60%)]"></div>
                     <div className="relative z-10 text-center flex flex-col items-center">
-                        <h2 className="cta-text font-serif text-5xl md:text-8xl uppercase tracking-tighter mb-12 flex flex-col items-center">
-                            <span className="block italic text-[#e2dfce]/30 text-3xl md:text-5xl tracking-widest mb-4">The Final</span>
-                            <span>Verdict</span>
+                        <h2 className="cta-text font-sans text-5xl md:text-9xl font-black uppercase tracking-tighter mb-8 text-white">
+                            STOP <span className="text-transparent bg-clip-text bg-gradient-to-b from-gray-500 to-gray-800">CONSUMING.</span>
+                            <br/> START <span className="text-[#9b1b30]">BUILDING.</span>
                         </h2>
-                        <p className="cta-text text-[#a3a195] text-lg max-w-xl mx-auto font-light tracking-wide mb-12">
-                            There is no turning back. Forge your legacy or fade into obscurity. The realm awaits your command.
+                        <p className="cta-text text-[#a3a195] text-lg max-w-xl mx-auto tracking-wide mb-12">
+                            The platform is live. The only missing variable is your execution.
                         </p>
                         <div className="cta-text flex flex-col sm:flex-row gap-6">
-                            <Link to="/signup" className="btn-brutal bg-[#e2dfce] !text-[#020202] hover:bg-transparent font-bold tracking-widest">
-                                <span>Join the Vanguard</span>
-                            </Link>
-                            <Link to="/login" className="btn-brutal">
-                                <span>Access Archives</span>
+                            <Link to="/signup" className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold uppercase tracking-widest overflow-hidden transition-all hover:bg-transparent hover:text-white border border-white">
+                                <span className="relative z-10 flex items-center gap-2">Initiate Launch <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></span>
+                                <div className="absolute inset-0 bg-[#9b1b30] translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-0"></div>
                             </Link>
                         </div>
                     </div>
