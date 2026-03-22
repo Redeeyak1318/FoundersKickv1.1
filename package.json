@@ -10,8 +10,8 @@
     "start": "npx serve -s dist -l $PORT"
   },
   "dependencies": {
-    "@react-three/drei": "^9.105.6",
-    "@react-three/fiber": "^8.0.0",
+    "@react-three/drei": "9.105.6",
+    "@react-three/fiber": "8.17.10",
     "@studio-freight/lenis": "^1.0.42",
     "@supabase/supabase-js": "^2.99.0",
     "@tailwindcss/vite": "^4.2.1",
