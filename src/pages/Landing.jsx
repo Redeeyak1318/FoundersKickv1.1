@@ -14,7 +14,7 @@ export default function Landing() {
     const networkRef = useRef(null)
     const launchRef = useRef(null)
     const ctaRef = useRef(null)
-    const videoRef = useRef(null)
+    const canvasRef = useRef(null)
 
 
     // Setup smooth scrolling with Lenis
@@ -41,66 +41,88 @@ export default function Landing() {
     }, []);
 
     useEffect(() => {
-        const video = videoRef.current
-        if (!video) return
+        const frameCount = 159// 👈 IMPORTANT: set your actual frame count
 
-        video.setAttribute("playsinline", "")
-        video.setAttribute("webkit-playsinline", "")
+        const currentFrame = (index) =>
+            `/frames/frame_${String(index).padStart(4, "0")}.jpg`
 
+        const images = []
+        const imageSeq = { frame: 0 }
 
-        const handleLoaded = () => {
-            const duration = video.duration
+        for (let i = 1; i <= frameCount; i++) {
+            const img = new Image()
+            img.src = currentFrame(i)
+            images.push(img)
+        }
 
-            video.currentTime = 0.01
-            video.pause()
+        const canvas = canvasRef.current
+        const context = canvas.getContext("2d")
 
-            gsap.ticker.lagSmoothing(0)
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
 
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".hero-section",
-                    start: "top top",
-                    end: "+=5000",
-                    scrub: 1,
-                    pin: true,
-                    pinSpacing: true,
-                    anticipatePin: 1,
-                    invalidateOnRefresh: true,
-                    fastScrollEnd: true
-                }
-            })
+        const render = () => {
+            const img = images[imageSeq.frame]
+            if (!img) return
 
-            tl.to({}, {
-                duration: 1,
-                ease: "none",
-                onUpdate: function () {
-                    const t = this.progress() * duration
-                    video.currentTime = t
-                }
-            }, 0)
-
-            tl.fromTo(".hero-line",
-                { y: 120, opacity: 0 },
-                {
-                    y: 0,
-                    opacity: 1,
-                    stagger: 0.2,
-                    immediateRender: true
-                },
-                0
+            const scale = Math.max(
+                canvas.width / img.width,
+                canvas.height / img.height
             )
 
-            tl.to(".hero-line",
-                { y: -120, opacity: 0, stagger: 0.1 },
-                0.4
+            const x = (canvas.width - img.width * scale) / 2
+            const y = (canvas.height - img.height * scale) / 2
+
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            context.drawImage(
+                img,
+                x,
+                y,
+                img.width * scale,
+                img.height * scale
             )
         }
 
-        video.addEventListener("loadedmetadata", handleLoaded)
+        images[0].onload = render
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".hero-section",
+                start: "top top",
+                end: `+=${frameCount * 28}`,
+                scrub: 0.4,
+                pin: true,
+                pinSpacing: true,
+                anticipatePin: 1,
+            }
+        })
+
+        tl.to(imageSeq, {
+            frame: frameCount - 1,
+            snap: "frame",
+            ease: "none",
+            onUpdate: function () {
+                render()
+
+                const progress = this.progress()
+                const text = document.querySelectorAll(".hero-line")
+
+                const fadeStart = 0.42 // 👈 tweak this ONLY
+
+                text.forEach(el => {
+                    if (progress > fadeStart) {
+                        el.style.opacity = "0"
+                        el.style.transform = "translateY(-120px)"
+                    } else {
+                        el.style.opacity = "1"
+                        el.style.transform = "translateY(0px)"
+                    }
+                })
+            }
+        }, 0)
+
 
         return () => {
-            video.removeEventListener("loadedmetadata", handleLoaded)
-
             ScrollTrigger.getAll().forEach(t => t.kill())
         }
     }, [])
@@ -207,15 +229,9 @@ export default function Landing() {
 
                 <div className="h-screen w-full overflow-hidden hero-sticky">
 
-                    <video
-                        ref={videoRef}
-                        className="absolute inset-0 w-full h-full object-cover will-change-transform"
-                        style={{ transform: "translate3d(0,0,0)" }}
-                        src="/hero.mp4"
-                        muted
-                        playsInline
-                        preload="auto"
-                        disablePictureInPicture
+                    <canvas
+                        ref={canvasRef}
+                        className="absolute inset-0 w-full h-full"
                     />
 
                     <div className="absolute inset-0 bg-black/40"></div>
