@@ -19,6 +19,8 @@ export default function Landing() {
     const canvasRef = useRef(null)
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const imageSeq = useRef({ frame: 0 });
+
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
 
@@ -62,7 +64,6 @@ export default function Landing() {
             `/frames/frame_${String(index).padStart(4, "0")}.jpg`;
 
         const images = new Array(frameCount);
-        const imageSeq = useRef({ frame: 0 });
 
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -153,34 +154,6 @@ export default function Landing() {
                 render();
 
                 const progress = self.progress;
-                const text = document.querySelectorAll(".hero-line");
-
-                const fadeStart = 0.5;
-                const fadeEnd = 0.75;
-
-                text.forEach(el => {
-                    let opacity = 1;
-
-                    if (progress >= fadeStart && progress <= fadeEnd) {
-                        opacity = 1 - (progress - fadeStart) / (fadeEnd - fadeStart);
-                    } else if (progress > fadeEnd) {
-                        opacity = 0;
-                    }
-
-                    el.style.opacity = opacity;
-                    el.style.transform = `translateY(${(1 - opacity) * -120}px)`;
-                });
-            }
-        });
-
-        tl.to(imageSeq, {
-            frame: frameCount - 1,
-            snap: "frame",
-            ease: "none",
-            onUpdate: function () {
-                render();
-
-                const progress = this.progress();
                 const text = document.querySelectorAll(".hero-line");
 
                 const fadeStart = 0.5;
