@@ -107,16 +107,20 @@ export default function Landing() {
                 const progress = this.progress()
                 const text = document.querySelectorAll(".hero-line")
 
-                const fadeStart = 0.42 // 👈 tweak this ONLY
+                const fadeStart = 0.35
+                const fadeEnd = 0.6
 
                 text.forEach(el => {
-                    if (progress > fadeStart) {
-                        el.style.opacity = "0"
-                        el.style.transform = "translateY(-120px)"
-                    } else {
-                        el.style.opacity = "1"
-                        el.style.transform = "translateY(0px)"
+                    let opacity = 1
+
+                    if (progress >= fadeStart && progress <= fadeEnd) {
+                        opacity = 1 - (progress - fadeStart) / (fadeEnd - fadeStart)
+                    } else if (progress > fadeEnd) {
+                        opacity = 0
                     }
+
+                    el.style.opacity = opacity
+                    el.style.transform = `translateY(${(1 - opacity) * -120}px)`
                 })
             }
         }, 0)

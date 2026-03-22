@@ -4,7 +4,7 @@
 @theme {
     --font-serif: "Gavency", Helvetica, Arial, sans-serif;
     --font-sans: "Ranade", Helvetica, Arial, sans-serif;
-    
+
     --color-bg-base: #020202;
     --color-bg-panel: #0a0a0a;
     --color-charcoal: #121212;
@@ -37,12 +37,14 @@
         width: 4px;
         background: var(--bg-base);
     }
+
     ::-webkit-scrollbar-thumb {
         background: #333;
     }
 }
 
 @layer components {
+
     /* Brutalist Fantasy Utilities */
     .btn-brutal {
         color: var(--color-parchment);
@@ -90,7 +92,10 @@
 
     .film-grain {
         position: fixed;
-        top: 0; left: 0; bottom: 0; right: 0;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
         z-index: 9999;
         pointer-events: none;
         opacity: 0.04;
@@ -100,14 +105,20 @@
     /* Torn paper overlay trick */
     .torn-edge-top {
         position: absolute;
-        top: -1px; left: 0; right: 0; height: 4vw;
+        top: -1px;
+        left: 0;
+        right: 0;
+        height: 4vw;
         background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0,0 L0,10 L10,5 L20,8 L30,3 L40,7 L50,1 L60,9 L70,4 L80,6 L90,2 L100,8 L100,0 Z" fill="%23020202" /></svg>') no-repeat bottom center/cover;
         z-index: 20;
     }
 
     .torn-edge-bottom {
         position: absolute;
-        bottom: -1px; left: 0; right: 0; height: 4vw;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 4vw;
         background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0,10 L0,0 L10,5 L20,2 L30,7 L40,3 L50,9 L60,1 L70,6 L80,4 L90,8 L100,2 L100,10 Z" fill="%23020202" /></svg>') no-repeat top center/cover;
         z-index: 20;
     }
@@ -135,25 +146,37 @@
     .nav-link:hover {
         color: var(--color-parchment);
     }
-    
+
     .nav-link:hover::after {
         width: 100%;
     }
 }
 
 /* Lenis */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
     height: auto;
 }
+
 .lenis.lenis-smooth {
     scroll-behavior: auto !important;
 }
+
 .lenis.lenis-smooth [data-lenis-prevent] {
     overscroll-behavior: contain;
 }
+
 .lenis.lenis-stopped {
     overflow: hidden;
 }
+
 .lenis.lenis-scrolling iframe {
     pointer-events: none;
+}
+
+.hero-line {
+    transition:
+        opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
