@@ -18,12 +18,14 @@ export default function Landing() {
     const ctaRef = useRef(null)
     const canvasRef = useRef(null)
     const [menuOpen, setMenuOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+    const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+
+        checkMobile();
+
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
 
@@ -60,7 +62,7 @@ export default function Landing() {
             `/frames/frame_${String(index).padStart(4, "0")}.jpg`;
 
         const images = new Array(frameCount);
-        const imageSeq = useRef({ frame: 0 }).current;
+        const imageSeq = useRef({ frame: 0 });
 
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -69,7 +71,7 @@ export default function Landing() {
 
         // 🔥 RENDER FUNCTION (safe)
         const render = () => {
-            const img = images[imageSeq.frame];
+            const img = images[imageSeq.current.frame];
             if (!img || !img.complete) return;
 
             const scale = Math.max(
@@ -147,7 +149,7 @@ export default function Landing() {
             pin: true,
             anticipatePin: 1,
             onUpdate: (self) => {
-                imageSeq.frame = Math.floor(self.progress * (frameCount - 1));
+                imageSeq.current.frame = Math.floor(self.progress * (frameCount - 1));
                 render();
 
                 const progress = self.progress;
