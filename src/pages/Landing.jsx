@@ -107,8 +107,8 @@ export default function Landing() {
                 const progress = this.progress()
                 const text = document.querySelectorAll(".hero-line")
 
-                const fadeStart = 0.35
-                const fadeEnd = 0.6
+                const fadeStart = 0.5
+                const fadeEnd = 0.75
 
                 text.forEach(el => {
                     let opacity = 1
